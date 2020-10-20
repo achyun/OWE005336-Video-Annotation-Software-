@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OWE005336 (Video Annotation Software)", "OWE005336 (Video Annotation Software).csproj", "{B41C08F0-9183-4771-AFB4-4036047A43D3}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ImageDatabase", "ImageDatabase\ImageDatabase.sqlproj", "{26DE9577-A39A-4C4F-A6A3-EAC04A56BF07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B41C08F0-9183-4771-AFB4-4036047A43D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B41C08F0-9183-4771-AFB4-4036047A43D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B41C08F0-9183-4771-AFB4-4036047A43D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B41C08F0-9183-4771-AFB4-4036047A43D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26DE9577-A39A-4C4F-A6A3-EAC04A56BF07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26DE9577-A39A-4C4F-A6A3-EAC04A56BF07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26DE9577-A39A-4C4F-A6A3-EAC04A56BF07}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{26DE9577-A39A-4C4F-A6A3-EAC04A56BF07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26DE9577-A39A-4C4F-A6A3-EAC04A56BF07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26DE9577-A39A-4C4F-A6A3-EAC04A56BF07}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E7A29D5F-5910-4FB1-8333-DDBBAA2B5D13}
+	EndGlobalSection
+EndGlobal

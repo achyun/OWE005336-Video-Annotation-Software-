@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B41C08F0-9183-4771-AFB4-4036047A43D3}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>OWE005336__Video_Annotation_Software_</RootNamespace>
+    <AssemblyName>OWE005336 %28Video Annotation Software%29</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accord, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>packages\Accord.3.8.0\lib\net46\Accord.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Video, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>packages\Accord.Video.3.8.0\lib\net46\Accord.Video.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Video.FFMPEG, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=x86">
+      <HintPath>packages\Accord.Video.FFMPEG.3.8.0\lib\net46\Accord.Video.FFMPEG.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.ProtectedData, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.ProtectedData.4.7.0\lib\net461\System.Security.Cryptography.ProtectedData.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Windows">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Windows Kits\10\UnionMetadata\Windows.winmd</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CustomControls\ClipSelector.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\ClipSelector.Designer.cs">
+      <DependentUpon>ClipSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\LabelButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\LabelButton.Designer.cs">
+      <DependentUpon>LabelButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\fFrameGrabber.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\fFrameGrabber.Designer.cs">
+      <DependentUpon>fFrameGrabber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fLabelSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fLabelSelector.Designer.cs">
+      <DependentUpon>fLabelSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fProgressBar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fProgressBar.Designer.cs">
+      <DependentUpon>fProgressBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fSplash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fSplash.Designer.cs">
+      <DependentUpon>fSplash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\LabelTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\LabelTree.Designer.cs">
+      <DependentUpon>LabelTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\ROISelector.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\ROISelector.Designer.cs">
+      <DependentUpon>ROISelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fGetString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fGetString.Designer.cs">
+      <DependentUpon>fGetString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\ImageDatabaseAccess.cs" />
+    <Compile Include="Forms\fMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\fMain.Designer.cs">
+      <DependentUpon>fMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CustomControls\LabellingInterface.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\LabellingInterface.Designer.cs">
+      <DependentUpon>LabellingInterface.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\TagBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TagBox.Designer.cs">
+      <DependentUpon>TagBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\TagTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TagTextBox.Designer.cs">
+      <DependentUpon>TagTextBox.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Forms\fFrameGrabber.resx">
+      <DependentUpon>fFrameGrabber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogForms\fLabelSelector.resx">
+      <DependentUpon>fLabelSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\fMain.resx">
+      <DependentUpon>fMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogForms\fGetString.resx">
+      <DependentUpon>fGetString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogForms\fProgressBar.resx">
+      <DependentUpon>fProgressBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogForms\fSplash.resx">
+      <DependentUpon>fSplash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\LabelTree.resx">
+      <DependentUpon>LabelTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\LabellingInterface.resx">
+      <DependentUpon>LabellingInterface.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\TagTextBox.resx">
+      <DependentUpon>TagTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NeuralNet.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plus_icon %2832x32%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\1200px-OneDrive_Folder_Icon %2832x32%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\frame-512 %2832x32%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OkTick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CancelIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Close box %2818x18%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Splash2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Splash3.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Splash1.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="packages\Accord.3.8.0\build\Accord.targets" Condition="Exists('packages\Accord.3.8.0\build\Accord.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\Accord.3.8.0\build\Accord.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Accord.3.8.0\build\Accord.targets'))" />
+    <Error Condition="!Exists('packages\Accord.Video.FFMPEG.3.8.0\build\Accord.Video.FFMPEG.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Accord.Video.FFMPEG.3.8.0\build\Accord.Video.FFMPEG.targets'))" />
+  </Target>
+  <Import Project="packages\Accord.Video.FFMPEG.3.8.0\build\Accord.Video.FFMPEG.targets" Condition="Exists('packages\Accord.Video.FFMPEG.3.8.0\build\Accord.Video.FFMPEG.targets')" />
+</Project>

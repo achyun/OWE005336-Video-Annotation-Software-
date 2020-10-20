@@ -8,7 +8,7 @@ namespace OWE005336__Video_Annotation_Software_
 {
     static class Program
     {
-        public static ImageDatabaseAccess ImageDatabase = new ImageDatabaseAccess();
+        public static LabellingDB.ImageDatabaseAccess ImageDatabase = new LabellingDB.ImageDatabaseAccess();
 
         /// <summary>
         /// The main entry point for the application.

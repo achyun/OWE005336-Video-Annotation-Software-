@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LabellingDB;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -38,18 +39,29 @@ namespace OWE005336__Video_Annotation_Software_
             _RenameButton.Click += _RenameButton_Click;
             _DeleteButton.Click += _DeleteButton_Click;
 
+            this.MouseDown += LabelTree_MouseDown;
+
+        }
+
+        private void LabelTree_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.SelectedNode = this.GetNodeAt(this.PointToClient(Control.MousePosition));
         }
 
         private void _ContextMenu_Opening(object sender, CancelEventArgs e)
         {
             if (this.SelectedNode == null)
             {
+                _AddFamilyButton.Enabled = true;
+                _ImportFamilyButton.Enabled = true;
                 _AddLabelButton.Enabled = false;
                 _RenameButton.Enabled = false;
                 _DeleteButton.Enabled = false;
             }
             else
             {
+                _AddFamilyButton.Enabled = false;
+                _ImportFamilyButton.Enabled = false;
                 _AddLabelButton.Enabled = true;
                 _RenameButton.Enabled = true;
                 _DeleteButton.Enabled = true;

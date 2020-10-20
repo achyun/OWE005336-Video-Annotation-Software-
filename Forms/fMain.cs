@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Data;
 using System.Data.Sql;
 using System.Data.SqlClient;
+using LabellingDB;
 
 namespace OWE005336__Video_Annotation_Software_
 {
@@ -86,7 +87,8 @@ namespace OWE005336__Video_Annotation_Software_
                 if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 {
                     txtImageDir.Text = folderBrowserDialog.SelectedPath;
-                    Program.ImageDatabase.Settings_Set(ImageDatabaseAccess.SETTING_IMAGE_DIR, folderBrowserDialog.SelectedPath);
+                    TestAndSaveDirectoryRef(folderBrowserDialog.SelectedPath, ImageDatabaseAccess.SETTING_IMAGE_DIR);
+                    
                 }
             }
         }
@@ -101,7 +103,7 @@ namespace OWE005336__Video_Annotation_Software_
                 if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 {
                     txtVideoArchiveDir.Text = folderBrowserDialog.SelectedPath;
-                    Program.ImageDatabase.Settings_Set(ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR, txtVideoArchiveDir.Text);
+                    TestAndSaveDirectoryRef(folderBrowserDialog.SelectedPath, ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
                 }
             }
         }
@@ -449,6 +451,47 @@ namespace OWE005336__Video_Annotation_Software_
         private void ckbFilterForNoLabels_CheckedChanged(object sender, EventArgs e)
         {
             LoadImages();
+        }
+
+        private void txtImageDir_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                TestAndSaveDirectoryRef(txtImageDir.Text, ImageDatabaseAccess.SETTING_IMAGE_DIR);
+            }
+        }
+
+        private void txtVideoArchiveDir_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                TestAndSaveDirectoryRef(txtVideoArchiveDir.Text, ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
+            }
+        }
+
+        private bool TestAndSaveDirectoryRef(string dirPath, string settingName)
+        {
+            bool success = false;
+
+            try
+            {
+                if (Directory.Exists(dirPath))
+                {
+                    Program.ImageDatabase.Settings_Set(settingName, dirPath);
+                    success = true;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid Directory");
+                }
+                
+            }
+            catch
+            {
+                MessageBox.Show("Invalid Directory");
+            }
+
+            return success;
         }
     }
 }

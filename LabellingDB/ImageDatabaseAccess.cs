@@ -4,10 +4,9 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
 
-namespace OWE005336__Video_Annotation_Software_
+namespace LabellingDB
 {
     public class ImageDatabaseAccess
     {
@@ -59,7 +58,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'LabelTree_Load' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'LabelTree_Load' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -109,7 +108,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'LabelTree_AddLabel' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'LabelTree_AddLabel' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -139,7 +138,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'LabelTree_RenameLabel' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'LabelTree_RenameLabel' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -217,7 +216,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'LabelTree_LoadLabelList' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'LabelTree_LoadLabelList' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -246,7 +245,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'LabelTree_DeleteLabelByID' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'LabelTree_DeleteLabelByID' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -273,7 +272,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'LabelTree_DeleteLabelsByParentID' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'LabelTree_DeleteLabelsByParentID' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -305,7 +304,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Settings_Get' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Settings_Get' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -349,7 +348,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Settings_Modify' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Settings_Modify' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -374,7 +373,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Settings_Create' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Settings_Create' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -439,7 +438,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Images_AddDBEntry' (" + fileName + ") : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Images_AddDBEntry' (" + fileName + ") : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -526,7 +525,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Images_AddDBEntry' (" + fileName + ") : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Images_AddDBEntry' (" + fileName + ") : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -581,7 +580,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Images_Get' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Images_Get' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -644,7 +643,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Images_Update' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Images_Update' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -683,7 +682,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Images_Update' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Images_Update' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -736,7 +735,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Images_DeleteDBEntry' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Images_DeleteDBEntry' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -784,7 +783,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'BBoxLabels_LoadByImageID' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'BBoxLabels_LoadByImageID' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -823,7 +822,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'BBoxLabels_AddLabel' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'BBoxLabels_AddLabel' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -861,7 +860,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'BBoxLabels_UpdateLabel' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'BBoxLabels_UpdateLabel' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -889,7 +888,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'BBoxLabels_DeleteLabelByID' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'BBoxLabels_DeleteLabelByID' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -917,7 +916,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'BBoxLabels_DeleteLabelsByImageID' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'BBoxLabels_DeleteLabelsByImageID' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -977,7 +976,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error in 'Tags_Add' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'Tags_Add' : \r\n\r\n" + ex.ToString());
             }
             finally
             {

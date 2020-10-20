@@ -129,7 +129,6 @@
     <Compile Include="Forms\DialogForms\fGetString.Designer.cs">
       <DependentUpon>fGetString.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\ImageDatabaseAccess.cs" />
     <Compile Include="Forms\fMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -231,6 +230,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Splash1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="LabellingDB\LabellingDB.csproj">
+      <Project>{c45a5927-f21f-4b50-8d47-48bfb84a8c01}</Project>
+      <Name>LabellingDB</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Accord.3.8.0\build\Accord.targets" Condition="Exists('packages\Accord.3.8.0\build\Accord.targets')" />

@@ -24,7 +24,8 @@ namespace OWE005336__Video_Annotation_Software_
             this.AutoScroll = true;
             this.Click += TagBox_Click;
             this.MouseMove += TagBox_MouseMove;
-            _AllowableTags = Program.ImageDatabase.Tags_Load();
+            _AllowableTags = new AutoCompleteStringCollection();
+            _AllowableTags.AddRange(Program.ImageDatabase.Tags_Load());
         }
 
         public void PopulateTagsFromString(string tagString)

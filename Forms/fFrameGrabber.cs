@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Accord.Video.FFMPEG;
 using System.IO;
+using LabellingDB;
 
 namespace OWE005336__Video_Annotation_Software_
 {
@@ -41,7 +42,7 @@ namespace OWE005336__Video_Annotation_Software_
 
             pcbFrame.Image = _Reader.ReadVideoFrame(0);
             tkbScan.Maximum = (int)_Reader.FrameCount - 1;
-            cpsClipSelector.RegisterNewVideo((int)_Reader.FrameCount, (float)_Reader.FrameRate.Value/1000);
+            cpsClipSelector.RegisterNewVideo((int)_Reader.FrameCount, 1 / (float)_Reader.FrameRate.Value);
             _Timer = new System.Timers.Timer(100);
             _Timer.Elapsed += _Timer_Elapsed;
             _Timer.Start();

@@ -35,6 +35,7 @@
             this.pnlMetaData = new System.Windows.Forms.Panel();
             this.dgvLabels = new System.Windows.Forms.DataGridView();
             this.Label = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.OutOfFocus = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Truncated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Occluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ROILocation = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -46,7 +47,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.txtLabel = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSelectLabel = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.pnlMetaData.SuspendLayout();
@@ -90,6 +91,7 @@
             this.dgvLabels.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvLabels.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Label,
+            this.OutOfFocus,
             this.Truncated,
             this.Occluded,
             this.ROILocation,
@@ -103,6 +105,7 @@
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvLabels.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvLabels.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvLabels.Enabled = false;
             this.dgvLabels.Location = new System.Drawing.Point(0, 0);
             this.dgvLabels.Name = "dgvLabels";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -125,6 +128,12 @@
             this.Label.HeaderText = "Label";
             this.Label.Name = "Label";
             this.Label.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // OutOfFocus
+            // 
+            this.OutOfFocus.HeaderText = "Out Of Focus";
+            this.OutOfFocus.Name = "OutOfFocus";
+            this.OutOfFocus.Width = 65;
             // 
             // Truncated
             // 
@@ -172,6 +181,7 @@
             this.tbxTags.AutoScroll = true;
             this.tbxTags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tbxTags.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbxTags.Enabled = false;
             this.tbxTags.Location = new System.Drawing.Point(5, 91);
             this.tbxTags.Name = "tbxTags";
             this.tbxTags.Size = new System.Drawing.Size(372, 121);
@@ -191,6 +201,7 @@
             // 
             this.cmbSensorType.Dock = System.Windows.Forms.DockStyle.Top;
             this.cmbSensorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSensorType.Enabled = false;
             this.cmbSensorType.FormattingEnabled = true;
             this.cmbSensorType.Location = new System.Drawing.Point(5, 57);
             this.cmbSensorType.Name = "cmbSensorType";
@@ -210,7 +221,7 @@
             // panel2
             // 
             this.panel2.Controls.Add(this.txtLabel);
-            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.btnSelectLabel);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(5, 18);
             this.panel2.Name = "panel2";
@@ -221,6 +232,7 @@
             // txtLabel
             // 
             this.txtLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLabel.Enabled = false;
             this.txtLabel.Location = new System.Drawing.Point(3, 3);
             this.txtLabel.Name = "txtLabel";
             this.txtLabel.ReadOnly = true;
@@ -228,16 +240,17 @@
             this.txtLabel.TabIndex = 1;
             this.txtLabel.DoubleClick += new System.EventHandler(this.txtLabel_DoubleClick);
             // 
-            // button1
+            // btnSelectLabel
             // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button1.Location = new System.Drawing.Point(344, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(25, 20);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnSelectLabel_Click);
+            this.btnSelectLabel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnSelectLabel.Enabled = false;
+            this.btnSelectLabel.Location = new System.Drawing.Point(344, 3);
+            this.btnSelectLabel.Name = "btnSelectLabel";
+            this.btnSelectLabel.Size = new System.Drawing.Size(25, 20);
+            this.btnSelectLabel.TabIndex = 0;
+            this.btnSelectLabel.Text = "...";
+            this.btnSelectLabel.UseVisualStyleBackColor = true;
+            this.btnSelectLabel.Click += new System.EventHandler(this.btnSelectLabel_Click);
             // 
             // label3
             // 
@@ -287,15 +300,16 @@
         private System.Windows.Forms.ComboBox cmbSensorType;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DataGridView dgvLabels;
+        private TagBox tbxTags;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.TextBox txtLabel;
+        private System.Windows.Forms.Button btnSelectLabel;
+        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DataGridViewTextBoxColumn Label;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn OutOfFocus;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Truncated;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Occluded;
         private System.Windows.Forms.DataGridViewTextBoxColumn ROILocation;
         private System.Windows.Forms.DataGridViewTextBoxColumn ROISize;
-        private TagBox tbxTags;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.TextBox txtLabel;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label3;
     }
 }

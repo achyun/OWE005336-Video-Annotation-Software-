@@ -16,13 +16,14 @@ namespace OWE005336__Video_Annotation_Software_
         float _Scale = 1;
         PointF _Offset = new Point(0, 0);
         PointF _OldMouseLocationRaw;
-        PointF _OldMouseLocationScaled;
+        PointF _OldMouseLocation_pixels;
         List<ROIObject> _ROIs = new List<ROIObject>();
         DragActionEnum _DragAction = DragActionEnum.None;
         //ROIObject _CurrentROI = null;
         GrabBoxLocation _CurrentGrabBox = GrabBoxLocation.None;
         int _HighlightedROIIndex = -1;
         int _SelectedROIIndex = -1;
+        bool _DisplayCrosshairs = false;
 
         public delegate void NewROIAddedEventHandler(ROISelector sender, Rectangle roi);
         public delegate void ROIChangedEventHandler(ROISelector sender, int index, Rectangle roi);
@@ -32,20 +33,6 @@ namespace OWE005336__Video_Annotation_Software_
         public event ROIChangedEventHandler ROIChanged;
         public event ROIDeletedEventHandler ROIDeleted;
         public event ROISelectionChangedEventHandler ROISelectionChanged;
-
-        //public int HighlightedROIIndex
-        //{
-        //    get { return _HighlightedROIIndex; }
-        //    set
-        //    {
-        //        if (value != _HighlightedROIIndex)
-        //        {
-        //            _HighlightedROIIndex = value;
-        //            this.Refresh();
-        //        }
-                
-        //    }
-        //}
 
         public int SelectedROIIndex
         {
@@ -68,6 +55,7 @@ namespace OWE005336__Video_Annotation_Software_
 
             _ROIs.Clear();
 
+            _Offset = new PointF(0, 0);
             CalculateScale();
 
             foreach (Rectangle r in rois)
@@ -90,8 +78,20 @@ namespace OWE005336__Video_Annotation_Software_
             this.MouseUp += ROISelector_MouseUp;
             this.KeyDown += ROISelector_KeyDown;
             this.MouseWheel += ROISelector_MouseWheel;
-
+            this.MouseEnter += ROISelector_MouseEnter;
+            this.MouseLeave += ROISelector_MouseLeave;
             this.DoubleBuffered = true;
+        }
+
+        private void ROISelector_MouseEnter(object sender, EventArgs e)
+        {
+            _DisplayCrosshairs = true;
+        }
+
+        private void ROISelector_MouseLeave(object sender, EventArgs e)
+        {
+            _DisplayCrosshairs = false;
+            this.Refresh();
         }
 
         private void ROISelector_KeyDown(object sender, KeyEventArgs e)
@@ -130,14 +130,14 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void ROISelector_MouseMove(object sender, MouseEventArgs e)
         {
-            PointF p = TransformPoint(new Point(e.X, e.Y));
+            PointF p = TransformPointToPixel(new Point(e.X, e.Y));
             var currentROI = (_HighlightedROIIndex >= 0 ? _ROIs[_HighlightedROIIndex] : null);
 
             switch (_DragAction)
             {
                 case DragActionEnum.Pan:
-                    _Offset.X -= (float)(_OldMouseLocationRaw.X - e.Location.X);
-                    _Offset.Y -= (float)(_OldMouseLocationRaw.Y - e.Location.Y);
+                    _Offset.X -= (float)(_OldMouseLocationRaw.X - e.Location.X) / _Scale;
+                    _Offset.Y -= (float)(_OldMouseLocationRaw.Y - e.Location.Y) / _Scale;
 
                     _OldMouseLocationRaw.X = e.Location.X;
                     _OldMouseLocationRaw.Y = e.Location.Y;
@@ -148,26 +148,26 @@ namespace OWE005336__Video_Annotation_Software_
                     {
                         float x, y, w, h;
 
-                        if (p.X > _OldMouseLocationScaled.X)
+                        if (p.X > _OldMouseLocation_pixels.X)
                         {
-                            x = _OldMouseLocationScaled.X;
-                            w = p.X - _OldMouseLocationScaled.X;
+                            x = _OldMouseLocation_pixels.X;
+                            w = p.X - _OldMouseLocation_pixels.X;
                         }
                         else
                         {
                             x = p.X;
-                            w = _OldMouseLocationScaled.X - p.X;
+                            w = _OldMouseLocation_pixels.X - p.X;
                         }
 
-                        if (p.Y > _OldMouseLocationScaled.Y)
+                        if (p.Y > _OldMouseLocation_pixels.Y)
                         {
-                            y = _OldMouseLocationScaled.Y;
-                            h = p.Y - _OldMouseLocationScaled.Y;
+                            y = _OldMouseLocation_pixels.Y;
+                            h = p.Y - _OldMouseLocation_pixels.Y;
                         }
                         else
                         {
                             y = p.Y;
-                            h = _OldMouseLocationScaled.Y - p.Y;
+                            h = _OldMouseLocation_pixels.Y - p.Y;
                         }
 
                         currentROI.SetRectangle(new RectangleF(x, y, w, h), _Scale);
@@ -222,11 +222,11 @@ namespace OWE005336__Video_Annotation_Software_
                 case DragActionEnum.Move:
                     {
                         var r = currentROI.GetROI();
-                        float x = r.Left - (_OldMouseLocationScaled.X - p.X);
-                        float y = r.Top - (_OldMouseLocationScaled.Y - p.Y);
+                        float x = r.Left - (_OldMouseLocation_pixels.X - p.X);
+                        float y = r.Top - (_OldMouseLocation_pixels.Y - p.Y);
 
-                        _OldMouseLocationScaled.X = p.X;
-                        _OldMouseLocationScaled.Y = p.Y;
+                        _OldMouseLocation_pixels.X = p.X;
+                        _OldMouseLocation_pixels.Y = p.Y;
 
                         currentROI.SetRectangle(new RectangleF(x, y, r.Width, r.Height), _Scale);
                         this.Refresh();
@@ -286,17 +286,19 @@ namespace OWE005336__Video_Annotation_Software_
                             }
                         }
 
-                        if (oldHighlightedROIIndex != _HighlightedROIIndex) { this.Refresh(); }
+                        //if (oldHighlightedROIIndex != _HighlightedROIIndex) { this.Refresh(); }
 
                         break;
                     }
+                    
             }
+            this.Refresh();
         }
 
         private void ROISelector_MouseDown(object sender, MouseEventArgs e)
         {
             this.Focus();
-            _OldMouseLocationScaled = TransformPoint(new Point(e.X, e.Y));
+            _OldMouseLocation_pixels = TransformPointToPixel(new Point(e.X, e.Y));
             _OldMouseLocationRaw = new Point(e.X, e.Y);
 
             if (e.Button == MouseButtons.Left && _Frame != null)
@@ -334,7 +336,14 @@ namespace OWE005336__Video_Annotation_Software_
         {
             double zoom = Math.Pow(1.05, e.Delta / SystemInformation.MouseWheelScrollDelta);
 
+            float oldScale = _Scale;
             _Scale *= (float)zoom;
+
+            PointF p_img = TransformPointToPixel(e.Location);
+
+            _Offset.X = e.Location.X / _Scale - e.Location.X / oldScale + _Offset.X;
+            _Offset.Y = e.Location.Y / _Scale - e.Location.Y / oldScale + _Offset.Y;
+
             this.Refresh();
         }
 
@@ -352,6 +361,7 @@ namespace OWE005336__Video_Annotation_Software_
         {
             base.OnPaint(pe);
 
+
             using (var bmp = new Bitmap(this.Width, this.Height))
             {
                 using (var g = Graphics.FromImage(bmp))
@@ -361,7 +371,7 @@ namespace OWE005336__Video_Annotation_Software_
 
                     if (_Frame != null)
                     {
-                        g.DrawImage(_Frame, new PointF(0,0));
+                        g.DrawImage(_Frame, new PointF(0, 0));
                     }
 
                     for (int i = 0; i < _ROIs.Count; i++)
@@ -381,6 +391,18 @@ namespace OWE005336__Video_Annotation_Software_
                     }
                 }
                 pe.Graphics.DrawImage(bmp, 0, 0);
+            }
+
+            if (_DisplayCrosshairs)
+            {
+                Pen pen = new Pen(Color.Gray);
+                Point p = this.PointToClient(Control.MousePosition);
+                pe.Graphics.DrawLine(pen, p.X, 0, p.X, this.Height);
+                pe.Graphics.DrawLine(pen, 0, p.Y, this.Width, p.Y);
+            }
+            if (_Frame != null)
+            {
+                pe.Graphics.DrawString(_Frame.Width + "," + _Frame.Height, this.Font, new SolidBrush(Color.Black), new Point(0, 0));
             }
         }
 
@@ -405,7 +427,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
         }
 
-        private PointF TransformPoint(Point p)
+        private PointF TransformPointToPixel(Point p)
         {
             return new PointF(((float)(p.X) / _Scale) - _Offset.X, ((float)(p.Y) / _Scale) - _Offset.Y);
         }

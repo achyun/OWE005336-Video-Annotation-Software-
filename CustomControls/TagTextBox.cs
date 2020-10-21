@@ -104,7 +104,7 @@ namespace OWE005336__Video_Annotation_Software_
                 }
                 else
                 {
-                    if (MessageBox.Show("Tag not found\r\n\r\nAre you sure you want to add this as a new tag?", "Tag not found", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (MessageBox.Show("Tag not found\r\n\r\nAre you sure you want to add this as a new tag?", "Tag not found", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                     {
                         txtTextBox.ReadOnly = true;
                         TagCommitted?.Invoke(this, new TagTextBoxCommittedArgs(true));

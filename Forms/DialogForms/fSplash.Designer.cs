@@ -40,11 +40,15 @@
             this.imgBackground = new System.Windows.Forms.ImageList(this.components);
             this.ckbSavePassword = new System.Windows.Forms.CheckBox();
             this.pnlLoginDetails = new System.Windows.Forms.Panel();
+            this.pnlDatabaseDetails = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.pnlTitle = new System.Windows.Forms.Panel();
             this.lbtClose = new OWE005336__Video_Annotation_Software_.LabelButton();
             this.lbtLogin = new OWE005336__Video_Annotation_Software_.LabelButton();
-            this.pnlDatabaseDetails = new System.Windows.Forms.Panel();
             this.pnlLoginDetails.SuspendLayout();
             this.pnlDatabaseDetails.SuspendLayout();
+            this.pnlTitle.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtPassword
@@ -155,6 +159,50 @@
             this.pnlLoginDetails.Size = new System.Drawing.Size(207, 139);
             this.pnlLoginDetails.TabIndex = 13;
             // 
+            // pnlDatabaseDetails
+            // 
+            this.pnlDatabaseDetails.Controls.Add(this.label4);
+            this.pnlDatabaseDetails.Controls.Add(this.txtDatabase);
+            this.pnlDatabaseDetails.Controls.Add(this.label3);
+            this.pnlDatabaseDetails.Controls.Add(this.txtServer);
+            this.pnlDatabaseDetails.Location = new System.Drawing.Point(12, 12);
+            this.pnlDatabaseDetails.Name = "pnlDatabaseDetails";
+            this.pnlDatabaseDetails.Size = new System.Drawing.Size(199, 92);
+            this.pnlDatabaseDetails.TabIndex = 14;
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.BackColor = System.Drawing.Color.Transparent;
+            this.label5.Font = new System.Drawing.Font("Century Gothic", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(3, -2);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(185, 56);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "AIData";
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label6.AutoSize = true;
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Font = new System.Drawing.Font("Century Gothic", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(8, 54);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(227, 25);
+            this.label6.TabIndex = 16;
+            this.label6.Text = "an OWE software tool";
+            // 
+            // pnlTitle
+            // 
+            this.pnlTitle.Controls.Add(this.label6);
+            this.pnlTitle.Controls.Add(this.label5);
+            this.pnlTitle.Location = new System.Drawing.Point(12, 355);
+            this.pnlTitle.Name = "pnlTitle";
+            this.pnlTitle.Size = new System.Drawing.Size(241, 83);
+            this.pnlTitle.TabIndex = 17;
+            // 
             // lbtClose
             // 
             this.lbtClose.AutoSize = true;
@@ -181,17 +229,6 @@
             this.lbtLogin.Text = "Login";
             this.lbtLogin.Click += new System.EventHandler(this.lbtLogin_Click);
             // 
-            // pnlDatabaseDetails
-            // 
-            this.pnlDatabaseDetails.Controls.Add(this.label4);
-            this.pnlDatabaseDetails.Controls.Add(this.txtDatabase);
-            this.pnlDatabaseDetails.Controls.Add(this.label3);
-            this.pnlDatabaseDetails.Controls.Add(this.txtServer);
-            this.pnlDatabaseDetails.Location = new System.Drawing.Point(12, 12);
-            this.pnlDatabaseDetails.Name = "pnlDatabaseDetails";
-            this.pnlDatabaseDetails.Size = new System.Drawing.Size(199, 92);
-            this.pnlDatabaseDetails.TabIndex = 14;
-            // 
             // fSplash
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -199,15 +236,18 @@
             this.BackgroundImage = global::OWE005336__Video_Annotation_Software_.Properties.Resources.NeuralNet;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(720, 450);
+            this.Controls.Add(this.pnlTitle);
             this.Controls.Add(this.pnlDatabaseDetails);
             this.Controls.Add(this.pnlLoginDetails);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "fSplash";
-            this.Text = "fSplash";
+            this.Text = "AIData";
             this.pnlLoginDetails.ResumeLayout(false);
             this.pnlLoginDetails.PerformLayout();
             this.pnlDatabaseDetails.ResumeLayout(false);
             this.pnlDatabaseDetails.PerformLayout();
+            this.pnlTitle.ResumeLayout(false);
+            this.pnlTitle.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -228,5 +268,8 @@
         private System.Windows.Forms.CheckBox ckbSavePassword;
         private System.Windows.Forms.Panel pnlLoginDetails;
         private System.Windows.Forms.Panel pnlDatabaseDetails;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Panel pnlTitle;
     }
 }

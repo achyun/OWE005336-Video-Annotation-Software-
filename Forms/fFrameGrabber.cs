@@ -25,6 +25,7 @@ namespace OWE005336__Video_Annotation_Software_
         public string[] FrameNames { get; set; } = null;
         public int LabelID { get; set; } = -1;
         public string Tags { get; set; } = "";
+        public Size VideoFrameSize { get; set; }
 
         public List<string> VideoClipFileNames { get; private set; } = new List<string>();
 
@@ -36,6 +37,9 @@ namespace OWE005336__Video_Annotation_Software_
             _Reader = new VideoFileReader();
             _Reader.Open(filePath);
 
+            VideoFrameSize = new Size(_Reader.Width, _Reader.Height);
+
+            ckbArchiveVideo.Checked = Properties.Settings.Default.ArchiveVideos;
             float videoLength_s = (float)(_Reader.FrameCount) / (float)(_Reader.FrameRate);
 
             _VideoName = Path.GetFileNameWithoutExtension(filePath);
@@ -47,8 +51,8 @@ namespace OWE005336__Video_Annotation_Software_
             _Timer.Elapsed += _Timer_Elapsed;
             _Timer.Start();
 
-            cpsClipSelector.ClipAdded += ClipSelector1_ClipAdded;
-            cpsClipSelector.ClipDeleted += ClipSelector1_ClipDeleted;
+            cpsClipSelector.ClipAdded += cpsClipSelector_ClipAdded;
+            cpsClipSelector.ClipDeleted += cpsClipSelector_ClipDeleted;
             cmbSensorType.DataSource = Enum.GetValues(typeof(SensorTypeEnum));
             cmbSensorType.SelectedItem = SensorTypeEnum.Unknown;
             cmbSensorType.SelectedIndexChanged += CmbSensorType_SelectedIndexChanged;
@@ -59,12 +63,12 @@ namespace OWE005336__Video_Annotation_Software_
             SensorType = (SensorTypeEnum)cmbSensorType.SelectedItem;
         }
 
-        private void ClipSelector1_ClipDeleted(ClipSelector sender, int index)
+        private void cpsClipSelector_ClipDeleted(ClipSelector sender, int index)
         {
             lblClipCount.Text = "Clips: " + cpsClipSelector.Clips.Count.ToString();
         }
 
-        private void ClipSelector1_ClipAdded(ClipSelector sender, ClipInfo clip)
+        private void cpsClipSelector_ClipAdded(ClipSelector sender, ClipInfo clip)
         {
             lblClipCount.Text = "Clips: " + cpsClipSelector.Clips.Count.ToString();
         }
@@ -79,11 +83,6 @@ namespace OWE005336__Video_Annotation_Software_
                 this.BeginInvoke(new Action(() => { pcbFrame.Image = _Frame; }));
                 _Timer.Start();
             }
-        }
-
-        private void fFrameGrabber_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void tkbScan_ValueChanged(object sender, EventArgs e)
@@ -109,7 +108,7 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void ltvThumbnails_KeyDown(object sender, KeyEventArgs e)
         {
-            if (ltvThumbnails.SelectedItems.Count > 0)
+            if (e.KeyData == Keys.Delete && ltvThumbnails.SelectedItems.Count > 0)
             {
                 int index = ltvThumbnails.SelectedItems[0].Index;
                 ltvThumbnails.Items.RemoveAt(index);
@@ -119,23 +118,40 @@ namespace OWE005336__Video_Annotation_Software_
 
         private async void btnSave_Click(object sender, EventArgs e)
         {
-            if (ltvThumbnails.Items.Count > 0)
-            {
-                Frames = new Image[ltvThumbnails.Items.Count];
-                FrameNames = new string[ltvThumbnails.Items.Count];
+            bool save = true;
 
-                for (int i = 0; i < Frames.Length; i++)
+            if ((SensorTypeEnum)cmbSensorType.SelectedItem == SensorTypeEnum.Unknown || tgbTags.ToString() == "" || LabelID == 0)
+            {
+                if (MessageBox.Show("File attributes are incomplete.\r\n\r\nWould you like to continue?", "Incomplete attributes", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
                 {
-                    Frames[i] = (Image)ltvThumbnails.Items[i].Tag;
-                    FrameNames[i] = _VideoName + "_" + ltvThumbnails.Items[i].Text;
+                    save = false;
                 }
             }
 
-            Tags = tgbTags.ToString();
+            if (save)
+            {
+                Properties.Settings.Default.ArchiveVideos = ckbArchiveVideo.Checked;
 
-            VideoClipFileNames = await ExportVideoClips(cpsClipSelector.Clips, _VideoName);
+                if (ltvThumbnails.Items.Count > 0)
+                {
+                    Frames = new Image[ltvThumbnails.Items.Count];
+                    FrameNames = new string[ltvThumbnails.Items.Count];
 
-            this.DialogResult = DialogResult.OK;
+                    for (int i = 0; i < Frames.Length; i++)
+                    {
+                        Frames[i] = (Image)ltvThumbnails.Items[i].Tag;
+                        FrameNames[i] = _VideoName + "_" + ltvThumbnails.Items[i].Text;
+                    }
+                }
+
+                Tags = tgbTags.ToString();
+
+                VideoClipFileNames = await ExportVideoClips(cpsClipSelector.Clips, _VideoName);
+
+                _Reader.Close();
+
+                this.DialogResult = DialogResult.OK;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

@@ -5,5 +5,7 @@
     [labelling_complete] BIT NOT NULL DEFAULT 0, 
     [sensor_type] INT NOT NULL DEFAULT -1, 
     [label_id] INT NOT NULL DEFAULT -1, 
-    [tags] NVARCHAR(100) NOT NULL DEFAULT ''
+    [tags] NVARCHAR(100) NOT NULL DEFAULT '', 
+    [video_width] INT NOT NULL DEFAULT 0, 
+    [video_height] INT NOT NULL DEFAULT 0
 )

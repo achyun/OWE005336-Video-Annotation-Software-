@@ -18,7 +18,7 @@ namespace OWE005336__Video_Annotation_Software_
     public partial class fMain : Form
     {
         private Size _THUMBNAIL_SIZE;
-        private bool _PaintDataInProgress = false;
+        private PaintLocker _PaintDataInProgress = new PaintLocker();
 
         public fMain()
         {
@@ -30,6 +30,7 @@ namespace OWE005336__Video_Annotation_Software_
             string imageDirPath = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
             txtImageDir.Text = imageDirPath;
             txtVideoArchiveDir.Text = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
+            txtProcessedFilesDir.Text = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_PROCESSED_FILE_ARCHIVE_DIR);
 
             LoadImages();
 
@@ -37,7 +38,6 @@ namespace OWE005336__Video_Annotation_Software_
             dgvImages.DragDrop += dgvImages_DragDrop;
             dgvImages.SelectionChanged += dgvImages_SelectionChanged;
             dgvImages.CellValueChanged += dgvImages_CellValueChanged;
-            
         }
 
         private void dgvImages_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -46,12 +46,89 @@ namespace OWE005336__Video_Annotation_Software_
 
             if (e.ColumnIndex == dgvImages.Columns["Complete"].Index)
             {
-                if (!_PaintDataInProgress)
+                if (!_PaintDataInProgress.Locked)
                 {
-                    lImg.Completed = (bool)dgvImages.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-                    Program.ImageDatabase.Images_Update(lImg);
+                    bool completeValue = (bool)dgvImages.CurrentCell.Value;
+
+                    bool imageDataIsValid = false;
+
+                    // if we're trying to mark the image as complete then check that the data is actually complete
+                    if (completeValue) { imageDataIsValid = CheckImageDataComplete(lImg); }
+                    
+                    if (!completeValue || imageDataIsValid)
+                    {
+                        lImg.Completed = (bool)dgvImages.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                        Program.ImageDatabase.Images_Update(lImg);
+                    }
+                    else
+                    {
+                        dgvImages.RefreshEdit();
+                    }
+                    
                 }
             }
+        }
+
+        private bool CheckImageDataComplete(LabelledImage lImage)
+        {
+            bool complete = true;
+
+            if (lImage.LabelID == -1)
+            {
+                complete = false;
+                MessageBox.Show("Missing label", "Missing Label", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            if (lImage.SensorType == SensorTypeEnum.Unknown)
+            {
+                complete = false;
+                MessageBox.Show("Please select a sensor type", "Sensory Type Unknown", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            if (lImage.Tags == "")
+            {
+                if (MessageBox.Show("No tags have been provided.\r\n\r\nWould you like to continue?", "Incomplete attributes", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
+                {
+                    complete = false;
+                }
+            }
+
+            if (lImage.LabelledROIs.Count == 0)
+            {
+                complete = false;
+                MessageBox.Show("There are no labelled regions of interest\r\n\r\nPlease add at least one region of interest", "No Regions of Interest", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                foreach (LabelledROI lroi in lImage.LabelledROIs)
+                {
+                    if (!CheckLabelDataComplete(lroi, lImage.ImageSize))
+                    {
+                        complete = false;
+                        break;
+                    }
+                }
+            }
+
+            return complete;
+        }
+
+        private bool CheckLabelDataComplete(LabelledROI lroi, Size imageSize)
+        {
+            bool complete = true;
+            if (lroi.LabelID == -1)
+            {
+                complete = false;
+                MessageBox.Show("Missing label", "Missing Label", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            if (lroi.ROI.Left < 0 || lroi.ROI.Top < 0 || lroi.ROI.Right > imageSize.Width - 1 || lroi.ROI.Bottom > imageSize.Height - 1)
+            {
+                complete = false;
+                MessageBox.Show("Region is out of bounds", "Region Out of Bounds", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            return complete;
         }
 
         #region "GUI Events"
@@ -108,9 +185,24 @@ namespace OWE005336__Video_Annotation_Software_
             }
         }
 
+        private void btnSelectProcessedFileArchiveDir_Click(object sender, EventArgs e)
+        {
+            string dirPath = string.Empty;
+            var fileContent = string.Empty;
+
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    txtProcessedFilesDir.Text = folderBrowserDialog.SelectedPath;
+                    TestAndSaveDirectoryRef(folderBrowserDialog.SelectedPath, ImageDatabaseAccess.SETTING_PROCESSED_FILE_ARCHIVE_DIR);
+                }
+            }
+        }
+
         private void dgvImages_SelectionChanged(object sender, EventArgs e)
         {
-            if (!_PaintDataInProgress)
+            if (!_PaintDataInProgress.Locked)
             {
                 if (dgvImages.SelectedRows.Count > 0)
                 {
@@ -129,7 +221,11 @@ namespace OWE005336__Video_Annotation_Software_
         private void dgvImages_DragDrop(object sender, DragEventArgs e)
         {
             string[] filePathsArray = (string[])e.Data.GetData(DataFormats.FileDrop);
-            ImportImages(filePathsArray);            
+
+            bool archiveFiles = false;
+            if (MessageBox.Show("Would you like to move the selected files to the archive folder?", "Archive Files?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) { archiveFiles = true; }
+
+            ImportImages(filePathsArray, archiveFiles);            
         }
 
         private void dgvImages_DragEnter(object sender, DragEventArgs e)
@@ -187,7 +283,9 @@ namespace OWE005336__Video_Annotation_Software_
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string[] filePathsArray = openFileDialog.FileNames;
-                    ImportImages(filePathsArray);
+                    bool archiveFiles = false;
+                    if (MessageBox.Show("Would you like to move the selected files to the archive folder?", "Archive Files?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) { archiveFiles = true; }
+                    ImportImages(filePathsArray, archiveFiles);
                 }
             }
         }
@@ -210,6 +308,8 @@ namespace OWE005336__Video_Annotation_Software_
                     filePath = openFileDialog.FileName;
                     Properties.Settings.Default.DefaultFileLocation = Path.GetDirectoryName(filePath);
                     fFrameGrabber grabber = new fFrameGrabber(filePath);
+                    bool archiveFile = Properties.Settings.Default.ArchiveVideos;
+
                     if (grabber.ShowDialog() == DialogResult.OK)
                     {
                         if (grabber.Frames != null)
@@ -219,23 +319,54 @@ namespace OWE005336__Video_Annotation_Software_
 
                         if (grabber.VideoClipFileNames.Count > 0)
                         {
-                            ImportVideos(grabber.VideoClipFileNames.ToArray(), grabber.SensorType, grabber.LabelID, grabber.Tags);
+                            ImportVideos(grabber.VideoClipFileNames.ToArray(), grabber.VideoFrameSize, grabber.SensorType, grabber.LabelID, grabber.Tags);
                         }
+
+                        if (archiveFile) { Program.ImageDatabase.MoveFileToArchive(filePath); }
                     }
                 }
+            }
+        }
+
+        private void ckbFilterForIncomplete_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadImages();
+        }
+
+        private void ckbFilterForNoLabels_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadImages();
+        }
+
+        private void txtImageDir_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                TestAndSaveDirectoryRef(txtImageDir.Text, ImageDatabaseAccess.SETTING_IMAGE_DIR);
+            }
+        }
+
+        private void txtVideoArchiveDir_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                TestAndSaveDirectoryRef(txtVideoArchiveDir.Text, ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
+            }
+        }
+
+        private void txtProcessedFilesDir_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyData == Keys.Enter)
+            {
+                TestAndSaveDirectoryRef(txtProcessedFilesDir.Text, ImageDatabaseAccess.SETTING_PROCESSED_FILE_ARCHIVE_DIR);
             }
         }
         #endregion
 
         #region "Helper Functions"
-        private void ImportImages(string[] sourceFilePathsArray)
+        private void ImportImages(string[] sourceFilePathsArray, bool archiveSourceFile)
         {
-            List<string> destFilePaths = new List<string>();
-            string todaysFolderName = DateTime.Now.ToString("yyyy-MM-dd");
-            string imgDir = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
-            string fullDirPath = Path.Combine(imgDir, todaysFolderName);
-            
-            Directory.CreateDirectory(fullDirPath); // This includes a check to see if it already exists
+            List<string> sourceFilePaths = new List<string>();
 
             for (int i = 0; i < sourceFilePathsArray.Length; i++)
             {
@@ -243,32 +374,25 @@ namespace OWE005336__Video_Annotation_Software_
 
                 if (ext == ".png" || ext == ".bmp" || ext == ".jpg")
                 {
-                    string fullFilePath = Path.Combine(todaysFolderName, Path.GetFileName(sourceFilePathsArray[i]));
-                    destFilePaths.Add(fullFilePath);
+                    sourceFilePaths.Add(sourceFilePathsArray[i]);
                 }
             }
 
-            SaveImages(sourceFilePathsArray, destFilePaths.ToArray());
+            SaveImages(sourceFilePathsArray, archiveSourceFile);
         }
 
         private void ImportImages(Image[] images, string[] names, SensorTypeEnum sensorType, int labelID, string tags)
         {
-            List<string> destFilePaths = new List<string>();
-            string todaysFolderName = DateTime.Now.ToString("yyyy-MM-dd");
-            string imgDir = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
-            string fullDirPath = Path.Combine(imgDir, todaysFolderName);
-
-            Directory.CreateDirectory(fullDirPath); // This includes a check to see if it already exists
+            List<string> destFileNames = new List<string>();
 
             for (int i = 0; i < names.Length; i++)
             {
-                string fullFilePath = Path.Combine(todaysFolderName, names[i] + ".png");
-                destFilePaths.Add(fullFilePath);
+                destFileNames.Add(names[i] + ".png");
             }
 
-            SaveImages(images, destFilePaths.ToArray(), sensorType, labelID, tags);
+            SaveImages(images, destFileNames.ToArray(), sensorType, labelID, tags);
         }
-        private async void SaveImages(string[] sourcefilePathsArray, string[] destFilePathsArray)
+        private async void SaveImages(string[] sourcefilePathsArray, bool archiveSourceFile)
         {
             List<string> failedCopies = new List<string>();
 
@@ -277,7 +401,7 @@ namespace OWE005336__Video_Annotation_Software_
 
             for (int i = 0; i < sourcefilePathsArray.Length; i++)
             {
-                LabelledImage lImg = await Program.ImageDatabase.Images_Add(sourcefilePathsArray[i], destFilePathsArray[i]);
+                LabelledImage lImg = await Program.ImageDatabase.Images_Add(sourcefilePathsArray[i], archiveSourceFile);
                 if (lImg == null)
                 {
                     failedCopies.Add(sourcefilePathsArray[i]);
@@ -341,25 +465,12 @@ namespace OWE005336__Video_Annotation_Software_
             stsStatus.Items.Remove(statusLabel);
         }
 
-        private void ImportVideos(string[] sourceFilePathsArray, SensorTypeEnum sensorType, int labelID, string tags)
+        private void ImportVideos(string[] sourceFilePathsArray, Size videoSize, SensorTypeEnum sensorType, int labelID, string tags)
         {
-            List<string> destFilePaths = new List<string>();
-            string todaysFolderName = DateTime.Now.ToString("yyyy-MM-dd");
-            string imgDir = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
-            string fullDirPath = Path.Combine(imgDir, todaysFolderName);
-
-            Directory.CreateDirectory(fullDirPath); // This includes a check to see if it already exists
-
-            for (int i = 0; i < sourceFilePathsArray.Length; i++)
-            {
-                string fullFilePath = Path.Combine(todaysFolderName, Path.GetFileName(sourceFilePathsArray[i]));
-                destFilePaths.Add(fullFilePath);
-            }
-
-            SaveVideos(sourceFilePathsArray, destFilePaths.ToArray(), sensorType, labelID, tags);
+            SaveVideos(sourceFilePathsArray, videoSize, sensorType, labelID, tags);
         }
 
-        private async void SaveVideos(string[] sourcefilePathsArray, string[] destFilePathsArray, SensorTypeEnum sensorType, int labelID, string tags)
+        private async void SaveVideos(string[] sourcefilePathsArray, Size videoSize, SensorTypeEnum sensorType, int labelID, string tags)
         {
             List<string> failedCopies = new List<string>();
 
@@ -368,7 +479,7 @@ namespace OWE005336__Video_Annotation_Software_
 
             for (int i = 0; i < sourcefilePathsArray.Length; i++)
             {
-                Video video = await Program.ImageDatabase.Videos_Add(sourcefilePathsArray[i], destFilePathsArray[i], sensorType, labelID, tags);
+                Video video = await Program.ImageDatabase.Videos_AddToVideoArchive(sourcefilePathsArray[i], videoSize, sensorType, labelID, tags);
                 if (video == null)
                 {
                     failedCopies.Add(sourcefilePathsArray[i]);
@@ -424,11 +535,11 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void AddImageToGrid(LabelledImage limg)
         {
-            _PaintDataInProgress = true;
+            _PaintDataInProgress.Lock();
             dgvImages.Rows.Add(new object[] { null, limg.Completed, limg.Filepath }); //ID, FileName, Thumbnail, Complete, Labels
             dgvImages.Rows[dgvImages.Rows.Count - 1].Tag = limg;
 
-            _PaintDataInProgress = false;
+            _PaintDataInProgress.Unlock();
         }
 
         private async void LoadThumbnail(LabelledImage limg, Size thumbnailSize, int rowIndex)
@@ -436,38 +547,12 @@ namespace OWE005336__Video_Annotation_Software_
             Image img = await Program.ImageDatabase.Images_LoadImageThumbnail(limg, thumbnailSize);
             if (img != null)
             {
-                _PaintDataInProgress = true;
+                _PaintDataInProgress.Lock();
                 dgvImages.Rows[rowIndex].Cells[0].Value = img;
-                _PaintDataInProgress = false;
+                _PaintDataInProgress.Unlock();
             }
         }
         #endregion
-
-        private void ckbFilterForIncomplete_CheckedChanged(object sender, EventArgs e)
-        {
-            LoadImages();
-        }
-
-        private void ckbFilterForNoLabels_CheckedChanged(object sender, EventArgs e)
-        {
-            LoadImages();
-        }
-
-        private void txtImageDir_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == Keys.Enter)
-            {
-                TestAndSaveDirectoryRef(txtImageDir.Text, ImageDatabaseAccess.SETTING_IMAGE_DIR);
-            }
-        }
-
-        private void txtVideoArchiveDir_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == Keys.Enter)
-            {
-                TestAndSaveDirectoryRef(txtVideoArchiveDir.Text, ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
-            }
-        }
 
         private bool TestAndSaveDirectoryRef(string dirPath, string settingName)
         {

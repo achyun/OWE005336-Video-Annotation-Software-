@@ -41,6 +41,7 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.ckbArchiveVideo = new System.Windows.Forms.CheckBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -116,6 +117,7 @@
             // cpsClipSelector
             // 
             this.cpsClipSelector.BorderWidth = 5;
+            this.cpsClipSelector.DefaultClipLength = 4F;
             this.cpsClipSelector.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.cpsClipSelector.HighlightedClipIndex = -1;
             this.cpsClipSelector.Location = new System.Drawing.Point(0, 51);
@@ -171,14 +173,15 @@
             this.panel4.Controls.Add(this.panel5);
             this.panel4.Controls.Add(this.Label);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(0, 510);
+            this.panel4.Location = new System.Drawing.Point(0, 490);
             this.panel4.Name = "panel4";
             this.panel4.Padding = new System.Windows.Forms.Padding(5);
-            this.panel4.Size = new System.Drawing.Size(275, 266);
+            this.panel4.Size = new System.Drawing.Size(275, 286);
             this.panel4.TabIndex = 2;
             // 
             // panel6
             // 
+            this.panel6.Controls.Add(this.ckbArchiveVideo);
             this.panel6.Controls.Add(this.btnCancel);
             this.panel6.Controls.Add(this.btnSave);
             this.panel6.Controls.Add(this.groupBox1);
@@ -186,8 +189,18 @@
             this.panel6.Location = new System.Drawing.Point(5, 203);
             this.panel6.Name = "panel6";
             this.panel6.Padding = new System.Windows.Forms.Padding(5);
-            this.panel6.Size = new System.Drawing.Size(265, 53);
+            this.panel6.Size = new System.Drawing.Size(265, 78);
             this.panel6.TabIndex = 19;
+            // 
+            // ckbArchiveVideo
+            // 
+            this.ckbArchiveVideo.AutoSize = true;
+            this.ckbArchiveVideo.Location = new System.Drawing.Point(175, 54);
+            this.ckbArchiveVideo.Name = "ckbArchiveVideo";
+            this.ckbArchiveVideo.Size = new System.Drawing.Size(92, 17);
+            this.ckbArchiveVideo.TabIndex = 11;
+            this.ckbArchiveVideo.Text = "Archive Video";
+            this.ckbArchiveVideo.UseVisualStyleBackColor = true;
             // 
             // btnCancel
             // 
@@ -345,7 +358,6 @@
             this.Controls.Add(this.panel3);
             this.Name = "fFrameGrabber";
             this.Text = "fFrameGrabber";
-            this.Load += new System.EventHandler(this.fFrameGrabber_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tkbScan)).EndInit();
@@ -354,6 +366,7 @@
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel5.ResumeLayout(false);
@@ -390,5 +403,6 @@
         private System.Windows.Forms.ComboBox cmbSensorType;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.CheckBox ckbArchiveVideo;
     }
 }

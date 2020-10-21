@@ -15,8 +15,8 @@ namespace OWE005336__Video_Annotation_Software_
         private DragActionEnum _DragAction = DragActionEnum.None;
         private GrabPositionEnum _GrabPosition = GrabPositionEnum.None;
         private int _LastMouseFrameIndex;
-        private int _NumberOfFrames;
         private float _FrameRate_Hz;
+        private int _MaxFrameIndex;
         private const int SELECT_OFFSET = 5;
 
         public delegate void ClipAddedEventHandler(ClipSelector sender, ClipInfo clip);
@@ -28,13 +28,15 @@ namespace OWE005336__Video_Annotation_Software_
         public List<ClipInfo> Clips { get; set; } = null;
         public int SelectedClipIndex { get; set; }
         public int BorderWidth { get; set; }
-        public int NumberOfFrames { get { return _NumberOfFrames; } }
+        //public int NumberOfFrames { get; private set; }
         public int HighlightedClipIndex { get; set; }
+
+        public float DefaultClipLength { get; set; } = 4.0f;
         public ClipSelector()
         {
             InitializeComponent();
             Clips = new List<ClipInfo>();
-            _NumberOfFrames = 100;
+            _MaxFrameIndex = 99;
             BorderWidth = 5;
             SelectedClipIndex = -1;
             HighlightedClipIndex = -1;
@@ -59,7 +61,7 @@ namespace OWE005336__Video_Annotation_Software_
 
         public void RegisterNewVideo(int numberOfFrames, float frameRate_Hz)
         {
-            _NumberOfFrames = numberOfFrames;
+            _MaxFrameIndex = numberOfFrames - 1;
             _FrameRate_Hz = frameRate_Hz;
         }
 
@@ -68,9 +70,26 @@ namespace OWE005336__Video_Annotation_Software_
             if (_GrabPosition == GrabPositionEnum.None)
             {
                 ClipInfo ci = new ClipInfo();
-                int clipHalfLength = NumberOfFrames / 20;
-                ci.StartFrame = Math.Max(_LastMouseFrameIndex - clipHalfLength, 0);
-                ci.EndFrame = Math.Min(_LastMouseFrameIndex + clipHalfLength, NumberOfFrames - 1);
+                int centreClipIndex_frames = _LastMouseFrameIndex;
+                int clipLength_frames = (int)Math.Round((DefaultClipLength / _FrameRate_Hz), 0);
+                int clipHalfLength_frames = (int)(clipLength_frames / 2);
+
+                if (centreClipIndex_frames - clipHalfLength_frames < 0)
+                {
+                    ci.StartFrame = 0;
+                    ci.EndFrame = Math.Min(_MaxFrameIndex, ci.StartFrame + clipLength_frames);
+                }
+                else if (centreClipIndex_frames + clipHalfLength_frames > _MaxFrameIndex)
+                {
+                    ci.EndFrame = _MaxFrameIndex;
+                    ci.StartFrame = Math.Max(0, ci.EndFrame - clipLength_frames);
+                }
+                else
+                {
+                    ci.StartFrame = centreClipIndex_frames - clipHalfLength_frames;
+                    ci.EndFrame = ci.StartFrame + clipLength_frames;
+                }                
+
                 Clips.Add(ci);
 
                 ClipAdded?.Invoke(this, ci);
@@ -101,11 +120,11 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 case DragActionEnum.MoveStart:
                     ci = Clips[SelectedClipIndex];
-                    if (fIndex < ci.EndFrame) { ci.StartFrame = fIndex; this.Refresh(); }
+                    if (fIndex < ci.EndFrame && fIndex > 0) { ci.StartFrame = fIndex; this.Refresh(); }
                     break;
                 case DragActionEnum.MoveEnd:
                     ci = Clips[SelectedClipIndex];
-                    if (fIndex > ci.StartFrame) { ci.EndFrame = fIndex; this.Refresh(); }
+                    if (fIndex > ci.StartFrame && fIndex < _MaxFrameIndex) { ci.EndFrame = fIndex; this.Refresh(); }
                     break;
                 case DragActionEnum.Move:
                     ci = Clips[SelectedClipIndex];
@@ -113,7 +132,7 @@ namespace OWE005336__Video_Annotation_Software_
                     int sf = ci.StartFrame + delta;
                     int ef = ci.EndFrame + delta;
                     
-                    if (sf >= 0 && ef <= NumberOfFrames)
+                    if (sf >= 0 && ef <= _MaxFrameIndex)
                     {
                         ci.StartFrame = sf;
                         ci.EndFrame = ef;
@@ -174,8 +193,8 @@ namespace OWE005336__Video_Annotation_Software_
         public void AddClip(int startFrame, int endFrame)
         {
             if (startFrame >= endFrame) { throw new Exception("Start Frame must precede End Frame"); }
-            if (startFrame < 0 || startFrame > NumberOfFrames -1) { throw new Exception("Start Frame is out of bounds"); }
-            if (endFrame < 0 || endFrame > NumberOfFrames - 1) { throw new Exception("End Frame is out of bounds"); }
+            if (startFrame < 0 || startFrame > _MaxFrameIndex) { throw new Exception("Start Frame is out of bounds"); }
+            if (endFrame < 0 || endFrame > _MaxFrameIndex) { throw new Exception("End Frame is out of bounds"); }
         }
 
         protected override void OnPaint(PaintEventArgs pe)
@@ -237,8 +256,7 @@ namespace OWE005336__Video_Annotation_Software_
             //return ((x - BorderWidth) / (this.Width - 2 * BorderWidth)) * (NumberOfFrames - 1);
             float controlWidth = (float)(this.Width - 2 * BorderWidth);
             float xControl = (float)(x - BorderWidth);
-            float maxFrameIndex = (float)(NumberOfFrames - 1);
-            return (int)(maxFrameIndex * xControl / controlWidth);
+            return (int)(_MaxFrameIndex * xControl / controlWidth);
             
         }
 
@@ -246,9 +264,8 @@ namespace OWE005336__Video_Annotation_Software_
         {
             //return (fIndex * (this.Width - 2 * BorderWidth) / (NumberOfFrames - 1)) + BorderWidth;
             float controlWidth = (float)(this.Width - 2 * BorderWidth);
-            float maxFrameIndex = (float)(NumberOfFrames - 1);
 
-            return (int)((float)fIndex * controlWidth / maxFrameIndex) + BorderWidth;
+            return (int)((float)fIndex * controlWidth / _MaxFrameIndex) + BorderWidth;
         }
 
         private enum DragActionEnum

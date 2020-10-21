@@ -12,6 +12,7 @@ namespace LabellingDB
     {
         public const string SETTING_IMAGE_DIR = "image_dir";
         public const string SETTING_VIDEO_ARCHIVE_DIR = "video_archive_dir";
+        public const string SETTING_PROCESSED_FILE_ARCHIVE_DIR = "processed_file_archive_dir";
         string _ConnectionString = null;
 
         public ImageDatabaseAccess()
@@ -22,8 +23,7 @@ namespace LabellingDB
         public bool VerifyLoginCredentials(string server, string database, string userName, string password)
         {
             bool success = false;
-            //Data Source=10.55.55.104,50040;User ID=chris.down;Password=********;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False
-            _ConnectionString = "Data Source=" + server + "; Database=" + database + "; User Id=" + userName + "; Password=" + password + "; Integrated Security=False;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False";
+            _ConnectionString = "Data Source=" + server + "; Database=" + database + "; User Id=" + userName + "; Password=" + password + "; Integrated Security=False; Persist Security Info=False; Pooling=False;MultipleActiveResultSets=False; Connect Timeout=60; Encrypt=False; TrustServerCertificate=False";
             SqlConnection conn = new SqlConnection(_ConnectionString);
             try
             {
@@ -36,8 +36,30 @@ namespace LabellingDB
             return success;
         }
 
+        private string GetTodaysDirName()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd");
+        }
+
+        public bool MoveFileToArchive(string sourceFileName)
+        {
+            bool success = false;
+            string imageDirPath = Settings_Get(SETTING_PROCESSED_FILE_ARCHIVE_DIR);
+            string todaysDirPath = GetTodaysDirName();
+            string fullDirPath = Path.Combine(imageDirPath, todaysDirPath);
+
+            try
+            {
+                File.Move(sourceFileName, Path.Combine(fullDirPath, Path.GetFileName(sourceFileName)));
+                success = true;
+            }
+            catch { }
+
+            return success;
+        }
+
         #region "LabelTree"
-        public List<LabelNode> LabelTree_Load(int parentID = -1)
+        public List<LabelNode> LabelTree_LoadByParentID(int parentID = -1)
         {
             List<LabelNode> labels = new List<LabelNode>();
             SqlConnection conn = new SqlConnection(_ConnectionString);
@@ -58,7 +80,7 @@ namespace LabellingDB
             }
             catch (Exception ex)
             {
-                //MessageBox.Show("Error in 'LabelTree_Load' : \r\n\r\n" + ex.ToString());
+                //MessageBox.Show("Error in 'LabelTree_LoadByParentID' : \r\n\r\n" + ex.ToString());
             }
             finally
             {
@@ -68,10 +90,40 @@ namespace LabellingDB
 
             return labels;
         }
+        public LabelNode LabelTree_LoadByID(int id)
+        {
+            LabelNode label = null;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlDataReader rdr = null;
+            SqlCommand cmd = new SqlCommand("SELECT id, name, parent_id FROM label_trees WHERE id = @id", conn);
+            cmd.Parameters.AddWithValue("@id", id);
 
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                {
+                    label = new LabelNode(rdr.GetInt32(0), rdr.GetString(1), rdr.GetInt32(2));
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'LabelTree_LoadByID' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return label;
+        }
         public List<LabelNode> LabelTree_LoadAll()
         {
-            List<LabelNode> labels = LabelTree_Load();
+            List<LabelNode> labels = LabelTree_LoadByParentID();
 
             for (int i = 0; i < labels.Count; i++)
             {
@@ -81,7 +133,6 @@ namespace LabellingDB
 
             return labels;
         }
-
         public LabelNode LabelTree_AddLabel(int parentID, string name)
         {
             int new_id = -1;
@@ -118,7 +169,6 @@ namespace LabellingDB
 
             return newNode;
         }
-
         public bool LabelTree_RenameLabel(int id, string new_name)
         {
             bool success = false;
@@ -147,7 +197,6 @@ namespace LabellingDB
 
             return success;
         }
-
         public bool LabelTree_DeleteLabel(LabelNode node)
         {
             bool success = false;
@@ -161,10 +210,9 @@ namespace LabellingDB
 
             return success;
         }
-
         private void LabelTree_RecursiveLoadLabels(ref LabelNode node)
         {
-            node.Children = LabelTree_Load(node.ID);
+            node.Children = LabelTree_LoadByParentID(node.ID);
 
             for (int i = 0; i < node.Children.Count; i++)
             {
@@ -172,13 +220,12 @@ namespace LabellingDB
                 LabelTree_RecursiveLoadLabels(ref child);
             }
         }
-
         private bool LabelTree_RecursiveDeleteLabels(LabelNode node)
         {
             bool success = false;
 
             // Load all of this node's children so we can iterate through them and delete their children.
-            node.Children = LabelTree_Load(node.ID);
+            node.Children = LabelTree_LoadByParentID(node.ID);
 
             // Delete all this node's children.
             success = LabelTree_DeleteLabelsByParentID(node.ID);
@@ -195,7 +242,6 @@ namespace LabellingDB
             
             return success;
         }
-
         public List<LabelNode> LabelTree_LoadLabelList()
         {
             List<LabelNode> labels = new List<LabelNode>();
@@ -226,7 +272,6 @@ namespace LabellingDB
 
             return labels;
         }
-
         private bool LabelTree_DeleteLabelByID(int id)
         {
             bool success = false;
@@ -382,11 +427,41 @@ namespace LabellingDB
             return success;
         }
 
+        //private string Settings_GetDestImageDir()
+        //{
+        //    string todaysFolderName = DateTime.Now.ToString("yyyy-MM-dd");
+        //    string imgDir = Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
+        //    string fullDirPath = Path.Combine(imgDir, todaysFolderName);
+        //    Directory.CreateDirectory(fullDirPath); // This includes a check to see if it already exists
+
+        //    return fullDirPath;
+        //}
+
+        //private string Settings_GetDestVideoArchiveDir()
+        //{
+        //    string todaysFolderName = DateTime.Now.ToString("yyyy-MM-dd");
+        //    string imgDir = Settings_Get(ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
+        //    string fullDirPath = Path.Combine(imgDir, todaysFolderName);
+        //    Directory.CreateDirectory(fullDirPath); // This includes a check to see if it already exists
+
+        //    return fullDirPath;
+        //}
+
+        //private string Settings_GetDestProcessedFileArchiveDir()
+        //{
+        //    string todaysFolderName = DateTime.Now.ToString("yyyy-MM-dd");
+        //    string imgDir = Settings_Get(ImageDatabaseAccess.SETTING_PROCESSED_FILE_ARCHIVE_DIR);
+        //    string fullDirPath = Path.Combine(imgDir, todaysFolderName);
+        //    Directory.CreateDirectory(fullDirPath); // This includes a check to see if it already exists
+
+        //    return fullDirPath;
+        //}
+
         #endregion
 
         #region "Videos"
-        
-        public Task<Video> Videos_Add(string sourceFliePath, string destFilePath, SensorTypeEnum sensorType = SensorTypeEnum.Unknown, int labelID = -1, string tags = "")
+
+        public Task<Video> Videos_AddToVideoArchive(string sourceFliePath, Size videoSize, SensorTypeEnum sensorType = SensorTypeEnum.Unknown, int labelID = -1, string tags = "")
         {
             return Task.Run(() =>
             {
@@ -394,13 +469,18 @@ namespace LabellingDB
 
                 if (File.Exists(sourceFliePath))
                 {
-                    string dirPath = Settings_Get(SETTING_VIDEO_ARCHIVE_DIR);
-                    string newFilePath = Path.Combine(dirPath, destFilePath);
+                    string videoDirPath = Settings_Get(SETTING_VIDEO_ARCHIVE_DIR);
+                    string todaysDirPath = GetTodaysDirName();
+                    string fullDirPath = Path.Combine(videoDirPath, todaysDirPath);
+                    string fileName = Path.GetFileName(sourceFliePath);
+
+                    string dbPath = Path.Combine(todaysDirPath, fileName);
+                    string newFilePath = Path.Combine(fullDirPath, fileName);
 
                     try
                     {
                         File.Copy(sourceFliePath, newFilePath);
-                        video = Videos_AddDBEntry(destFilePath, sensorType, labelID, tags);
+                        video = Videos_AddDBEntry(dbPath, videoSize, sensorType, labelID, tags);
                     }
                     catch (Exception ex) { }
                 }
@@ -408,17 +488,19 @@ namespace LabellingDB
                 return video;
             });
         }
-        private Video Videos_AddDBEntry(string fileName, SensorTypeEnum sensorType, int labelID, string tags)
+        private Video Videos_AddDBEntry(string fileName, Size imageSize, SensorTypeEnum sensorType, int labelID, string tags)
         {
             Video video = null;
             SqlConnection conn = new SqlConnection(_ConnectionString);
-            SqlCommand cmd = new SqlCommand("INSERT INTO videos (filepath, sensor_type, label_id, tags) VALUES(@filepath, @sensor_type, @label_id, @tags); " +
+            SqlCommand cmd = new SqlCommand("INSERT INTO videos (filepath, sensor_type, label_id, tags, video_width, video_height) VALUES(@filepath, @sensor_type, @label_id, @tags, @video_width, @video_height); " +
                                             "SELECT SCOPE_IDENTITY()", conn);
             SqlDataReader rdr = null;
 
             cmd.Parameters.AddWithValue("@filepath", fileName);
             cmd.Parameters.AddWithValue("@sensor_type", sensorType);
             cmd.Parameters.AddWithValue("@label_id", labelID);
+            cmd.Parameters.AddWithValue("@video_width", imageSize.Width);
+            cmd.Parameters.AddWithValue("@video_height", imageSize.Height);
             cmd.Parameters.Add("@tags", SqlDbType.NVarChar).Value = tags;
             cmd.CommandType = CommandType.Text;
 
@@ -428,7 +510,7 @@ namespace LabellingDB
                 rdr = cmd.ExecuteReader();
                 if (rdr.Read())
                 {
-                    video = new Video();
+                    video = new Video(imageSize);
                     video.ID = Decimal.ToInt32(rdr.GetDecimal(0));
                     video.Filepath = fileName;
                     video.SensorType = sensorType;
@@ -450,20 +532,33 @@ namespace LabellingDB
         #endregion
 
         #region "Images"
-        public Task<LabelledImage> Images_Add(string sourceFliePath, string destFilePath, SensorTypeEnum sensorType = SensorTypeEnum.Unknown, int labelID = -1, string tags = "")
+        public Task<LabelledImage> Images_Add(string sourceFliePath, bool archiveSourceFile, SensorTypeEnum sensorType = SensorTypeEnum.Unknown, int labelID = -1, string tags = "")
         {
             return Task.Run(() => {
                 LabelledImage lImage = null;
 
                 if (File.Exists(sourceFliePath))
                 {
-                    string dirPath = Settings_Get(SETTING_IMAGE_DIR);
-                    string newFilePath = Path.Combine(dirPath, destFilePath);
+                    string imageDirPath = Settings_Get(SETTING_IMAGE_DIR);
+                    string todaysDirPath = GetTodaysDirName();
+                    string fullDirPath = Path.Combine(imageDirPath, todaysDirPath);
+                    string fileName = Path.GetFileName(sourceFliePath);
 
+                    string dbPath = Path.Combine(todaysDirPath, fileName);
+                    string newFilePath = Path.Combine(fullDirPath, fileName);
+                    
                     try
                     {
+                        Image img = Image.FromFile(sourceFliePath);
+                        Size imgSize = img.Size;
+                        img.Dispose();
+
                         File.Copy(sourceFliePath, newFilePath);
-                        lImage = Images_AddDBEntry(destFilePath, sensorType, labelID, tags);
+                        lImage = Images_AddDBEntry(dbPath, imgSize, sensorType, labelID, tags);
+                        if (archiveSourceFile)
+                        {
+                            MoveFileToArchive(sourceFliePath);
+                        }
                     }
                     catch { }
                 }
@@ -471,22 +566,25 @@ namespace LabellingDB
                 return lImage;
             });
         }
-
-        public Task<LabelledImage> Images_Add(Image img, string destFilePath, SensorTypeEnum sensorType = SensorTypeEnum.Unknown, int labelID = -1, string tags = "")
+        public Task<LabelledImage> Images_Add(Image img, string fileName, SensorTypeEnum sensorType = SensorTypeEnum.Unknown, int labelID = -1, string tags = "")
         {
             return Task.Run(() => {
                 LabelledImage lImage = null;
 
                 if (img != null)
                 {
-                    string dirPath = Settings_Get(SETTING_IMAGE_DIR);
-                    string newFilePath = Path.Combine(dirPath, destFilePath);
+                    string imageDirPath = Settings_Get(SETTING_IMAGE_DIR);
+                    string todaysDirPath = GetTodaysDirName();
+                    string fullDirPath = Path.Combine(imageDirPath, todaysDirPath);
+
+                    string dbPath = Path.Combine(todaysDirPath, fileName);
+                    string newFilePath = Path.Combine(fullDirPath, fileName);
 
                     try
                     {
                         Bitmap bmp = new Bitmap(img);
                         bmp.Save(newFilePath);
-                        lImage = Images_AddDBEntry(destFilePath, sensorType, labelID, tags);
+                        lImage = Images_AddDBEntry(dbPath, img.Size, sensorType, labelID, tags);
                     }
                     catch { }
                 }
@@ -494,18 +592,19 @@ namespace LabellingDB
                 return lImage;
             });
         }
-
-        private LabelledImage Images_AddDBEntry(string fileName, SensorTypeEnum sensorType, int labelID, string tags)
+        private LabelledImage Images_AddDBEntry(string fileName, Size imageSize, SensorTypeEnum sensorType, int labelID, string tags)
         {
             LabelledImage limg = null;
             SqlConnection conn = new SqlConnection(_ConnectionString);
-            SqlCommand cmd = new SqlCommand("INSERT INTO images (filepath, sensor_type, label_id, tags) VALUES(@filepath, @sensor_type, @label_id, @tags); " +
+            SqlCommand cmd = new SqlCommand("INSERT INTO images (filepath, sensor_type, label_id, tags, image_width, image_height) VALUES(@filepath, @sensor_type, @label_id, @tags, @image_width, @image_height); " +
                                             "SELECT SCOPE_IDENTITY()", conn);
             SqlDataReader rdr = null;
 
             cmd.Parameters.AddWithValue("@filepath", fileName);
             cmd.Parameters.AddWithValue("@sensor_type", sensorType);
             cmd.Parameters.AddWithValue("@label_id", labelID);
+            cmd.Parameters.AddWithValue("@image_width", imageSize.Width);
+            cmd.Parameters.AddWithValue("@image_height", imageSize.Height);
             cmd.Parameters.Add("@tags", SqlDbType.NVarChar).Value = tags;
             cmd.CommandType = CommandType.Text;
 
@@ -515,12 +614,19 @@ namespace LabellingDB
                 rdr = cmd.ExecuteReader();
                 if (rdr.Read())
                 {
-                    limg = new LabelledImage();
+                    limg = new LabelledImage(imageSize);
                     limg.ID = Decimal.ToInt32(rdr.GetDecimal(0));
                     limg.Filepath = fileName;
                     limg.SensorType = sensorType;
                     limg.Tags = tags;
                     limg.LabelID = labelID;
+
+                    if (labelID > -1)
+                    {
+                        LabelNode ln = LabelTree_LoadByID(labelID);
+                        limg.LabelName = ln.Name;
+                    }
+                    
                 }
             }
             catch (Exception ex)
@@ -534,14 +640,13 @@ namespace LabellingDB
 
             return limg;
         }
-
         public List<LabelledImage> Images_Get(bool filterForIncomplete, bool filterForNoLabels)
         {
             DataTable dt = new DataTable();
             List<LabelledImage> imageList = new List<LabelledImage>();
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataAdapter adapter = new SqlDataAdapter();
-            SqlCommand cmd = new SqlCommand("SELECT images.id, filepath, labelling_complete, sensor_type, tags, label_id, label_trees.name FROM images LEFT JOIN label_trees ON label_trees.id = images.label_id", conn);
+            SqlCommand cmd = new SqlCommand("SELECT images.id, filepath, labelling_complete, sensor_type, tags, label_id, image_width, image_height, label_trees.name FROM images LEFT JOIN label_trees ON label_trees.id = images.label_id", conn);
 
             if (filterForIncomplete || filterForNoLabels) { cmd.CommandText += " WHERE"; }
 
@@ -567,14 +672,17 @@ namespace LabellingDB
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    LabelledImage img = new LabelledImage();
+                    int width = (int)dr.ItemArray[6];
+                    int height = (int)dr.ItemArray[7];
+                    LabelledImage img = new LabelledImage(new Size(width, height));
+                    
                     img.ID = (int)(dr.ItemArray[0]);
                     img.Filepath = (string)(dr.ItemArray[1]);
                     img.Completed = (bool)(dr.ItemArray[2]);
                     img.SensorType = (SensorTypeEnum)(dr.ItemArray[3]);
                     img.Tags = (string)(dr.ItemArray[4]);
                     img.LabelID = (int)dr.ItemArray[5];
-                    if (!dr.ItemArray[6].Equals(System.DBNull.Value)) { img.LabelName = (string)dr.ItemArray[6]; }
+                    if (!dr.ItemArray[8].Equals(System.DBNull.Value)) { img.LabelName = (string)dr.ItemArray[8]; }
                     imageList.Add(img);
                 }
             }
@@ -590,7 +698,6 @@ namespace LabellingDB
 
             return imageList;
         }
-
         public Task<Image> Images_LoadImageFile(LabelledImage lImg)
         {         
 
@@ -611,7 +718,6 @@ namespace LabellingDB
                 return image;
             });            
         }
-
         public Task<Image> Images_LoadImageThumbnail(LabelledImage lImg, Size maxSize)
         {
             return Task.Run(async () => {
@@ -622,7 +728,6 @@ namespace LabellingDB
                 return image;
             });
         }
-
         private bool Images_GetCurrentCompletedStatus(LabelledImage lImg)
         {
             bool labelling_complete = false;
@@ -691,7 +796,6 @@ namespace LabellingDB
 
             return success;
         }
-
         public bool Images_DeleteImage(LabelledImage img)
         {
             bool success = false;
@@ -714,7 +818,6 @@ namespace LabellingDB
             }
             return success;
         }
-
         public bool Images_DeleteDBEntry(int id)
         {
             bool success = false;
@@ -752,7 +855,7 @@ namespace LabellingDB
             List<LabelledROI> labels = new List<LabelledROI>();
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT bbox_labels.id, image_id, label_id, location_x, location_y, size_width, size_height, truncated, occluded, label_trees.name FROM bbox_labels LEFT JOIN label_trees ON label_trees.id = bbox_labels.label_id WHERE bbox_labels.image_id = @image_id", conn);
+            SqlCommand cmd = new SqlCommand("SELECT bbox_labels.id, image_id, label_id, location_x, location_y, size_width, size_height, truncated, occluded, out_of_focus, label_trees.name FROM bbox_labels LEFT JOIN label_trees ON label_trees.id = bbox_labels.label_id WHERE bbox_labels.image_id = @image_id", conn);
             cmd.Parameters.AddWithValue("@image_id", imageID);
 
             try
@@ -775,8 +878,9 @@ namespace LabellingDB
                     lroi.LabelID = rdr.GetInt32(2);
                     lroi.Truncated = (bool)rdr.GetValue(7);
                     lroi.Occluded = (bool)rdr.GetValue(8);
+                    lroi.OutOfFocus = (bool)rdr.GetValue(9);
                     lroi.ImageID = imageID;
-                    if (rdr.GetValue(9) != DBNull.Value) { lroi.LabelName = rdr.GetString(9); }
+                    if (rdr.GetValue(10) != DBNull.Value) { lroi.LabelName = rdr.GetString(10); }
                     
                     labels.Add(lroi);
                 }
@@ -793,15 +897,16 @@ namespace LabellingDB
             return labels;
         }
 
-        public LabelledROI BBoxLabels_AddLabel(int imageID, Rectangle roi)
+        public LabelledROI BBoxLabels_AddLabel(int imageID, Rectangle roi, int labelID = -1)
         {
             int newID = -1;
             LabelledROI lroi = null;
             SqlConnection conn = new SqlConnection(_ConnectionString);
-            SqlCommand cmd = new SqlCommand("INSERT INTO bbox_labels (image_id, location_x, location_y, size_width, size_height) VALUES(@image_id, @location_x, @location_y, @size_width, @size_height); " +
+            SqlCommand cmd = new SqlCommand("INSERT INTO bbox_labels (image_id, label_id, location_x, location_y, size_width, size_height) VALUES(@image_id, @label_id, @location_x, @location_y, @size_width, @size_height); " +
                                             "SELECT SCOPE_IDENTITY()", conn);
             SqlDataReader rdr = null;
             cmd.Parameters.Add("@image_id", SqlDbType.Int).Value = imageID;
+            cmd.Parameters.Add("@label_id", SqlDbType.Int).Value = labelID;
             cmd.Parameters.Add("@location_x", SqlDbType.Int).Value = roi.X;
             cmd.Parameters.Add("@location_y", SqlDbType.Int).Value = roi.Y;
             cmd.Parameters.Add("@size_width", SqlDbType.Int).Value = roi.Width;
@@ -816,9 +921,14 @@ namespace LabellingDB
                 if (rdr.Read())
                 {
                     newID = Decimal.ToInt32(rdr.GetDecimal(0));
+                    lroi = new LabelledROI(newID, imageID, roi);
+                    lroi.LabelID = labelID; 
+                    if (labelID > -1)
+                    {
+                        LabelNode ln = LabelTree_LoadByID(labelID);
+                        lroi.LabelName = ln.Name;
+                    }   
                 }
-                lroi = new LabelledROI(newID, imageID, roi);
-
             }
             catch (Exception ex)
             {
@@ -1019,6 +1129,7 @@ namespace LabellingDB
             ROI = roi;
             Truncated = false;
             Occluded = false;
+            OutOfFocus = false;
         }
         public int ID { get; set; }
         public int ImageID { get; set; }
@@ -1027,6 +1138,7 @@ namespace LabellingDB
         public Rectangle ROI { get; set; }
         public bool Truncated { get; set; }
         public bool Occluded { get; set; }
+        public bool OutOfFocus { get; set; }
     }
 
     public class LabelledImage
@@ -1040,11 +1152,13 @@ namespace LabellingDB
         public string Tags { get; set; } = "";
         public int LabelID { get; set; }
         public string LabelName { get; set; }
-        public LabelledImage()
+        public Size ImageSize { get; set; }
+        public LabelledImage(Size imageSize)
         {
             LabelledROIs = new List<LabelledROI>();
             SensorType = SensorTypeEnum.Unknown;
             LabelID = -1;
+            ImageSize = imageSize;
         }
     }
 
@@ -1058,10 +1172,12 @@ namespace LabellingDB
         public string Tags { get; set; } = "";
         public int LabelID { get; set; }
         public string LabelName { get; set; }
-        public Video()
+        public Size VideoSize { get; set; }
+        public Video(Size videoSize)
         {
             SensorType = SensorTypeEnum.Unknown;
             LabelID = -1;
+            VideoSize = videoSize;
         }
     }
 

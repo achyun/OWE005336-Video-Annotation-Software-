@@ -11,7 +11,9 @@
     [modified_by] CHAR(30) NOT NULL DEFAULT CURRENT_USER, 
     [modified_date] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
     [completed_by] CHAR(30) NULL, 
-    [completed_date] DATETIME NULL 
+    [completed_date] DATETIME NULL, 
+    [image_width] INT NOT NULL DEFAULT 0, 
+    [image_height] INT NOT NULL DEFAULT 0 
 )
 
 GO

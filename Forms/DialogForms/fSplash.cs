@@ -21,6 +21,8 @@ namespace OWE005336__Video_Annotation_Software_
             InitializeComponent();
             pnlLoginDetails.BackColor = Color.FromArgb(50, Color.Gray);
             pnlDatabaseDetails.BackColor = pnlLoginDetails.BackColor;
+            pnlTitle.BackColor = pnlLoginDetails.BackColor;
+
             if (Properties.Settings.Default.Password != "")
             {
                 txtPassword.Text = ToInsecureString(DecryptString(Properties.Settings.Default.Password)); ;

@@ -38,6 +38,9 @@
             this.tbcOptions = new System.Windows.Forms.TabControl();
             this.tbpImages = new System.Windows.Forms.TabPage();
             this.dgvImages = new System.Windows.Forms.DataGridView();
+            this.Thumbnail = new System.Windows.Forms.DataGridViewImageColumn();
+            this.Complete = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ckbFilterForNoLabels = new System.Windows.Forms.CheckBox();
             this.ckbFilterForIncomplete = new System.Windows.Forms.CheckBox();
@@ -45,7 +48,11 @@
             this.btnOpenImages = new System.Windows.Forms.Button();
             this.btnOpenVideo = new System.Windows.Forms.Button();
             this.tbpLabels = new System.Windows.Forms.TabPage();
+            this.trvLabels = new OWE005336__Video_Annotation_Software_.LabelTree();
             this.tbpSettings = new System.Windows.Forms.TabPage();
+            this.btnSelectProcessedFileArchiveDir = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtProcessedFilesDir = new System.Windows.Forms.TextBox();
             this.btnSetVideoArchiveDir = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.txtVideoArchiveDir = new System.Windows.Forms.TextBox();
@@ -54,11 +61,7 @@
             this.txtImageDir = new System.Windows.Forms.TextBox();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.stsStatus = new System.Windows.Forms.StatusStrip();
-            this.Thumbnail = new System.Windows.Forms.DataGridViewImageColumn();
-            this.Complete = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lbiImage = new OWE005336__Video_Annotation_Software_.LabellingInterface();
-            this.trvLabels = new OWE005336__Video_Annotation_Software_.LabelTree();
             this.menuStrip1.SuspendLayout();
             this.tbcOptions.SuspendLayout();
             this.tbpImages.SuspendLayout();
@@ -164,6 +167,28 @@
             this.dgvImages.TabIndex = 9;
             this.dgvImages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvImages_KeyDown);
             // 
+            // Thumbnail
+            // 
+            this.Thumbnail.HeaderText = "Thumbnail";
+            this.Thumbnail.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.Thumbnail.Name = "Thumbnail";
+            this.Thumbnail.ReadOnly = true;
+            this.Thumbnail.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Thumbnail.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // Complete
+            // 
+            this.Complete.HeaderText = "Complete";
+            this.Complete.Name = "Complete";
+            this.Complete.Width = 60;
+            // 
+            // FilePath
+            // 
+            this.FilePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.FilePath.HeaderText = "File Path";
+            this.FilePath.Name = "FilePath";
+            this.FilePath.ReadOnly = true;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.ckbFilterForNoLabels);
@@ -241,8 +266,22 @@
             this.tbpLabels.Text = "Labels";
             this.tbpLabels.UseVisualStyleBackColor = true;
             // 
+            // trvLabels
+            // 
+            this.trvLabels.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trvLabels.ImageIndex = 0;
+            this.trvLabels.Location = new System.Drawing.Point(3, 3);
+            this.trvLabels.Name = "trvLabels";
+            this.trvLabels.SelectedImageIndex = 0;
+            this.trvLabels.ShowNodeToolTips = true;
+            this.trvLabels.Size = new System.Drawing.Size(268, 661);
+            this.trvLabels.TabIndex = 0;
+            // 
             // tbpSettings
             // 
+            this.tbpSettings.Controls.Add(this.btnSelectProcessedFileArchiveDir);
+            this.tbpSettings.Controls.Add(this.label3);
+            this.tbpSettings.Controls.Add(this.txtProcessedFilesDir);
             this.tbpSettings.Controls.Add(this.btnSetVideoArchiveDir);
             this.tbpSettings.Controls.Add(this.label2);
             this.tbpSettings.Controls.Add(this.txtVideoArchiveDir);
@@ -255,6 +294,33 @@
             this.tbpSettings.TabIndex = 2;
             this.tbpSettings.Text = "Settings";
             this.tbpSettings.UseVisualStyleBackColor = true;
+            // 
+            // btnSelectProcessedFileArchiveDir
+            // 
+            this.btnSelectProcessedFileArchiveDir.Location = new System.Drawing.Point(241, 104);
+            this.btnSelectProcessedFileArchiveDir.Name = "btnSelectProcessedFileArchiveDir";
+            this.btnSelectProcessedFileArchiveDir.Size = new System.Drawing.Size(30, 20);
+            this.btnSelectProcessedFileArchiveDir.TabIndex = 13;
+            this.btnSelectProcessedFileArchiveDir.Text = "...";
+            this.btnSelectProcessedFileArchiveDir.UseVisualStyleBackColor = true;
+            this.btnSelectProcessedFileArchiveDir.Click += new System.EventHandler(this.btnSelectProcessedFileArchiveDir_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 88);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(165, 13);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "Processed Files Archive Directory";
+            // 
+            // txtProcessedFilesDir
+            // 
+            this.txtProcessedFilesDir.Location = new System.Drawing.Point(11, 104);
+            this.txtProcessedFilesDir.Name = "txtProcessedFilesDir";
+            this.txtProcessedFilesDir.Size = new System.Drawing.Size(224, 20);
+            this.txtProcessedFilesDir.TabIndex = 15;
+            this.txtProcessedFilesDir.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtProcessedFilesDir_KeyDown);
             // 
             // btnSetVideoArchiveDir
             // 
@@ -326,28 +392,6 @@
             this.stsStatus.TabIndex = 9;
             this.stsStatus.Text = "statusStrip1";
             // 
-            // Thumbnail
-            // 
-            this.Thumbnail.HeaderText = "Thumbnail";
-            this.Thumbnail.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.Thumbnail.Name = "Thumbnail";
-            this.Thumbnail.ReadOnly = true;
-            this.Thumbnail.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Thumbnail.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // Complete
-            // 
-            this.Complete.HeaderText = "Complete";
-            this.Complete.Name = "Complete";
-            this.Complete.Width = 60;
-            // 
-            // FilePath
-            // 
-            this.FilePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.FilePath.HeaderText = "File Path";
-            this.FilePath.Name = "FilePath";
-            this.FilePath.ReadOnly = true;
-            // 
             // lbiImage
             // 
             this.lbiImage.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -355,17 +399,6 @@
             this.lbiImage.Name = "lbiImage";
             this.lbiImage.Size = new System.Drawing.Size(923, 693);
             this.lbiImage.TabIndex = 4;
-            // 
-            // trvLabels
-            // 
-            this.trvLabels.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trvLabels.ImageIndex = 0;
-            this.trvLabels.Location = new System.Drawing.Point(3, 3);
-            this.trvLabels.Name = "trvLabels";
-            this.trvLabels.SelectedImageIndex = 0;
-            this.trvLabels.ShowNodeToolTips = true;
-            this.trvLabels.Size = new System.Drawing.Size(268, 661);
-            this.trvLabels.TabIndex = 0;
             // 
             // fMain
             // 
@@ -380,7 +413,7 @@
             this.DoubleBuffered = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "fMain";
-            this.Text = "Form1";
+            this.Text = "AIData";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tbcOptions.ResumeLayout(false);
@@ -426,6 +459,9 @@
         private System.Windows.Forms.DataGridViewImageColumn Thumbnail;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Complete;
         private System.Windows.Forms.DataGridViewTextBoxColumn FilePath;
+        private System.Windows.Forms.Button btnSelectProcessedFileArchiveDir;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtProcessedFilesDir;
     }
 }
 

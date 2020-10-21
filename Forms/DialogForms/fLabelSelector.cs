@@ -56,6 +56,7 @@ namespace OWE005336__Video_Annotation_Software_
 
             if (parentID > -1)
             {
+                this.trvLabels.SaveTreeState();
                 this.DialogResult = DialogResult.OK;
             }
             else
@@ -66,6 +67,7 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            this.trvLabels.SaveTreeState();
             this.DialogResult = DialogResult.Cancel;
         }
     }

@@ -94,5 +94,17 @@ namespace OWE005336__Video_Annotation_Software_.Properties {
                 this["SavePassword"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ArchiveVideos {
+            get {
+                return ((bool)(this["ArchiveVideos"]));
+            }
+            set {
+                this["ArchiveVideos"] = value;
+            }
+        }
     }
 }

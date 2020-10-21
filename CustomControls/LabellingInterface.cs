@@ -18,6 +18,10 @@ namespace OWE005336__Video_Annotation_Software_
 
             cmbSensorType.DataSource = Enum.GetValues(typeof(SensorTypeEnum));
 
+            dgvLabels.Columns["Truncated"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvLabels.Columns["Occluded"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvLabels.Columns["OutOfFocus"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
             _ROISelector.NewROIAdded += _ROISelector_NewROIAdded;
             _ROISelector.ROIChanged += _ROISelector_ROIChanged;
             _ROISelector.ROIDeleted += _ROISelector_ROIDeleted;
@@ -34,7 +38,7 @@ namespace OWE005336__Video_Annotation_Software_
         #region "GUI Events"
         private void tbxTags_TagsChanged(TagBox sender, EventArgs e)
         {
-            if (!_PaintDataInProgress)
+            if (!_PaintDataInProgress && LabelledImage != null)
             {
                 LabelledImage.Tags = sender.ToString();
                 Program.ImageDatabase.Images_Update(LabelledImage);
@@ -43,7 +47,7 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void cmbSensorType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!_PaintDataInProgress)
+            if (!_PaintDataInProgress && LabelledImage != null)
             {
                 LabelledImage.SensorType = (SensorTypeEnum)cmbSensorType.SelectedItem;
                 Program.ImageDatabase.Images_Update(LabelledImage);
@@ -54,26 +58,24 @@ namespace OWE005336__Video_Annotation_Software_
         {
             LabelledROI lroi = (LabelledROI)dgvLabels.Rows[e.RowIndex].Tag;
 
-            if (e.ColumnIndex == dgvLabels.Columns["Label"].Index)
-            { 
-                //lroi.LabelID = ((LabelNode)dgvLabels.Rows[e.RowIndex].Cells[e.ColumnIndex].Value).ID;
-            }
-            else if (e.ColumnIndex == dgvLabels.Columns["Truncated"].Index)
+            if (!_PaintDataInProgress && LabelledImage != null)
             {
-                if (!_PaintDataInProgress)
+                if (e.ColumnIndex == dgvLabels.Columns["Truncated"].Index)
                 {
                     lroi.Truncated = (bool)dgvLabels.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                     Program.ImageDatabase.BBoxLabels_UpdateLabel(lroi);
                 }
-            }
-            else if (e.ColumnIndex == dgvLabels.Columns["Occluded"].Index)
-            {
-                if (!_PaintDataInProgress)
+                else if (e.ColumnIndex == dgvLabels.Columns["Occluded"].Index)
                 {
                     lroi.Occluded = (bool)dgvLabels.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                     Program.ImageDatabase.BBoxLabels_UpdateLabel(lroi);
                 }
-            }            
+                else if (e.ColumnIndex == dgvLabels.Columns["OutOfFocus"].Index)
+                {
+                    lroi.OutOfFocus = (bool)dgvLabels.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                    Program.ImageDatabase.BBoxLabels_UpdateLabel(lroi);
+                }
+            }
         }
 
         private void dgvLabels_SelectionChanged(object sender, EventArgs e)
@@ -155,7 +157,10 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void _ROISelector_NewROIAdded(ROISelector sender, Rectangle roi)
         {
-            LabelledROI newLabelledROI = Program.ImageDatabase.BBoxLabels_AddLabel(LabelledImage.ID, roi);
+            int labelID = -1;
+            if (dgvLabels.Rows.Count == 0) { labelID = LabelledImage.LabelID; }
+
+            LabelledROI newLabelledROI = Program.ImageDatabase.BBoxLabels_AddLabel(LabelledImage.ID, roi, labelID);
             if (newLabelledROI != null)
             {
                 LabelledImage.LabelledROIs.Add(newLabelledROI);
@@ -180,10 +185,10 @@ namespace OWE005336__Video_Annotation_Software_
                 {
                     LabelledImage.LabelID = l.ID;
                     LabelledImage.LabelName = l.Name;
-                    txtLabel.Text = l.Name;
+
                     if (Program.ImageDatabase.Images_Update(LabelledImage))
                     {
-                        dgvLabels.SelectedRows[0].Cells["Label"].Value = l.Name;
+                        txtLabel.Text = l.Name;
                     }
                 }
             }
@@ -227,6 +232,12 @@ namespace OWE005336__Video_Annotation_Software_
                 tbxTags.PopulateTagsFromString(image.Tags);
                 cmbSensorType.SelectedItem = image.SensorType;
                 PaintROIsGrid(image);
+
+                txtLabel.Enabled = true;
+                cmbSensorType.Enabled = true;
+                dgvLabels.Enabled = true;
+                btnSelectLabel.Enabled = true;
+                tbxTags.Enabled = true;
             }
             else
             {
@@ -235,6 +246,12 @@ namespace OWE005336__Video_Annotation_Software_
                 tbxTags.PopulateTagsFromString("");
                 cmbSensorType.SelectedItem = SensorTypeEnum.Unknown;
                 dgvLabels.Rows.Clear();
+
+                txtLabel.Enabled = false;
+                cmbSensorType.Enabled = false;
+                dgvLabels.Enabled = false;
+                btnSelectLabel.Enabled = false;
+                tbxTags.Enabled = false;
             }
             
 
@@ -255,7 +272,7 @@ namespace OWE005336__Video_Annotation_Software_
         {
             string loc = lroi.ROI.X.ToString() + ", " + lroi.ROI.Y.ToString();
             string s = lroi.ROI.Width.ToString() + ", " + lroi.ROI.Height.ToString();
-            dgvLabels.Rows.Add(new object[] { lroi.LabelName, lroi.Truncated, lroi.Occluded, loc, s });
+            dgvLabels.Rows.Add(new object[] { lroi.LabelName, lroi.OutOfFocus, lroi.Truncated, lroi.Occluded, loc, s });
             dgvLabels.Rows[dgvLabels.Rows.Count - 1].Tag = lroi;
         }
 

@@ -1,5 +1,6 @@
 ﻿using LabellingDB;
 using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,12 +14,14 @@ namespace OWE005336__Video_Annotation_Software_
 {
     public partial class LabelTree : TreeView
     {
+        LastTreeStateSettings _LastTreeStateSettings = new LastTreeStateSettings();
         ContextMenuStrip _ContextMenu = new ContextMenuStrip();
         ToolStripMenuItem _AddFamilyButton = new ToolStripMenuItem("Add Family");
         ToolStripMenuItem _ImportFamilyButton = new ToolStripMenuItem("Import Family");
         ToolStripMenuItem _AddLabelButton = new ToolStripMenuItem("Add Label");
         ToolStripMenuItem _RenameButton = new ToolStripMenuItem("Rename");
         ToolStripMenuItem _DeleteButton = new ToolStripMenuItem("Delete");
+
         public LabelTree()
         {
             InitializeComponent();
@@ -40,7 +43,47 @@ namespace OWE005336__Video_Annotation_Software_
             _DeleteButton.Click += _DeleteButton_Click;
 
             this.MouseDown += LabelTree_MouseDown;
+        }
 
+        public void SaveTreeState()
+        {
+            if (this.SelectedNode != null)
+            {
+                _LastTreeStateSettings.SelectedNodeID = ((LabelNode)this.SelectedNode.Tag).ID;
+            }
+            else
+            {
+                _LastTreeStateSettings.SelectedNodeID = -1;
+            }
+
+            if (_LastTreeStateSettings.ExpandedNodeIDs == null) { _LastTreeStateSettings.ExpandedNodeIDs = new List<int>(); }
+            else { _LastTreeStateSettings.ExpandedNodeIDs.Clear(); }
+
+            if (this.Nodes != null)
+            {
+                foreach (TreeNode n in this.Nodes)
+                {
+                    if (n.IsExpanded)
+                    {
+                        _LastTreeStateSettings.ExpandedNodeIDs.Add(((LabelNode)n.Tag).ID);
+                        RecursivelyCheckForExpandedNodes(n);
+                    }
+                }
+            }
+
+            _LastTreeStateSettings.Save();
+        }
+
+        private void RecursivelyCheckForExpandedNodes(TreeNode node)
+        {
+            foreach (TreeNode n in node.Nodes)
+            {
+                if (n.IsExpanded)
+                {
+                    _LastTreeStateSettings.ExpandedNodeIDs.Add(((LabelNode)n.Tag).ID);
+                    RecursivelyCheckForExpandedNodes(n);
+                }
+            }
         }
 
         private void LabelTree_MouseDown(object sender, MouseEventArgs e)
@@ -181,7 +224,13 @@ namespace OWE005336__Video_Annotation_Software_
                 n.SelectedImageIndex = 0;
                 n.Tag = lbl;
                 RecursivelyAddTreeNodes(ref n, lbl);
+
                 this.Nodes.Add(n);
+                if (_LastTreeStateSettings.ExpandedNodeIDs != null)
+                {
+                    if (_LastTreeStateSettings.ExpandedNodeIDs.Contains(lbl.ID)) { n.Expand(); }
+                    if (_LastTreeStateSettings.SelectedNodeID == lbl.ID) { this.SelectedNode = n; }
+                }
             }
         }
 
@@ -199,8 +248,32 @@ namespace OWE005336__Video_Annotation_Software_
                 if (c.Children.Count > 0) { n.ImageIndex = 1; n.SelectedImageIndex = 1; }
                 else { n.ImageIndex = 2; n.SelectedImageIndex = 2; }
                 RecursivelyAddTreeNodes(ref n, c);
+                
                 node.Nodes.Add(n);
+                if (_LastTreeStateSettings.ExpandedNodeIDs != null)
+                {
+                    if (_LastTreeStateSettings.ExpandedNodeIDs.Contains(c.ID)) { n.Expand(); }
+                    if (_LastTreeStateSettings.SelectedNodeID == c.ID) { this.SelectedNode = n; }
+                }
             }
+        }
+    }
+    sealed class LastTreeStateSettings : ApplicationSettingsBase
+    {
+        [UserScopedSettingAttribute()]
+        //[DefaultSettingValueAttribute("null")]
+        public List<int> ExpandedNodeIDs
+        {
+            get { return (List<int>)this["ExpandedNodeIDs"]; }
+            set { this["ExpandedNodeIDs"] = value; }
+        }
+
+        [UserScopedSettingAttribute()]
+        [DefaultSettingValueAttribute("-1")]
+        public int SelectedNodeID
+        {
+            get { return (int)this["SelectedNodeID"]; }
+            set { this["SelectedNodeID"] = value; }
         }
     }
 }

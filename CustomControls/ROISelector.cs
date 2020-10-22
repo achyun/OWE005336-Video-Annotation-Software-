@@ -344,6 +344,11 @@ namespace OWE005336__Video_Annotation_Software_
             _Offset.X = e.Location.X / _Scale - e.Location.X / oldScale + _Offset.X;
             _Offset.Y = e.Location.Y / _Scale - e.Location.Y / oldScale + _Offset.Y;
 
+            foreach (var roi in _ROIs)
+            {
+                roi.UpdateGrabBoxes(_Scale);
+            }
+
             this.Refresh();
         }
 
@@ -378,15 +383,15 @@ namespace OWE005336__Video_Annotation_Software_
                     {
                         if (i == SelectedROIIndex)
                         {
-                            _ROIs[i].Draw(g, false, Color.Red);
+                            _ROIs[i].Draw(g, false, Color.Red, _Scale);
                         }
                         else if (i == _HighlightedROIIndex)
                         {
-                            _ROIs[i].Draw(g, false, Color.DarkOrange);
+                            _ROIs[i].Draw(g, false, Color.DarkOrange, _Scale);
                         }
                         else
                         {
-                            _ROIs[i].Draw(g, false, Color.Orange);
+                            _ROIs[i].Draw(g, false, Color.Orange, _Scale);
                         }
                     }
                 }
@@ -517,12 +522,13 @@ namespace OWE005336__Video_Annotation_Software_
             return contains;
         }
 
-        public void Draw(Graphics g, bool selected, Color c)
+        public void Draw(Graphics g, bool selected, Color c, float scale)
         {
             var b = new SolidBrush(c);
+            var p = new Pen(c, 1 / scale);
 
-            g.DrawRectangle(new Pen(c, 1), _ROI.X, _ROI.Y, _ROI.Width, _ROI.Height);
-            g.FillRectangles(new SolidBrush(c), _GrabBoxes);
+            g.DrawRectangle(p, _ROI.X, _ROI.Y, _ROI.Width, _ROI.Height);
+            g.FillRectangles(b, _GrabBoxes);
         }
 
         private RectangleF CalcGrabBoxAtPoint(float x, float y, float scale)

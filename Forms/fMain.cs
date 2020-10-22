@@ -526,7 +526,6 @@ namespace OWE005336__Video_Annotation_Software_
 
             dgvImages_SelectionChanged(null, null);
 
-
             for (int i = 0; i < lImages.Count; i++)
             {
                 LoadThumbnail(lImages[i], _THUMBNAIL_SIZE, i);
@@ -544,11 +543,12 @@ namespace OWE005336__Video_Annotation_Software_
 
         private async void LoadThumbnail(LabelledImage limg, Size thumbnailSize, int rowIndex)
         {
+            var cell = dgvImages.Rows[rowIndex].Cells[0];
             Image img = await Program.ImageDatabase.Images_LoadImageThumbnail(limg, thumbnailSize);
             if (img != null)
             {
                 _PaintDataInProgress.Lock();
-                dgvImages.Rows[rowIndex].Cells[0].Value = img;
+                cell.Value = img;
                 _PaintDataInProgress.Unlock();
             }
         }

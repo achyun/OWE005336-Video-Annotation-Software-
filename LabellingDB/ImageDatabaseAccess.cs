@@ -48,6 +48,8 @@ namespace LabellingDB
             string todaysDirPath = GetTodaysDirName();
             string fullDirPath = Path.Combine(imageDirPath, todaysDirPath);
 
+            Directory.CreateDirectory(fullDirPath);
+
             try
             {
                 File.Move(sourceFileName, Path.Combine(fullDirPath, Path.GetFileName(sourceFileName)));
@@ -460,7 +462,6 @@ namespace LabellingDB
         #endregion
 
         #region "Videos"
-
         public Task<Video> Videos_AddToVideoArchive(string sourceFliePath, Size videoSize, SensorTypeEnum sensorType = SensorTypeEnum.Unknown, int labelID = -1, string tags = "")
         {
             return Task.Run(() =>
@@ -476,6 +477,8 @@ namespace LabellingDB
 
                     string dbPath = Path.Combine(todaysDirPath, fileName);
                     string newFilePath = Path.Combine(fullDirPath, fileName);
+
+                    Directory.CreateDirectory(fullDirPath);
 
                     try
                     {
@@ -546,6 +549,8 @@ namespace LabellingDB
 
                     string dbPath = Path.Combine(todaysDirPath, fileName);
                     string newFilePath = Path.Combine(fullDirPath, fileName);
+
+                    Directory.CreateDirectory(fullDirPath);
                     
                     try
                     {
@@ -560,7 +565,8 @@ namespace LabellingDB
                             MoveFileToArchive(sourceFliePath);
                         }
                     }
-                    catch { }
+                    catch (Exception ex) 
+                    { }
                 }
 
                 return lImage;
@@ -579,6 +585,8 @@ namespace LabellingDB
 
                     string dbPath = Path.Combine(todaysDirPath, fileName);
                     string newFilePath = Path.Combine(fullDirPath, fileName);
+
+                    Directory.CreateDirectory(fullDirPath);
 
                     try
                     {
@@ -640,13 +648,13 @@ namespace LabellingDB
 
             return limg;
         }
-        public List<LabelledImage> Images_Get(bool filterForIncomplete, bool filterForNoLabels)
+        public List<LabelledImage> Images_Get(bool filterForIncomplete, bool filterForNoLabels, int maxResults = 30)
         {
             DataTable dt = new DataTable();
             List<LabelledImage> imageList = new List<LabelledImage>();
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataAdapter adapter = new SqlDataAdapter();
-            SqlCommand cmd = new SqlCommand("SELECT images.id, filepath, labelling_complete, sensor_type, tags, label_id, image_width, image_height, label_trees.name FROM images LEFT JOIN label_trees ON label_trees.id = images.label_id", conn);
+            SqlCommand cmd = new SqlCommand("SELECT TOP " + maxResults.ToString() + " images.id, filepath, labelling_complete, sensor_type, tags, label_id, image_width, image_height, label_trees.name FROM images LEFT JOIN label_trees ON label_trees.id = images.label_id", conn);
 
             if (filterForIncomplete || filterForNoLabels) { cmd.CommandText += " WHERE"; }
 
@@ -662,6 +670,10 @@ namespace LabellingDB
             {
                 cmd.CommandText += " (SELECT COUNT(id) FROM bbox_labels WHERE bbox_labels.image_id = images.id) = 0 ";
             }
+
+            cmd.CommandText += " ORDER BY images.id";
+            if (!filterForIncomplete) { cmd.CommandText += " DESC"; }
+
             adapter.SelectCommand = cmd;           
             cmd.CommandType = CommandType.Text;
 
@@ -947,7 +959,7 @@ namespace LabellingDB
         {
             bool success = false;
             SqlConnection conn = new SqlConnection(_ConnectionString);
-            SqlCommand cmd = new SqlCommand("UPDATE bbox_labels SET label_id = @label_id, location_x = @location_x, location_y = @location_y, size_width = @size_width, size_height = @size_height, truncated = @truncated, occluded = @occluded WHERE id = @id; " +
+            SqlCommand cmd = new SqlCommand("UPDATE bbox_labels SET label_id = @label_id, location_x = @location_x, location_y = @location_y, size_width = @size_width, size_height = @size_height, truncated = @truncated, occluded = @occluded, out_of_focus = @out_of_focus WHERE id = @id; " +
                                             "UPDATE images SET modified_by = CURRENT_USER, modified_date = CURRENT_TIMESTAMP WHERE id = @image_id", conn);
             cmd.Parameters.Add("@id", SqlDbType.Int).Value = lroi.ID;
             cmd.Parameters.Add("@label_id", SqlDbType.Int).Value = lroi.LabelID;
@@ -958,6 +970,7 @@ namespace LabellingDB
             cmd.Parameters.Add("@size_height", SqlDbType.Int).Value = lroi.ROI.Height;
             cmd.Parameters.Add("@truncated", SqlDbType.Bit).Value = lroi.Truncated;
             cmd.Parameters.Add("@occluded", SqlDbType.Bit).Value = lroi.Occluded;
+            cmd.Parameters.Add("@out_of_focus", SqlDbType.Bit).Value = lroi.OutOfFocus;
 
             try
             {

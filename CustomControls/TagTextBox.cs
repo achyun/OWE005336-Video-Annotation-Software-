@@ -77,7 +77,7 @@ namespace OWE005336__Video_Annotation_Software_
                 Bitmap b = new Bitmap(100, 100);
                 Graphics g = Graphics.FromImage(b);
                 SizeF strSize = g.MeasureString(txtTextBox.Text, txtTextBox.Font);
-                txtTextBox.Width = (int)(strSize.Width + 30);
+                txtTextBox.Width = (int)(strSize.Width + 80);
                 this.Width = txtTextBox.Width + pcbClose.Width;
             }
             else
@@ -102,6 +102,10 @@ namespace OWE005336__Video_Annotation_Software_
                     txtTextBox.ReadOnly = true;
                     TagCommitted?.Invoke(this, new TagTextBoxCommittedArgs(false));
                 }
+                else if (txtTextBox.Text == "")
+                {
+                    TagCancelled?.Invoke(this, new EventArgs());
+                }
                 else
                 {
                     if (MessageBox.Show("Tag not found\r\n\r\nAre you sure you want to add this as a new tag?", "Tag not found", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
@@ -114,6 +118,10 @@ namespace OWE005336__Video_Annotation_Software_
                         TagCancelled?.Invoke(this, new EventArgs());
                     }
                 }
+
+                txtTextBox.SelectionLength = 0;
+                txtTextBox.SelectionStart = 0;
+                
             }
         }
     }

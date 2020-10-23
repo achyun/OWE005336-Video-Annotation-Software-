@@ -33,6 +33,12 @@ namespace LabellingDB
             catch { }
             finally { conn.Close(); }
 
+            if (success)
+            {
+                // Check that the label tree Lft/Rgt structure is ok
+                if (LabelTree_TreeHasInvalidLeftRightValues()) { LabelTree_ResetLeftRightValues(); }
+            }
+
             return success;
         }
 
@@ -66,7 +72,7 @@ namespace LabellingDB
             List<LabelNode> labels = new List<LabelNode>();
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT id, name FROM label_trees WHERE parent_id = @parent_id", conn);
+            SqlCommand cmd = new SqlCommand("SELECT id, name, lft, rgt FROM label_trees WHERE parent_id = @parent_id", conn);
             cmd.Parameters.AddWithValue("@parent_id", parentID);
             
             try
@@ -77,7 +83,10 @@ namespace LabellingDB
                 rdr = cmd.ExecuteReader();
                 while (rdr.Read())
                 {
-                    labels.Add(new LabelNode(rdr.GetInt32(0), rdr.GetString(1), parentID));
+                    LabelNode ln = new LabelNode(rdr.GetInt32(0), rdr.GetString(1), parentID);
+                    ln.Left = rdr.GetInt32(2);
+                    ln.Right = rdr.GetInt32(3);
+                    labels.Add(ln);
                 }
             }
             catch (Exception ex)
@@ -97,7 +106,7 @@ namespace LabellingDB
             LabelNode label = null;
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT id, name, parent_id FROM label_trees WHERE id = @id", conn);
+            SqlCommand cmd = new SqlCommand("SELECT id, name, parent_id, lft, rgt FROM label_trees WHERE id = @id", conn);
             cmd.Parameters.AddWithValue("@id", id);
 
             try
@@ -109,6 +118,8 @@ namespace LabellingDB
                 if (rdr.Read())
                 {
                     label = new LabelNode(rdr.GetInt32(0), rdr.GetString(1), rdr.GetInt32(2));
+                    label.Left = rdr.GetInt32(3);
+                    label.Right = rdr.GetInt32(4);
                 }
             }
             catch (Exception ex)
@@ -169,6 +180,8 @@ namespace LabellingDB
                 if (rdr != null) { rdr.Close(); }
             }
 
+            LabelTree_ResetLeftRightValues();
+
             return newNode;
         }
         public bool LabelTree_RenameLabel(int id, string new_name)
@@ -199,6 +212,35 @@ namespace LabellingDB
 
             return success;
         }
+        public bool LabelTree_UpdateLeftRight(LabelNode node)
+        {
+            bool success = false;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlCommand cmd = new SqlCommand("UPDATE label_trees SET lft = @lft, rgt = @rgt WHERE id = @id", conn);
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = node.ID;
+            cmd.Parameters.Add("@lft", SqlDbType.Int).Value = node.Left;
+            cmd.Parameters.Add("@rgt", SqlDbType.Int).Value = node.Right;
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'LabelTree_UpdateLeftRight' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+            }
+
+            return success;
+        }
         public bool LabelTree_DeleteLabel(LabelNode node)
         {
             bool success = false;
@@ -209,6 +251,8 @@ namespace LabellingDB
             {
                 success = LabelTree_RecursiveDeleteLabels(node);
             }
+
+            LabelTree_ResetLeftRightValues();
 
             return success;
         }
@@ -325,6 +369,67 @@ namespace LabellingDB
             {
                 if (conn != null) { conn.Close(); }
             }
+
+            return success;
+        }
+        private bool LabelTree_TreeHasInvalidLeftRightValues()
+        {
+            bool invalid = true;
+
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlDataReader rdr = null;
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(id) FROM label_trees WHERE lft = 0 OR rgt = 0", conn);
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                {
+                    if (rdr.GetInt32(0) == 0) { invalid = false; }
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'LabelTree_TreeHasInvalidLeftRightValues' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return invalid;
+        }
+        private bool LabelTree_ResetLeftRightValues()
+        {
+            bool success = true;
+            int index = 1;
+            List<LabelNode> topLevelFolders = LabelTree_LoadAll();
+
+            foreach (LabelNode ln in topLevelFolders)
+            {
+                success = LabelTree_RecursivelySetLeftRightValues(ln, ref index);
+                if (!success) { break; }
+            }
+
+            return success;
+        }
+        private bool LabelTree_RecursivelySetLeftRightValues(LabelNode node, ref int index)
+        {
+            bool success = true;
+
+            node.Left = index++;
+            foreach (LabelNode ln in node.Children)
+            {
+                success = LabelTree_RecursivelySetLeftRightValues(ln, ref index);
+                if (!success) { break; }
+            }
+            node.Right = index++;
+
+            LabelTree_UpdateLeftRight(node);
 
             return success;
         }
@@ -1128,6 +1233,8 @@ namespace LabellingDB
         public int ID { get; set; }
         public int ParentID { get; set; }
         public string Name { get; set; }
+        public int Left { get; set; }
+        public int Right { get; set; }
         public List<LabelNode> Children { get; set; }
     }
 

@@ -8,6 +8,7 @@ namespace OWE005336__Video_Annotation_Software_
 {
     public partial class LabellingInterface : UserControl
     {
+        public LabelledImage LabelledImage { get; private set; } = null;
         private ROISelector _ROISelector = new ROISelector();
         private bool _PaintDataInProgress = false;
         public LabellingInterface()
@@ -26,6 +27,7 @@ namespace OWE005336__Video_Annotation_Software_
             _ROISelector.ROIChanged += _ROISelector_ROIChanged;
             _ROISelector.ROIDeleted += _ROISelector_ROIDeleted;
             _ROISelector.ROISelectionChanged += _ROISelector_ROISelectionChanged;
+            _ROISelector.ShortcutKeyPressed += _ROISelector_ShortcutKeyPressed;
             dgvLabels.KeyDown += dgvLabels_KeyDown;
             dgvLabels.SelectionChanged += dgvLabels_SelectionChanged;
             dgvLabels.CellValueChanged += dgvLabels_CellValueChanged;
@@ -33,6 +35,11 @@ namespace OWE005336__Video_Annotation_Software_
             cmbSensorType.SelectedIndexChanged += cmbSensorType_SelectedIndexChanged;
 
             tbxTags.TagsChanged += tbxTags_TagsChanged;
+        }
+
+        private void _ROISelector_ShortcutKeyPressed(ROISelector sender, int keyValue)
+        {
+            ProcessLabelShorcut(keyValue);
         }
 
         #region "GUI Events"
@@ -93,22 +100,29 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void dgvLabels_KeyDown(object sender, KeyEventArgs e)
         {
-            if (dgvLabels.SelectedRows.Count > 0 && e.KeyCode == Keys.Delete)
+            if (dgvLabels.SelectedRows.Count > 0)
             {
-                List<DataGridViewRow> toBeDeleted = new List<DataGridViewRow>();
-
-                for (int i = dgvLabels.SelectedRows.Count - 1; i >= 0; i--)
+                if (e.KeyCode == Keys.Delete)
                 {
-                    int index = dgvLabels.SelectedRows[i].Index;
-                    Program.ImageDatabase.BBoxLabels_DeleteLabelByID(LabelledImage.LabelledROIs[index].ID);
-                    LabelledImage.LabelledROIs.RemoveAt(index);
-                    _ROISelector.RemoveROIByIndex(index);
-                    toBeDeleted.Add(dgvLabels.SelectedRows[i]);
+                    List<DataGridViewRow> toBeDeleted = new List<DataGridViewRow>();
+
+                    for (int i = dgvLabels.SelectedRows.Count - 1; i >= 0; i--)
+                    {
+                        int index = dgvLabels.SelectedRows[i].Index;
+                        Program.ImageDatabase.BBoxLabels_DeleteLabelByID(LabelledImage.LabelledROIs[index].ID);
+                        LabelledImage.LabelledROIs.RemoveAt(index);
+                        _ROISelector.RemoveROIByIndex(index);
+                        toBeDeleted.Add(dgvLabels.SelectedRows[i]);
+                    }
+
+                    foreach (DataGridViewRow dr in toBeDeleted)
+                    {
+                        dgvLabels.Rows.Remove(dr);
+                    }
                 }
-
-                foreach (DataGridViewRow dr in toBeDeleted)
+                if (e.KeyValue >= 0x30 && e.KeyValue <= 0x39)
                 {
-                    dgvLabels.Rows.Remove(dr);
+                    ProcessLabelShorcut(e.KeyValue);
                 }
             }
         }
@@ -129,6 +143,7 @@ namespace OWE005336__Video_Annotation_Software_
                             if (Program.ImageDatabase.BBoxLabels_UpdateLabel(lroi))
                             {
                                 dgvLabels.SelectedRows[0].Cells["Label"].Value = l.Name;
+                                _ROISelector.UpdateROIName(e.RowIndex, l.Name);
                             }
                         }
                     }
@@ -200,8 +215,6 @@ namespace OWE005336__Video_Annotation_Software_
         }
         #endregion
 
-        public LabelledImage LabelledImage { get; private set; } = null;
-
         public void SetLabelledImage(LabelledImage image)
         {
             LabelledImage = image;
@@ -218,13 +231,13 @@ namespace OWE005336__Video_Annotation_Software_
 
                 frame = (Bitmap)(await Program.ImageDatabase.Images_LoadImageFile(image));
 
-                List<Rectangle> rois = new List<Rectangle>();
+                List<ROIObject> rois = new List<ROIObject>();
 
                 
 
                 foreach (LabelledROI lroi in image.LabelledROIs)
                 {
-                    rois.Add(lroi.ROI);
+                    rois.Add(new ROIObject(lroi.ROI, 1, lroi.LabelName));
                 }
 
                 _ROISelector.LinkToLabelledImage(rois, frame);
@@ -241,7 +254,7 @@ namespace OWE005336__Video_Annotation_Software_
             }
             else
             {
-                _ROISelector.LinkToLabelledImage(new List<Rectangle>(), null);
+                _ROISelector.LinkToLabelledImage(new List<ROIObject>(), null);
                 txtLabel.Text = "";
                 tbxTags.PopulateTagsFromString("");
                 cmbSensorType.SelectedItem = SensorTypeEnum.Unknown;
@@ -285,7 +298,28 @@ namespace OWE005336__Video_Annotation_Software_
             dgvLabels.Rows[index].Cells["ROISize"].Value = s;
         }
 
-        
+        private void ProcessLabelShorcut(int keyValue)
+        {
+            if (dgvLabels.SelectedRows.Count > 0)
+            {
+                int shortcut = keyValue - 0x30;
+                int labelID = Program.LabelShortcuts[shortcut];
+                LabelNode ln = Program.ImageDatabase.LabelTree_LoadByID(labelID);
+
+                if (ln != null)
+                {
+                    LabelledROI lroi = (LabelledROI)dgvLabels.SelectedRows[0].Tag;
+                    lroi.LabelID = ln.ID;
+                    lroi.LabelName = ln.Name;
+
+                    if (Program.ImageDatabase.BBoxLabels_UpdateLabel(lroi))
+                    {
+                        dgvLabels.SelectedRows[0].Cells["Label"].Value = ln.Name;
+                        _ROISelector.UpdateROIName(dgvLabels.SelectedRows[0].Index, ln.Name);
+                    }
+                }
+            }
+        }
     }
 
    

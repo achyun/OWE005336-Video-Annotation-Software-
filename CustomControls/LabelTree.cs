@@ -21,6 +21,7 @@ namespace OWE005336__Video_Annotation_Software_
         ToolStripMenuItem _AddLabelButton = new ToolStripMenuItem("Add Label");
         ToolStripMenuItem _RenameButton = new ToolStripMenuItem("Rename");
         ToolStripMenuItem _DeleteButton = new ToolStripMenuItem("Delete");
+        ToolStripMenuItem _ShortcutButton = new ToolStripMenuItem("Set Shortcut");
 
         public LabelTree()
         {
@@ -31,6 +32,23 @@ namespace OWE005336__Video_Annotation_Software_
             _ContextMenu.Items.Add(_AddLabelButton);
             _ContextMenu.Items.Add(_RenameButton);
             _ContextMenu.Items.Add(_DeleteButton);
+            _ContextMenu.Items.Add(new ToolStripSeparator());
+            _ContextMenu.Items.Add(_ShortcutButton);
+
+            for (int i = 0; i < 10; i++)
+            {
+                LabelNode label;
+                string labelName = "";
+                if (Program.LabelShortcuts[i] > -1)
+                { 
+                    label = Program.ImageDatabase.LabelTree_LoadByID(Program.LabelShortcuts[i]);
+                    labelName = " (" + label.Name + ")";
+                }
+                ToolStripMenuItem tsmi = new ToolStripMenuItem(i.ToString() + labelName);
+                tsmi.Tag = i;
+                tsmi.Click += ShortCutMenuItem_Click;
+                _ShortcutButton.DropDownItems.Add(tsmi);
+            }
 
             this.ContextMenuStrip = _ContextMenu;
             this.ImageList = imgLabels;
@@ -86,6 +104,20 @@ namespace OWE005336__Video_Annotation_Software_
             }
         }
 
+        private void ShortCutMenuItem_Click(object sender, EventArgs e)
+        {
+            int index = (int)(((ToolStripMenuItem)sender).Tag);
+            LabelNode ln = (LabelNode)this.SelectedNode.Tag;
+            Program.LabelShortcuts[index] = ln.ID;
+
+            string labelName = " (" + ln.Name + ")";
+            ToolStripMenuItem tsmi = (ToolStripMenuItem)sender;
+            tsmi.Text = index.ToString() + labelName;
+
+            Properties.Settings.Default.Shortcuts = String.Join(",", Program.LabelShortcuts);
+            Properties.Settings.Default.Save();
+        }
+
         private void LabelTree_MouseDown(object sender, MouseEventArgs e)
         {
             this.SelectedNode = this.GetNodeAt(this.PointToClient(Control.MousePosition));
@@ -100,6 +132,7 @@ namespace OWE005336__Video_Annotation_Software_
                 _AddLabelButton.Enabled = false;
                 _RenameButton.Enabled = false;
                 _DeleteButton.Enabled = false;
+                _ShortcutButton.Enabled = false;
             }
             else
             {
@@ -108,6 +141,10 @@ namespace OWE005336__Video_Annotation_Software_
                 _AddLabelButton.Enabled = true;
                 _RenameButton.Enabled = true;
                 _DeleteButton.Enabled = true;
+
+                LabelNode ln = (LabelNode)this.SelectedNode.Tag;
+                if (ln.ParentID == -1) { _ShortcutButton.Enabled = false; }
+                else { _ShortcutButton.Enabled = true; }
             }
         }
 

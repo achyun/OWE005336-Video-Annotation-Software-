@@ -93,7 +93,7 @@
             // mniOpen
             // 
             this.mniOpen.Name = "mniOpen";
-            this.mniOpen.Size = new System.Drawing.Size(103, 22);
+            this.mniOpen.Size = new System.Drawing.Size(180, 22);
             this.mniOpen.Text = "Open";
             this.mniOpen.Click += new System.EventHandler(this.mniOpen_Click);
             // 

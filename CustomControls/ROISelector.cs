@@ -29,10 +29,12 @@ namespace OWE005336__Video_Annotation_Software_
         public delegate void ROIChangedEventHandler(ROISelector sender, int index, Rectangle roi);
         public delegate void ROIDeletedEventHandler(ROISelector sender, int index);
         public delegate void ROISelectionChangedEventHandler(ROISelector sender, int index);
+        public delegate void ShortcutKeyPressedEventHandler(ROISelector sender, int keyValue);
         public event NewROIAddedEventHandler NewROIAdded;
         public event ROIChangedEventHandler ROIChanged;
         public event ROIDeletedEventHandler ROIDeleted;
         public event ROISelectionChangedEventHandler ROISelectionChanged;
+        public event ShortcutKeyPressedEventHandler ShortcutKeyPressed;
 
         public int SelectedROIIndex
         {
@@ -49,18 +51,18 @@ namespace OWE005336__Video_Annotation_Software_
             }
         }
 
-        public void LinkToLabelledImage(List<Rectangle> rois, Bitmap frame)
+        public void LinkToLabelledImage(List<ROIObject> rois, Bitmap frame)
         {
             _Frame = frame;
 
-            _ROIs.Clear();
+            _ROIs = rois;
 
             _Offset = new PointF(0, 0);
-            CalculateScale();
+            CalculateScale();         
 
-            foreach (Rectangle r in rois)
+            foreach (ROIObject r in _ROIs)
             {
-                _ROIs.Add(new ROIObject(r, _Scale));
+                r.UpdateGrabBoxes(_Scale);
             }
 
             _HighlightedROIIndex = -1;
@@ -96,17 +98,32 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void ROISelector_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape && _DragAction == DragActionEnum.DrawNew)
+            if (e.KeyCode == Keys.Escape)
             {
-                _DragAction = DragActionEnum.None;
-                _ROIs.RemoveAt(_ROIs.Count - 1);
-                this.Refresh();
+                if (_DragAction == DragActionEnum.DrawNew)
+                {
+                    _DragAction = DragActionEnum.None;
+                    _ROIs.RemoveAt(_ROIs.Count - 1);
+                    this.Refresh();
+                }
+                else if (SelectedROIIndex > -1)
+                {
+                    SelectedROIIndex = -1;
+                }
+                
             }
-            else if (e.KeyCode == Keys.Delete && SelectedROIIndex >= 0)
+            else if (SelectedROIIndex >= 0)
             {
-                _ROIs.RemoveAt(SelectedROIIndex);
-                ROIDeleted?.Invoke(this, SelectedROIIndex);
-                SelectedROIIndex = -1;
+                if (e.KeyCode == Keys.Delete)
+                {
+                    _ROIs.RemoveAt(SelectedROIIndex);
+                    ROIDeleted?.Invoke(this, SelectedROIIndex);
+                    SelectedROIIndex = -1;
+                }
+                else if (e.KeyValue >= 0x30 && e.KeyValue <= 0x39)
+                {
+                    ShortcutKeyPressed(this, e.KeyValue);
+                }
             }
         }
 
@@ -305,7 +322,7 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 if (_HighlightedROIIndex < 0)
                 {
-                    ROIObject newROI = new ROIObject(new RectangleF(e.X, e.Y, 6, 6), _Scale);
+                    ROIObject newROI = new ROIObject(new RectangleF(e.X, e.Y, 6, 6), _Scale, "");
                     _ROIs.Add(newROI);
                     _SelectedROIIndex = _ROIs.Count - 1;
                     _HighlightedROIIndex = _SelectedROIIndex;
@@ -377,6 +394,15 @@ namespace OWE005336__Video_Annotation_Software_
                     if (_Frame != null)
                     {
                         g.DrawImage(_Frame, new PointF(0, 0));
+                        if (SelectedROIIndex > -1 && (_HighlightedROIIndex == -1 || _HighlightedROIIndex == SelectedROIIndex))
+                        {
+                            SolidBrush b_transparent = new SolidBrush(Color.FromArgb(100, Color.Gray));
+                            var r = _ROIs[SelectedROIIndex].GetROI();
+                            g.FillRectangle(b_transparent, 0, 0, r.Left, _Frame.Height);
+                            g.FillRectangle(b_transparent, r.Right, 0, _Frame.Width - r.Right, _Frame.Height);
+                            g.FillRectangle(b_transparent, r.Left, 0, r.Width, r.Top);
+                            g.FillRectangle(b_transparent, r.Left, r.Bottom, r.Width, _Frame.Height - r.Bottom);
+                        }
                     }
 
                     for (int i = 0; i < _ROIs.Count; i++)
@@ -385,9 +411,9 @@ namespace OWE005336__Video_Annotation_Software_
                         {
                             _ROIs[i].Draw(g, false, Color.Red, _Scale);
                         }
-                        else if (i == _HighlightedROIIndex)
+                        else if (i == _HighlightedROIIndex && _HighlightedROIIndex != SelectedROIIndex)
                         {
-                            _ROIs[i].Draw(g, false, Color.DarkOrange, _Scale);
+                            _ROIs[i].Draw(g, true, Color.DarkOrange, _Scale);
                         }
                         else
                         {
@@ -415,6 +441,12 @@ namespace OWE005336__Video_Annotation_Software_
         public void RemoveROIByIndex(int index)
         {
             _ROIs.RemoveAt(index);
+            this.Refresh();
+        }
+
+        public void UpdateROIName(int index, string name)
+        {
+            _ROIs[index].Name = name;
             this.Refresh();
         }
         private void CalculateScale()
@@ -454,9 +486,13 @@ namespace OWE005336__Video_Annotation_Software_
         private RectangleF _ROI;
         private RectangleF[] _GrabBoxes = new RectangleF[8];
         private RectangleF[] _Border = new RectangleF[4];
+        public string Name { get; set; }
+        private float _DefaultFontSize = 10;
+        private Font _Font = new Font("Calibri", 10);
         private const int GRAB_WIDTH = 3;
-        public ROIObject(RectangleF roi, float scale)
+        public ROIObject(RectangleF roi, float scale, string name)
         {
+            Name = name;
             SetRectangle(roi, scale);
         }
         public RectangleF GetROI()
@@ -522,13 +558,31 @@ namespace OWE005336__Video_Annotation_Software_
             return contains;
         }
 
-        public void Draw(Graphics g, bool selected, Color c, float scale)
+        public void Draw(Graphics g, bool higlighted, Color c, float scale)
         {
             var b = new SolidBrush(c);
             var p = new Pen(c, 1 / scale);
-
+            
+            if (higlighted)
+            {
+                SolidBrush b_transparent = new SolidBrush(Color.FromArgb(100, Color.Gray));
+                g.FillRectangle(b_transparent, _ROI.X, _ROI.Y, _ROI.Width, _ROI.Height);
+            }
+            
             g.DrawRectangle(p, _ROI.X, _ROI.Y, _ROI.Width, _ROI.Height);
             g.FillRectangles(b, _GrabBoxes);
+            
+
+            if (Name !=  "")
+            {
+                var textBrush = new SolidBrush(Color.White);
+                _Font = new Font(_Font.FontFamily, _DefaultFontSize / scale);
+                SizeF textBox = g.MeasureString(Name, _Font);
+                
+                g.FillRectangle(b, _ROI.X, _ROI.Y - textBox.Height, textBox.Width, textBox.Height);
+                g.DrawString(Name, _Font, textBrush, _ROI.X, _ROI.Y - textBox.Height);
+            }
+            
         }
 
         private RectangleF CalcGrabBoxAtPoint(float x, float y, float scale)

@@ -42,7 +42,7 @@ namespace OWE005336__Video_Annotation_Software_
                 if (Program.LabelShortcuts[i] > -1)
                 { 
                     label = Program.ImageDatabase.LabelTree_LoadByID(Program.LabelShortcuts[i]);
-                    labelName = " (" + label.Name + ")";
+                    if (label != null) { labelName = " (" + label.Name + ")"; }
                 }
                 ToolStripMenuItem tsmi = new ToolStripMenuItem(i.ToString() + labelName);
                 tsmi.Tag = i;

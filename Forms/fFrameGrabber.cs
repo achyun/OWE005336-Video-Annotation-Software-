@@ -44,7 +44,8 @@ namespace OWE005336__Video_Annotation_Software_
 
             _VideoName = Path.GetFileNameWithoutExtension(filePath);
 
-            pcbFrame.Image = _Reader.ReadVideoFrame(0);
+            _Frame = _Reader.ReadVideoFrame(0);
+            pcbFrame.BackgroundImage = _Frame;
             tkbScan.Maximum = (int)_Reader.FrameCount - 1;
             cpsClipSelector.RegisterNewVideo((int)_Reader.FrameCount, 1 / (float)_Reader.FrameRate.Value);
             _Timer = new System.Timers.Timer(100);
@@ -80,7 +81,7 @@ namespace OWE005336__Video_Annotation_Software_
                 _FrameRefreshRequired = false;
                 _Timer.Stop();
                 _Frame = _Reader.ReadVideoFrame(_LastFrameIndex);
-                this.BeginInvoke(new Action(() => { pcbFrame.Image = _Frame; }));
+                this.BeginInvoke(new Action(() => { pcbFrame.BackgroundImage = _Frame; }));
                 _Timer.Start();
             }
         }
@@ -93,14 +94,14 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void btnSaveFrame_Click(object sender, EventArgs e)
         {
-            Image img = pcbFrame.Image.GetThumbnailImage(imgFrames.ImageSize.Width, imgFrames.ImageSize.Height, null, IntPtr.Zero);            
+            Image img = _Frame.GetThumbnailImage(_Frame.Width, _Frame.Height, null, IntPtr.Zero);            
             ListViewItem newThumb = new ListViewItem();
             
             imgFrames.Images.Add(img);
             
             newThumb.Text = _LastFrameIndex.ToString();
             newThumb.ImageIndex = imgFrames.Images.Count - 1;
-            newThumb.Tag = pcbFrame.Image.Clone();
+            newThumb.Tag = _Frame.Clone();
 
             ltvThumbnails.Items.Add(newThumb);
             lblImageCount.Text = "Images: " + ltvThumbnails.Items.Count.ToString();

@@ -104,6 +104,7 @@ namespace OWE005336__Video_Annotation_Software_
                 {
                     _DragAction = DragActionEnum.None;
                     _ROIs.RemoveAt(_ROIs.Count - 1);
+                    SelectedROIIndex = -1;
                     this.Refresh();
                 }
                 else if (SelectedROIIndex > -1)

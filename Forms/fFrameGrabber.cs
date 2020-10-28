@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Accord.Video.FFMPEG;
 using System.IO;
 using LabellingDB;
+using System.Drawing.Imaging;
 
 namespace OWE005336__Video_Annotation_Software_
 {
@@ -52,6 +53,7 @@ namespace OWE005336__Video_Annotation_Software_
             _Timer.Elapsed += _Timer_Elapsed;
             _Timer.Start();
 
+            Text = filePath;
             cpsClipSelector.ClipAdded += cpsClipSelector_ClipAdded;
             cpsClipSelector.ClipDeleted += cpsClipSelector_ClipDeleted;
             cmbSensorType.DataSource = Enum.GetValues(typeof(SensorTypeEnum));
@@ -198,25 +200,39 @@ namespace OWE005336__Video_Annotation_Software_
                 {
                     try
                     {
-                        VideoFileWriter writer = new VideoFileWriter();
                         string fileName = videoName + " (" + c.StartFrame.ToString() + "_" + c.EndFrame.ToString() + ").mp4";
                         string fullFilePath = Path.Combine(workingDir, fileName);
-                        writer.Open(fullFilePath, _Reader.Width, _Reader.Height, _Reader.FrameRate, VideoCodec.MPEG4, _Reader.BitRate);
 
-                        for (int i = c.StartFrame; i <= c.EndFrame; i++)
+                        await Task.Run(() =>
                         {
-                            await Task.Run(() => { writer.WriteVideoFrame(_Reader.ReadVideoFrame(i)); });
+                            using (var writer = new VideoFileWriter())
+                            {
+                                writer.Open(fullFilePath, _Reader.Width, _Reader.Height, _Reader.FrameRate, VideoCodec.MPEG4, _Reader.BitRate);
 
-                            if (progress.Cancelled) { break; }
-                            
-                            float percent = 100 * (i - c.StartFrame) / c.Length;
-                            progress.UpdateProgress(percent, "Exporting clip " + clipIndex.ToString() + " of " + clips.Count);
-                        }
-                        writer.Close();
+                                //See https://docs.microsoft.com/en-us/dotnet/api/system.drawing.imaging.bitmapdata?view=dotnet-plat-ext-3.1
+                                Bitmap bmp = _Reader.ReadVideoFrame(0); //Read the first frame to get the correct height, width of the bitmap, will use this to store the frame as we transfer it
+                                Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                                BitmapData storageFrame = bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, bmp.PixelFormat);
 
+                                for (int i = c.StartFrame; i <= c.EndFrame; i++)
+                                {
+                                    _Reader.ReadVideoFrame(i, storageFrame);
+                                    writer.WriteVideoFrame(storageFrame);
+
+                                    if (progress.Cancelled) { break; }
+
+                                    float percent = 100 * (i - c.StartFrame) / c.Length;
+                                    progress.BeginInvoke((Action)(() => progress.UpdateProgress(percent, "Exporting clip " + clipIndex.ToString() + " of " + clips.Count)));
+                                }
+                                writer.Close();
+                            }
+                        });
                         newVideoFilePaths.Add(fullFilePath);
+
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        MessageBox.Show("Error exporting video clip " + videoName + "\n" + ex.Message);
+                    }
                     clipIndex += 1;
 
                     if (progress.Cancelled) { break; }

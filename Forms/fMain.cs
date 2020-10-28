@@ -308,7 +308,6 @@ namespace OWE005336__Video_Annotation_Software_
                     filePath = openFileDialog.FileName;
                     Properties.Settings.Default.DefaultFileLocation = Path.GetDirectoryName(filePath);
                     fFrameGrabber grabber = new fFrameGrabber(filePath);
-                    bool archiveFile = Properties.Settings.Default.ArchiveVideos;
 
                     if (grabber.ShowDialog() == DialogResult.OK)
                     {
@@ -322,6 +321,7 @@ namespace OWE005336__Video_Annotation_Software_
                             ImportVideos(grabber.VideoClipFileNames.ToArray(), grabber.VideoFrameSize, grabber.SensorType, grabber.LabelID, grabber.Tags);
                         }
 
+                        bool archiveFile = Properties.Settings.Default.ArchiveVideos;
                         if (archiveFile) { Program.ImageDatabase.MoveFileToArchive(filePath); }
                     }
                 }

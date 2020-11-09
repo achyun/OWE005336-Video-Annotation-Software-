@@ -38,6 +38,8 @@ namespace OWE005336__Video_Annotation_Software_
             dgvImages.DragDrop += dgvImages_DragDrop;
             dgvImages.SelectionChanged += dgvImages_SelectionChanged;
             dgvImages.CellValueChanged += dgvImages_CellValueChanged;
+
+            dgvImages_SelectionChanged(null, null);
         }
 
         private void dgvImages_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -361,6 +363,11 @@ namespace OWE005336__Video_Annotation_Software_
                 TestAndSaveDirectoryRef(txtProcessedFilesDir.Text, ImageDatabaseAccess.SETTING_PROCESSED_FILE_ARCHIVE_DIR);
             }
         }
+
+        private void nudResultCount_ValueChanged(object sender, EventArgs e)
+        {
+            LoadImages();
+        }
         #endregion
 
         #region "Helper Functions"
@@ -516,7 +523,7 @@ namespace OWE005336__Video_Annotation_Software_
         }
         private void LoadImages()
         {
-            List<LabelledImage> lImages = Program.ImageDatabase.Images_Get(ckbFilterForIncomplete.Checked, ckbFilterForNoLabels.Checked);
+            List<LabelledImage> lImages = Program.ImageDatabase.Images_Get(ckbFilterForIncomplete.Checked, ckbFilterForNoLabels.Checked, (int)nudResultCount.Value);
 
             dgvImages.Rows.Clear();
             foreach (LabelledImage limg in lImages)

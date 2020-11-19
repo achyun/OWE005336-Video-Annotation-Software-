@@ -31,7 +31,7 @@ namespace OWE005336__Video_Annotation_Software_
             txtImageDir.Text = imageDirPath;
             txtVideoArchiveDir.Text = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
             txtProcessedFilesDir.Text = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_PROCESSED_FILE_ARCHIVE_DIR);
-
+            lblConnectedUser.Text = "Connected as '" + Program.ImageDatabase.GetCurrentUser() + "'";
             LoadImages();
 
             dgvImages.DragEnter += dgvImages_DragEnter;
@@ -87,13 +87,13 @@ namespace OWE005336__Video_Annotation_Software_
                 MessageBox.Show("Please select a sensor type", "Sensory Type Unknown", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
-            if (lImage.Tags == "")
-            {
-                if (MessageBox.Show("No tags have been provided.\r\n\r\nWould you like to continue?", "Incomplete attributes", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
-                {
-                    complete = false;
-                }
-            }
+            //if (lImage.Tags == "")
+            //{
+            //    if (MessageBox.Show("No tags have been provided.\r\n\r\nWould you like to continue?", "Incomplete attributes", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
+            //    {
+            //        complete = false;
+            //    }
+            //}
 
             if (lImage.LabelledROIs.Count == 0)
             {
@@ -368,6 +368,11 @@ namespace OWE005336__Video_Annotation_Software_
         {
             LoadImages();
         }
+
+        private void ckbLimitToUser_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadImages();
+        }
         #endregion
 
         #region "Helper Functions"
@@ -523,7 +528,15 @@ namespace OWE005336__Video_Annotation_Software_
         }
         private void LoadImages()
         {
-            List<LabelledImage> lImages = Program.ImageDatabase.Images_Get(ckbFilterForIncomplete.Checked, ckbFilterForNoLabels.Checked, (int)nudResultCount.Value);
+            bool filterByLabel = false;
+            int labelID = -1;
+
+            if (ckbFilterByLabel.Checked && txtSearchLabel.Tag != null)
+            {
+                filterByLabel = true;
+                labelID = (int)(txtSearchLabel.Tag);
+            }
+            List<LabelledImage> lImages = Program.ImageDatabase.Images_Get(ckbFilterForIncomplete.Checked, ckbFilterForNoLabels.Checked, ckbFilterForThisUser.Checked, filterByLabel, labelID,  (int)nudResultCount.Value);
 
             dgvImages.Rows.Clear();
             foreach (LabelledImage limg in lImages)
@@ -584,6 +597,50 @@ namespace OWE005336__Video_Annotation_Software_
             }
 
             return success;
+        }
+
+        private void btnCreateComposite_Click(object sender, EventArgs e)
+        {
+            using (fCompositeCreator compositeCreator = new fCompositeCreator())
+            {
+                if (compositeCreator.ShowDialog() == DialogResult.OK)
+                {
+
+                }
+            }
+        }
+
+        private void mniCheckForMissingFiles_Click(object sender, EventArgs e)
+        {
+            List<string> missingFiles = Program.ImageDatabase.CheckForMissingFiles();
+
+            fMissingFiles missingFilesForm = new fMissingFiles(missingFiles);
+
+            missingFilesForm.ShowDialog();
+        }
+
+        private void ckbFilterByLabel_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((ckbFilterByLabel.Checked && txtSearchLabel.Tag != null) || !ckbFilterByLabel.Checked)
+            {
+                LoadImages();
+            }
+            
+        }
+
+        private void txtSearchLabel_DoubleClick(object sender, EventArgs e)
+        {
+            fLabelSelector labelSelector = new fLabelSelector();
+            if (labelSelector.ShowDialog() == DialogResult.OK)
+            {
+                LabelNode l = labelSelector.SelectedLabel;
+                if (l.ParentID > -1)
+                {
+                    txtSearchLabel.Tag = l.ID;
+                    txtSearchLabel.Text = l.Name;
+                    if (ckbFilterByLabel.Checked) { LoadImages(); }
+                }
+            }
         }
     }
 }

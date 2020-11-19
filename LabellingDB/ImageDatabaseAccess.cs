@@ -42,6 +42,37 @@ namespace LabellingDB
             return success;
         }
 
+        public string GetCurrentUser()
+        {
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlDataReader rdr = null;
+            SqlCommand cmd = new SqlCommand("SELECT CURRENT_USER", conn);
+            string currentUser = "";
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                {
+                    currentUser = rdr.GetString(0);
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'GetCurrentUser' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return currentUser;
+        }
+
         private string GetTodaysDirName()
         {
             return DateTime.Now.ToString("yyyy-MM-dd");
@@ -64,6 +95,42 @@ namespace LabellingDB
             catch { }
 
             return success;
+        }
+
+        public List<string> CheckForMissingFiles()
+        {
+            List<string> missingFiles = new List<string>();
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlCommand cmd = new SqlCommand("SELECT filepath FROM images ORDER BY filepath", conn);
+            SqlDataReader rdr = null;
+            string dirPath = Settings_Get(SETTING_IMAGE_DIR);
+            string filePath;
+            cmd.CommandType = CommandType.Text;
+
+            try
+            {
+                conn.Open();
+                rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    filePath = Path.Combine(dirPath, rdr.GetString(0));
+                    if (!File.Exists(filePath))
+                    {
+                        missingFiles.Add(filePath);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'CheckForMissingFiles' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return missingFiles;
         }
 
         #region "LabelTree"
@@ -184,13 +251,14 @@ namespace LabellingDB
 
             return newNode;
         }
-        public bool LabelTree_RenameLabel(int id, string new_name)
+        public bool LabelTree_UpdateLabel(LabelNode labelNode)
         {
             bool success = false;
             SqlConnection conn = new SqlConnection(_ConnectionString);
-            SqlCommand cmd = new SqlCommand("UPDATE label_trees SET name = @new_name WHERE id = @id", conn);
-            cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
-            cmd.Parameters.Add("@new_name", SqlDbType.NVarChar, 50).Value = new_name;
+            SqlCommand cmd = new SqlCommand("UPDATE label_trees SET name = @name, parent_id = @parent_id WHERE id = @id", conn);
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = labelNode.ID;
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar, 50).Value = labelNode.Name;
+            cmd.Parameters.Add("@parent_id", SqlDbType.Int).Value = labelNode.ParentID;
 
             try
             {
@@ -209,6 +277,8 @@ namespace LabellingDB
             {
                 if (conn != null) { conn.Close(); }
             }
+
+            LabelTree_ResetLeftRightValues();
 
             return success;
         }
@@ -241,6 +311,62 @@ namespace LabellingDB
 
             return success;
         }
+        public bool LabelTree_CheckIfLabelsAreUsed(LabelNode node)
+        {
+            return LabelTree_RecursiveCheckIfLabelsAreUsed(node);
+        }
+
+        private bool LabelTree_RecursiveCheckIfLabelsAreUsed(LabelNode node)
+        {
+            bool labelIsUsed = LabelTree_CheckifLabelIsUsed(node);
+
+            if (!labelIsUsed)
+            {
+                node.Children = LabelTree_LoadByParentID(node.ID);
+
+                foreach (LabelNode ln in node.Children)
+                {
+                    labelIsUsed = LabelTree_RecursiveCheckIfLabelsAreUsed(ln);
+                    if (labelIsUsed) { break; }
+                }
+            }
+
+            return labelIsUsed;
+        }
+
+        private bool LabelTree_CheckifLabelIsUsed(LabelNode node)
+        {
+            bool labelIsUsed = true;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(ID) FROM bbox_labels WHERE label_id = @id", conn);
+            SqlDataReader rdr = null;
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = node.ID;
+            cmd.CommandType = CommandType.Text;
+
+            try
+            {
+                conn.Open();
+                
+                rdr = cmd.ExecuteReader();
+                
+                if (rdr.Read())
+                {
+                    if (rdr.GetInt32(0) == 0) { labelIsUsed = false; }
+                    else { labelIsUsed = true; }
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'LabelTree_CheckifLabelIsUsed' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+            }
+
+            return labelIsUsed;
+        }
+
         public bool LabelTree_DeleteLabel(LabelNode node)
         {
             bool success = false;
@@ -753,27 +879,54 @@ namespace LabellingDB
 
             return limg;
         }
-        public List<LabelledImage> Images_Get(bool filterForIncomplete, bool filterForNoLabels, int maxResults = 30)
+        public List<LabelledImage> Images_Get(bool filterForIncomplete, bool filterForNoLabels, bool filterForThisUser, bool filterByLabel, int labelID, int maxResults = 30)
         {
             DataTable dt = new DataTable();
             List<LabelledImage> imageList = new List<LabelledImage>();
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataAdapter adapter = new SqlDataAdapter();
             SqlCommand cmd = new SqlCommand("SELECT TOP " + maxResults.ToString() + " images.id, filepath, labelling_complete, sensor_type, tags, label_id, image_width, image_height, label_trees.name FROM images LEFT JOIN label_trees ON label_trees.id = images.label_id", conn);
+            int filterCount = 0;
+            bool andRequired = false;
 
-            if (filterForIncomplete || filterForNoLabels) { cmd.CommandText += " WHERE"; }
+            if (filterForIncomplete) { filterCount++; }
+            if (filterForNoLabels) { filterCount++; }
+            if (filterForThisUser) { filterCount++; }
+            if (filterByLabel) { filterCount++; }
+
+            if (filterCount > 0) { cmd.CommandText += " WHERE"; }
 
             if (filterForIncomplete)
             { 
                 cmd.CommandText += " labelling_complete = @labelling_complete";
                 cmd.Parameters.Add("@labelling_complete", SqlDbType.Bit).Value = !filterForIncomplete;
+                filterCount--;
+                andRequired = true;
             }
-
-            if (filterForIncomplete && filterForNoLabels) { cmd.CommandText += " AND"; }
 
             if (filterForNoLabels)
             {
-                cmd.CommandText += " (SELECT COUNT(id) FROM bbox_labels WHERE bbox_labels.image_id = images.id) = 0 ";
+                if (andRequired) { cmd.CommandText += " AND"; }
+                cmd.CommandText += " (SELECT COUNT(id) FROM bbox_labels WHERE bbox_labels.image_id = images.id) = 0";
+                filterCount--;
+                andRequired = true;
+            }
+
+            if (filterForThisUser)
+            {
+                if (andRequired) { cmd.CommandText += " AND"; }
+                cmd.CommandText += " images.created_by = CURRENT_USER";
+                filterCount--;
+                andRequired = true;
+            }
+
+            if (filterByLabel)
+            {
+                if (andRequired) { cmd.CommandText += " AND"; }
+                cmd.CommandText += " (SELECT COUNT(bbox_labels.id) FROM bbox_labels WHERE bbox_labels.label_id = @label_id AND bbox_labels.image_id = images.id) > 0";
+                cmd.Parameters.Add("@label_id", SqlDbType.Int).Value = labelID;
+                filterCount--;
+                andRequired = true;
             }
 
             cmd.CommandText += " ORDER BY images.id";

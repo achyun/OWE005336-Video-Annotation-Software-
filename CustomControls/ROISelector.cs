@@ -442,6 +442,7 @@ namespace OWE005336__Video_Annotation_Software_
         #region "Helper Functions"
         public void RemoveROIByIndex(int index)
         {
+            if (index == _SelectedROIIndex) { _SelectedROIIndex = -1; }
             _ROIs.RemoveAt(index);
             this.Refresh();
         }

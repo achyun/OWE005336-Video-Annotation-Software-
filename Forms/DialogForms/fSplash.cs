@@ -51,6 +51,11 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void lbtLogin_Click(object sender, EventArgs e)
         {
+            //LoginSuccessful = true;
+
+            //this.Close();
+
+            //return; 
             if (Program.ImageDatabase.VerifyLoginCredentials(txtServer.Text, txtDatabase.Text, txtUsername.Text, txtPassword.Text))
             {
                 Properties.Settings.Default.Server = txtServer.Text;

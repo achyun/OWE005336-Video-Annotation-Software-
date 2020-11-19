@@ -59,6 +59,26 @@ namespace OWE005336__Video_Annotation_Software_
             cmbSensorType.DataSource = Enum.GetValues(typeof(SensorTypeEnum));
             cmbSensorType.SelectedItem = SensorTypeEnum.Unknown;
             cmbSensorType.SelectedIndexChanged += CmbSensorType_SelectedIndexChanged;
+            tkbScan.MouseUp += TkbScan_MouseUp;
+            tkbScan.MouseLeave += TkbScan_MouseLeave;
+        }
+
+        private void TkbScan_MouseLeave(object sender, EventArgs e)
+        {
+            if (_LastFrameIndex != tkbScan.Value)
+            {
+                _FrameRefreshRequired = true;
+                _LastFrameIndex = tkbScan.Value;
+            }
+        }
+
+        private void TkbScan_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_LastFrameIndex != tkbScan.Value)
+            {
+                _FrameRefreshRequired = true;
+                _LastFrameIndex = tkbScan.Value;
+            }
         }
 
         private void CmbSensorType_SelectedIndexChanged(object sender, EventArgs e)
@@ -82,16 +102,17 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 _FrameRefreshRequired = false;
                 _Timer.Stop();
+                this.UseWaitCursor = true;
                 _Frame = _Reader.ReadVideoFrame(_LastFrameIndex);
                 this.BeginInvoke(new Action(() => { pcbFrame.BackgroundImage = _Frame; }));
+                this.UseWaitCursor = false;
                 _Timer.Start();
             }
         }
 
         private void tkbScan_ValueChanged(object sender, EventArgs e)
         {
-            _FrameRefreshRequired = true;
-            _LastFrameIndex = tkbScan.Value;
+            
         }
 
         private void btnSaveFrame_Click(object sender, EventArgs e)

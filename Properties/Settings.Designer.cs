@@ -118,5 +118,17 @@ namespace OWE005336__Video_Annotation_Software_.Properties {
                 this["Shortcuts"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LastSensorType {
+            get {
+                return ((int)(this["LastSensorType"]));
+            }
+            set {
+                this["LastSensorType"] = value;
+            }
+        }
     }
 }

@@ -29,12 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mniFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mniOpen = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniCheckForMissingFiles = new System.Windows.Forms.ToolStripMenuItem();
             this.tbcOptions = new System.Windows.Forms.TabControl();
             this.tbpImages = new System.Windows.Forms.TabPage();
             this.dgvImages = new System.Windows.Forms.DataGridView();
@@ -42,13 +44,16 @@
             this.Complete = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ckbFilterForThisUser = new System.Windows.Forms.CheckBox();
+            this.nudResultCount = new System.Windows.Forms.NumericUpDown();
             this.ckbFilterForNoLabels = new System.Windows.Forms.CheckBox();
             this.ckbFilterForIncomplete = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnCreateComposite = new System.Windows.Forms.Button();
             this.btnOpenImages = new System.Windows.Forms.Button();
             this.btnOpenVideo = new System.Windows.Forms.Button();
             this.tbpLabels = new System.Windows.Forms.TabPage();
-            this.trvLabels = new OWE005336__Video_Annotation_Software_.LabelTree();
             this.tbpSettings = new System.Windows.Forms.TabPage();
             this.btnSelectProcessedFileArchiveDir = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -61,23 +66,28 @@
             this.txtImageDir = new System.Windows.Forms.TextBox();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.stsStatus = new System.Windows.Forms.StatusStrip();
+            this.lblConnectedUser = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbiImage = new OWE005336__Video_Annotation_Software_.LabellingInterface();
-            this.nudResultCount = new System.Windows.Forms.NumericUpDown();
+            this.trvLabels = new OWE005336__Video_Annotation_Software_.LabelTree();
+            this.ckbFilterByLabel = new System.Windows.Forms.CheckBox();
+            this.txtSearchLabel = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.tbcOptions.SuspendLayout();
             this.tbpImages.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).BeginInit();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudResultCount)).BeginInit();
             this.panel2.SuspendLayout();
             this.tbpLabels.SuspendLayout();
             this.tbpSettings.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudResultCount)).BeginInit();
+            this.stsStatus.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mniFile});
+            this.mniFile,
+            this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1209, 24);
@@ -98,6 +108,21 @@
             this.mniOpen.Size = new System.Drawing.Size(103, 22);
             this.mniOpen.Text = "Open";
             this.mniOpen.Click += new System.EventHandler(this.mniOpen_Click);
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniCheckForMissingFiles});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // mniCheckForMissingFiles
+            // 
+            this.mniCheckForMissingFiles.Name = "mniCheckForMissingFiles";
+            this.mniCheckForMissingFiles.Size = new System.Drawing.Size(195, 22);
+            this.mniCheckForMissingFiles.Text = "Check for Missing Files";
+            this.mniCheckForMissingFiles.Click += new System.EventHandler(this.mniCheckForMissingFiles_Click);
             // 
             // tbcOptions
             // 
@@ -129,43 +154,43 @@
             this.dgvImages.AllowDrop = true;
             this.dgvImages.AllowUserToAddRows = false;
             this.dgvImages.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvImages.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvImages.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.dgvImages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvImages.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Thumbnail,
             this.Complete,
             this.FilePath});
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvImages.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvImages.DefaultCellStyle = dataGridViewCellStyle8;
             this.dgvImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvImages.Location = new System.Drawing.Point(3, 3);
             this.dgvImages.Name = "dgvImages";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvImages.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvImages.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.dgvImages.RowHeadersVisible = false;
             this.dgvImages.RowTemplate.Height = 50;
             this.dgvImages.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvImages.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvImages.Size = new System.Drawing.Size(268, 554);
+            this.dgvImages.Size = new System.Drawing.Size(268, 496);
             this.dgvImages.TabIndex = 9;
             this.dgvImages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvImages_KeyDown);
             // 
@@ -193,14 +218,53 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtSearchLabel);
+            this.panel1.Controls.Add(this.ckbFilterByLabel);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.ckbFilterForThisUser);
             this.panel1.Controls.Add(this.nudResultCount);
             this.panel1.Controls.Add(this.ckbFilterForNoLabels);
             this.panel1.Controls.Add(this.ckbFilterForIncomplete);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(3, 557);
+            this.panel1.Location = new System.Drawing.Point(3, 499);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(268, 50);
+            this.panel1.Size = new System.Drawing.Size(268, 108);
             this.panel1.TabIndex = 8;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(201, 7);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(61, 13);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "Result Limit";
+            // 
+            // ckbFilterForThisUser
+            // 
+            this.ckbFilterForThisUser.AutoSize = true;
+            this.ckbFilterForThisUser.Checked = true;
+            this.ckbFilterForThisUser.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckbFilterForThisUser.Location = new System.Drawing.Point(5, 49);
+            this.ckbFilterForThisUser.Name = "ckbFilterForThisUser";
+            this.ckbFilterForThisUser.Size = new System.Drawing.Size(100, 17);
+            this.ckbFilterForThisUser.TabIndex = 12;
+            this.ckbFilterForThisUser.Text = "Filter my images";
+            this.ckbFilterForThisUser.UseVisualStyleBackColor = true;
+            this.ckbFilterForThisUser.CheckedChanged += new System.EventHandler(this.ckbLimitToUser_CheckedChanged);
+            // 
+            // nudResultCount
+            // 
+            this.nudResultCount.Location = new System.Drawing.Point(204, 23);
+            this.nudResultCount.Name = "nudResultCount";
+            this.nudResultCount.Size = new System.Drawing.Size(52, 20);
+            this.nudResultCount.TabIndex = 11;
+            this.nudResultCount.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudResultCount.ValueChanged += new System.EventHandler(this.nudResultCount_ValueChanged);
             // 
             // ckbFilterForNoLabels
             // 
@@ -228,6 +292,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.btnCreateComposite);
             this.panel2.Controls.Add(this.btnOpenImages);
             this.panel2.Controls.Add(this.btnOpenVideo);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -235,6 +300,17 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(268, 57);
             this.panel2.TabIndex = 10;
+            // 
+            // btnCreateComposite
+            // 
+            this.btnCreateComposite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreateComposite.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources.Composite_32x32;
+            this.btnCreateComposite.Location = new System.Drawing.Point(130, 11);
+            this.btnCreateComposite.Name = "btnCreateComposite";
+            this.btnCreateComposite.Size = new System.Drawing.Size(41, 41);
+            this.btnCreateComposite.TabIndex = 2;
+            this.btnCreateComposite.UseVisualStyleBackColor = true;
+            this.btnCreateComposite.Click += new System.EventHandler(this.btnCreateComposite_Click);
             // 
             // btnOpenImages
             // 
@@ -268,17 +344,6 @@
             this.tbpLabels.TabIndex = 0;
             this.tbpLabels.Text = "Labels";
             this.tbpLabels.UseVisualStyleBackColor = true;
-            // 
-            // trvLabels
-            // 
-            this.trvLabels.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trvLabels.ImageIndex = 0;
-            this.trvLabels.Location = new System.Drawing.Point(3, 3);
-            this.trvLabels.Name = "trvLabels";
-            this.trvLabels.SelectedImageIndex = 0;
-            this.trvLabels.ShowNodeToolTips = true;
-            this.trvLabels.Size = new System.Drawing.Size(268, 661);
-            this.trvLabels.TabIndex = 0;
             // 
             // tbpSettings
             // 
@@ -389,11 +454,19 @@
             // 
             // stsStatus
             // 
+            this.stsStatus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lblConnectedUser});
             this.stsStatus.Location = new System.Drawing.Point(0, 717);
             this.stsStatus.Name = "stsStatus";
             this.stsStatus.Size = new System.Drawing.Size(1209, 22);
             this.stsStatus.TabIndex = 9;
             this.stsStatus.Text = "statusStrip1";
+            // 
+            // lblConnectedUser
+            // 
+            this.lblConnectedUser.Name = "lblConnectedUser";
+            this.lblConnectedUser.Size = new System.Drawing.Size(118, 17);
+            this.lblConnectedUser.Text = "toolStripStatusLabel1";
             // 
             // lbiImage
             // 
@@ -403,18 +476,36 @@
             this.lbiImage.Size = new System.Drawing.Size(923, 693);
             this.lbiImage.TabIndex = 4;
             // 
-            // nudResultCount
+            // trvLabels
             // 
-            this.nudResultCount.Location = new System.Drawing.Point(213, 6);
-            this.nudResultCount.Name = "nudResultCount";
-            this.nudResultCount.Size = new System.Drawing.Size(52, 20);
-            this.nudResultCount.TabIndex = 11;
-            this.nudResultCount.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.nudResultCount.ValueChanged += new System.EventHandler(this.nudResultCount_ValueChanged);
+            this.trvLabels.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trvLabels.ImageIndex = 0;
+            this.trvLabels.Location = new System.Drawing.Point(3, 3);
+            this.trvLabels.Name = "trvLabels";
+            this.trvLabels.SelectedImageIndex = 0;
+            this.trvLabels.ShowNodeToolTips = true;
+            this.trvLabels.Size = new System.Drawing.Size(268, 661);
+            this.trvLabels.TabIndex = 0;
+            // 
+            // ckbFilterByLabel
+            // 
+            this.ckbFilterByLabel.AutoSize = true;
+            this.ckbFilterByLabel.Location = new System.Drawing.Point(5, 72);
+            this.ckbFilterByLabel.Name = "ckbFilterByLabel";
+            this.ckbFilterByLabel.Size = new System.Drawing.Size(87, 17);
+            this.ckbFilterByLabel.TabIndex = 14;
+            this.ckbFilterByLabel.Text = "Filter by label";
+            this.ckbFilterByLabel.UseVisualStyleBackColor = true;
+            this.ckbFilterByLabel.CheckedChanged += new System.EventHandler(this.ckbFilterByLabel_CheckedChanged);
+            // 
+            // txtSearchLabel
+            // 
+            this.txtSearchLabel.Location = new System.Drawing.Point(115, 69);
+            this.txtSearchLabel.Name = "txtSearchLabel";
+            this.txtSearchLabel.ReadOnly = true;
+            this.txtSearchLabel.Size = new System.Drawing.Size(141, 20);
+            this.txtSearchLabel.TabIndex = 10;
+            this.txtSearchLabel.DoubleClick += new System.EventHandler(this.txtSearchLabel_DoubleClick);
             // 
             // fMain
             // 
@@ -437,11 +528,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudResultCount)).EndInit();
             this.panel2.ResumeLayout(false);
             this.tbpLabels.ResumeLayout(false);
             this.tbpSettings.ResumeLayout(false);
             this.tbpSettings.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudResultCount)).EndInit();
+            this.stsStatus.ResumeLayout(false);
+            this.stsStatus.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -480,6 +573,14 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtProcessedFilesDir;
         private System.Windows.Forms.NumericUpDown nudResultCount;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox ckbFilterForThisUser;
+        private System.Windows.Forms.ToolStripStatusLabel lblConnectedUser;
+        private System.Windows.Forms.Button btnCreateComposite;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mniCheckForMissingFiles;
+        private System.Windows.Forms.TextBox txtSearchLabel;
+        private System.Windows.Forms.CheckBox ckbFilterByLabel;
     }
 }
 

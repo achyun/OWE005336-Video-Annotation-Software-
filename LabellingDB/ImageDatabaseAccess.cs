@@ -879,7 +879,7 @@ namespace LabellingDB
 
             return limg;
         }
-        public List<LabelledImage> Images_Get(bool filterForIncomplete, bool filterForNoLabels, bool filterForThisUser, bool filterByLabel, int labelID, int maxResults = 30)
+        public List<LabelledImage> Images_Get(bool filterForIncomplete, bool filterForNoLabels, bool filterForThisUser, bool filterByLabel, int labelID, string filePathSearchString, int maxResults = 30)
         {
             DataTable dt = new DataTable();
             List<LabelledImage> imageList = new List<LabelledImage>();
@@ -893,6 +893,7 @@ namespace LabellingDB
             if (filterForNoLabels) { filterCount++; }
             if (filterForThisUser) { filterCount++; }
             if (filterByLabel) { filterCount++; }
+            if (filePathSearchString != "") { filterCount++; }
 
             if (filterCount > 0) { cmd.CommandText += " WHERE"; }
 
@@ -925,6 +926,15 @@ namespace LabellingDB
                 if (andRequired) { cmd.CommandText += " AND"; }
                 cmd.CommandText += " (SELECT COUNT(bbox_labels.id) FROM bbox_labels WHERE bbox_labels.label_id = @label_id AND bbox_labels.image_id = images.id) > 0";
                 cmd.Parameters.Add("@label_id", SqlDbType.Int).Value = labelID;
+                filterCount--;
+                andRequired = true;
+            }
+
+            if (filePathSearchString != "")
+            {
+                if (andRequired) { cmd.CommandText += " AND"; }
+                cmd.CommandText += " images.filepath LIKE @search_string";
+                cmd.Parameters.Add("@search_string", SqlDbType.NVarChar).Value = filePathSearchString;
                 filterCount--;
                 andRequired = true;
             }
@@ -968,6 +978,42 @@ namespace LabellingDB
 
             return imageList;
         }
+
+        public LabelledImage Images_SearchByFileName(string fileName)
+        {
+            LabelledImage lImg = null;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlDataReader rdr = null;
+            SqlCommand cmd = new SqlCommand("SELECT id, filepath, image_width, image_height FROM images WHERE filepath LIKE @file_path", conn);
+            cmd.Parameters.Add("@file_path", SqlDbType.NVarChar).Value = fileName;
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                {
+                    int width = rdr.GetInt32(2);
+                    int height = rdr.GetInt32(3);
+                    lImg = new LabelledImage(new Size(width, height));
+                    lImg.ID = rdr.GetInt32(0);
+                    lImg.Filepath = rdr.GetString(1);
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'Images_SearchByFileName' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return lImg;
+        }
         public Task<Image> Images_LoadImageFile(LabelledImage lImg)
         {         
 
@@ -991,6 +1037,18 @@ namespace LabellingDB
         public Task<Image> Images_LoadImageThumbnail(LabelledImage lImg, Size maxSize)
         {
             return Task.Run(async () => {
+                Task<Image> imageTask = Images_LoadImageFile(lImg);
+                Image image = await imageTask;
+                if (image != null) { image = image.GetThumbnailImage(maxSize.Width, maxSize.Height, null, IntPtr.Zero); }
+
+                return image;
+            });
+        }
+
+        public Task<Image> Images_LoadImageThumbnail(string fileName, Size maxSize)
+        {
+            return Task.Run(async () => {
+                LabelledImage lImg = Images_SearchByFileName(fileName);
                 Task<Image> imageTask = Images_LoadImageFile(lImg);
                 Image image = await imageTask;
                 if (image != null) { image = image.GetThumbnailImage(maxSize.Width, maxSize.Height, null, IntPtr.Zero); }

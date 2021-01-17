@@ -41,6 +41,7 @@
             this.mniReformatAllImages = new System.Windows.Forms.ToolStripMenuItem();
             this.mniReformatPNGImages = new System.Windows.Forms.ToolStripMenuItem();
             this.mniReformatJPGImages = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniReviewTestData = new System.Windows.Forms.ToolStripMenuItem();
             this.tbcOptions = new System.Windows.Forms.TabControl();
             this.tbpImages = new System.Windows.Forms.TabPage();
             this.dgvImages = new System.Windows.Forms.DataGridView();
@@ -48,6 +49,8 @@
             this.Complete = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtSearchFilePathLike = new System.Windows.Forms.TextBox();
             this.txtSearchLabel = new System.Windows.Forms.TextBox();
             this.ckbFilterByLabel = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -75,9 +78,7 @@
             this.stsStatus = new System.Windows.Forms.StatusStrip();
             this.lblConnectedUser = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbiImage = new OWE005336__Video_Annotation_Software_.LabellingInterface();
-            this.txtSearchFilePathLike = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.mniReviewTestData = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniImportCOCOImages = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tbcOptions.SuspendLayout();
             this.tbpImages.SuspendLayout();
@@ -112,7 +113,7 @@
             // mniOpen
             // 
             this.mniOpen.Name = "mniOpen";
-            this.mniOpen.Size = new System.Drawing.Size(103, 22);
+            this.mniOpen.Size = new System.Drawing.Size(180, 22);
             this.mniOpen.Text = "Open";
             this.mniOpen.Click += new System.EventHandler(this.mniOpen_Click);
             // 
@@ -121,7 +122,8 @@
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniCheckForMissingFiles,
             this.reformatImageFilesToolStripMenuItem,
-            this.mniReviewTestData});
+            this.mniReviewTestData,
+            this.mniImportCOCOImages});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -146,23 +148,30 @@
             // mniReformatAllImages
             // 
             this.mniReformatAllImages.Name = "mniReformatAllImages";
-            this.mniReformatAllImages.Size = new System.Drawing.Size(180, 22);
+            this.mniReformatAllImages.Size = new System.Drawing.Size(129, 22);
             this.mniReformatAllImages.Text = "All Images";
             this.mniReformatAllImages.Click += new System.EventHandler(this.mniReformatAllImages_Click);
             // 
             // mniReformatPNGImages
             // 
             this.mniReformatPNGImages.Name = "mniReformatPNGImages";
-            this.mniReformatPNGImages.Size = new System.Drawing.Size(180, 22);
+            this.mniReformatPNGImages.Size = new System.Drawing.Size(129, 22);
             this.mniReformatPNGImages.Text = "*.png";
             this.mniReformatPNGImages.Click += new System.EventHandler(this.mniReformatPNGImages_Click);
             // 
             // mniReformatJPGImages
             // 
             this.mniReformatJPGImages.Name = "mniReformatJPGImages";
-            this.mniReformatJPGImages.Size = new System.Drawing.Size(180, 22);
+            this.mniReformatJPGImages.Size = new System.Drawing.Size(129, 22);
             this.mniReformatJPGImages.Text = "*.jpg";
             this.mniReformatJPGImages.Click += new System.EventHandler(this.mniReformatJPGImages_Click);
+            // 
+            // mniReviewTestData
+            // 
+            this.mniReviewTestData.Name = "mniReviewTestData";
+            this.mniReviewTestData.Size = new System.Drawing.Size(195, 22);
+            this.mniReviewTestData.Text = "Review Test Data";
+            this.mniReviewTestData.Click += new System.EventHandler(this.mniReviewTestData_Click);
             // 
             // tbcOptions
             // 
@@ -272,6 +281,23 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(268, 139);
             this.panel1.TabIndex = 8;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(5, 98);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(98, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Image file path like:";
+            // 
+            // txtSearchFilePathLike
+            // 
+            this.txtSearchFilePathLike.Location = new System.Drawing.Point(115, 95);
+            this.txtSearchFilePathLike.Name = "txtSearchFilePathLike";
+            this.txtSearchFilePathLike.Size = new System.Drawing.Size(141, 20);
+            this.txtSearchFilePathLike.TabIndex = 15;
+            this.txtSearchFilePathLike.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchFilePathLike_KeyDown);
             // 
             // txtSearchLabel
             // 
@@ -554,29 +580,12 @@
             this.lbiImage.Size = new System.Drawing.Size(923, 693);
             this.lbiImage.TabIndex = 4;
             // 
-            // txtSearchFilePathLike
+            // mniImportCOCOImages
             // 
-            this.txtSearchFilePathLike.Location = new System.Drawing.Point(115, 95);
-            this.txtSearchFilePathLike.Name = "txtSearchFilePathLike";
-            this.txtSearchFilePathLike.Size = new System.Drawing.Size(141, 20);
-            this.txtSearchFilePathLike.TabIndex = 15;
-            this.txtSearchFilePathLike.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchFilePathLike_KeyDown);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(5, 98);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(98, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Image file path like:";
-            // 
-            // mniReviewTestData
-            // 
-            this.mniReviewTestData.Name = "mniReviewTestData";
-            this.mniReviewTestData.Size = new System.Drawing.Size(195, 22);
-            this.mniReviewTestData.Text = "Review Test Data";
-            this.mniReviewTestData.Click += new System.EventHandler(this.mniReviewTestData_Click);
+            this.mniImportCOCOImages.Name = "mniImportCOCOImages";
+            this.mniImportCOCOImages.Size = new System.Drawing.Size(195, 22);
+            this.mniImportCOCOImages.Text = "Import COCO Images";
+            this.mniImportCOCOImages.Click += new System.EventHandler(this.mniImportCOCOImages_Click);
             // 
             // fMain
             // 
@@ -659,6 +668,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtSearchFilePathLike;
         private System.Windows.Forms.ToolStripMenuItem mniReviewTestData;
+        private System.Windows.Forms.ToolStripMenuItem mniImportCOCOImages;
     }
 }
 

@@ -45,6 +45,8 @@ namespace OWE005336__Video_Annotation_Software_
                             y *= lImg.ImageSize.Height;
                             width *= lImg.ImageSize.Width;
                             height *= lImg.ImageSize.Height;
+                            x -= width / 2;
+                            y -= height / 2;
                             RectangleF rect = new RectangleF(x, y, width, height);
                             LabelledROI roi = new LabelledROI(0, 0, Rectangle.Round(rect));
                             roi.LabelName = fields[0]; // this is the class ID
@@ -139,7 +141,21 @@ namespace OWE005336__Video_Annotation_Software_
 
                 foreach (LabelledROI lroi in lImg.LabelledROIs)
                 {
-                    rois.Add(new ROIObject(lroi.ROI, 1, lroi.LabelName));
+                    if (lroi.LabelName.Contains(':'))
+                    {
+                        string[] s = lroi.LabelName.Split(':');
+                        decimal conf = 0;
+                        decimal.TryParse(s[1], out conf);
+                        if (conf >= nudConfidence.Value)
+                        {
+                            rois.Add(new ROIObject(lroi.ROI, 1, lroi.LabelName));
+                        }
+                    }
+                    else
+                    {
+                        
+                    }
+                    
                 }
 
                 roiSelector1.LinkToLabelledImage(rois, frame);

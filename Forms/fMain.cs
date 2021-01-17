@@ -393,21 +393,38 @@ namespace OWE005336__Video_Annotation_Software_
                     string[] files = Directory.GetFiles(folderBrowserDialog.SelectedPath);
                     bool folderStructureOK = false;
 
-                    if (dirs.Length == 1 && files.Length == 1)
-                    {
-                        char sep = Path.DirectorySeparatorChar;
-                        string[] d = dirs[0].Split(sep);
+                    string labelDir = dirs.Where(x => x.Contains("Labels")).FirstOrDefault();
 
-                        if (d[d.Length - 1] == "Labels")
-                        {
-                            fReviewTestResults reviewTestResults = new fReviewTestResults(folderBrowserDialog.SelectedPath);
-                            reviewTestResults.Show();
-                            folderStructureOK = true;
-                        }
+                    if (labelDir != null)
+                    {
+                        fReviewTestResults reviewTestResults = new fReviewTestResults(folderBrowserDialog.SelectedPath);
+                        reviewTestResults.Show();
+                        folderStructureOK = true;
                     }
 
                     if (!folderStructureOK) { MessageBox.Show("Unexpected folder structure"); }
                     
+                }
+            }
+        }
+
+        private void mniImportCOCOImages_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string[] files = Directory.GetFiles(folderBrowserDialog.SelectedPath, "*.json");
+
+                    if (files.Length > 0)
+                    {
+                        fReviewCOCOImages reviewCOCOImages = new fReviewCOCOImages(files);
+                        reviewCOCOImages.Show();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No json files found");
+                    }
                 }
             }
         }

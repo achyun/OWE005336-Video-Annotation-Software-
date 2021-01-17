@@ -34,14 +34,18 @@
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.panel1 = new System.Windows.Forms.Panel();
             this.dgvImages = new System.Windows.Forms.DataGridView();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.LabelCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MaxConf = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MinConf = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.roiSelector1 = new OWE005336__Video_Annotation_Software_.ROISelector();
+            this.label1 = new System.Windows.Forms.Label();
+            this.nudConfidence = new System.Windows.Forms.NumericUpDown();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).BeginInit();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudConfidence)).BeginInit();
             this.SuspendLayout();
             // 
             // imgFrames
@@ -79,7 +83,9 @@
             // 
             // dgvImages
             // 
+            this.dgvImages.AllowUserToAddRows = false;
             this.dgvImages.AllowUserToDeleteRows = false;
+            this.dgvImages.AllowUserToResizeRows = false;
             this.dgvImages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvImages.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.LabelCount,
@@ -92,14 +98,6 @@
             this.dgvImages.Size = new System.Drawing.Size(342, 623);
             this.dgvImages.TabIndex = 4;
             this.dgvImages.SelectionChanged += new System.EventHandler(this.dgvImages_SelectionChanged);
-            // 
-            // panel2
-            // 
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 623);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(342, 106);
-            this.panel2.TabIndex = 5;
             // 
             // LabelCount
             // 
@@ -121,6 +119,16 @@
             this.FilePath.HeaderText = "File Path";
             this.FilePath.Name = "FilePath";
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.nudConfidence);
+            this.panel2.Controls.Add(this.label1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 623);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(342, 106);
+            this.panel2.TabIndex = 5;
+            // 
             // roiSelector1
             // 
             this.roiSelector1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -130,6 +138,32 @@
             this.roiSelector1.Size = new System.Drawing.Size(1121, 729);
             this.roiSelector1.TabIndex = 1;
             this.roiSelector1.Text = "roiSelector1";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 3);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(111, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Confidence Threshold";
+            // 
+            // nudConfidence
+            // 
+            this.nudConfidence.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.nudConfidence.Location = new System.Drawing.Point(9, 19);
+            this.nudConfidence.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudConfidence.Name = "nudConfidence";
+            this.nudConfidence.Size = new System.Drawing.Size(108, 20);
+            this.nudConfidence.TabIndex = 2;
             // 
             // fReviewTestResults
             // 
@@ -145,6 +179,9 @@
             this.Load += new System.EventHandler(this.fReviewTestResults_Load);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudConfidence)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -162,5 +199,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn MaxConf;
         private System.Windows.Forms.DataGridViewTextBoxColumn MinConf;
         private System.Windows.Forms.DataGridViewTextBoxColumn FilePath;
+        private System.Windows.Forms.NumericUpDown nudConfidence;
+        private System.Windows.Forms.Label label1;
     }
 }

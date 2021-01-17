@@ -1027,7 +1027,11 @@ namespace LabellingDB
                     byte[] b = File.ReadAllBytes(fullFilePath);
                     MemoryStream ms = new MemoryStream(b);
                     image = Image.FromStream(ms);
-
+                    if (image.Width != lImg.ImageSize.Width || image.Height != lImg.ImageSize.Height)
+                    {
+                        lImg.ImageSize = new Size(image.Width, image.Height);
+                        Images_UpdateSize(lImg);
+                    }
                 }
                 catch { }
 
@@ -1116,6 +1120,39 @@ namespace LabellingDB
             catch (Exception ex)
             {
                 //MessageBox.Show("Error in 'Images_Update' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+            }
+
+            return success;
+        }
+
+        public bool Images_UpdateSize(LabelledImage lImg)
+        {
+            bool success = false;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+
+            string commandString = "UPDATE images SET image_width = @width, image_height = @height WHERE id = @id";
+
+            SqlCommand cmd = new SqlCommand(commandString, conn);
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = lImg.ID;
+            cmd.Parameters.Add("@width", SqlDbType.Int).Value = lImg.ImageSize.Width;
+            cmd.Parameters.Add("@height", SqlDbType.Int).Value = lImg.ImageSize.Height;
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'Images_UpdateSize' : \r\n\r\n" + ex.ToString());
             }
             finally
             {

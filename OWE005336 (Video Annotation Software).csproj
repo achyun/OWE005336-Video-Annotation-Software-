@@ -50,8 +50,8 @@
     <Reference Include="FFmpeg.AutoGen, Version=4.3.0.1, Culture=neutral, PublicKeyToken=9b7632533a381715, processorArchitecture=MSIL">
       <HintPath>packages\FFmpeg.AutoGen.4.3.0.1\lib\net45\FFmpeg.AutoGen.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -153,6 +153,12 @@
     <Compile Include="CustomControls\LabelTree.Designer.cs">
       <DependentUpon>LabelTree.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DialogForms\fReviewCOCOImages.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fReviewCOCOImages.Designer.cs">
+      <DependentUpon>fReviewCOCOImages.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -225,6 +231,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\LabelTree.resx">
       <DependentUpon>LabelTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogForms\fReviewCOCOImages.resx">
+      <DependentUpon>fReviewCOCOImages.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

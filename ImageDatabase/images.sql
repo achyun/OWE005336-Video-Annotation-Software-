@@ -13,7 +13,8 @@
     [completed_by] CHAR(30) NULL, 
     [completed_date] DATETIME NULL, 
     [image_width] INT NOT NULL DEFAULT 0, 
-    [image_height] INT NOT NULL DEFAULT 0 
+    [image_height] INT NOT NULL DEFAULT 0, 
+    [is_test_image] BIT NOT NULL DEFAULT 0 
 )
 
 GO

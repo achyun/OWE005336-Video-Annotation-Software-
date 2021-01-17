@@ -8,15 +8,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Accord.Video.FFMPEG;
+using FFMediaToolkit.Decoding;
+using FFMediaToolkit.Graphics;
 using System.IO;
 using LabellingDB;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace OWE005336__Video_Annotation_Software_
 {
     public partial class fFrameGrabber : Form
     {
+        
         VideoFileReader _Reader;
+        MediaFile _File;
         int _LastFrameIndex = 0;
         bool _FrameRefreshRequired = true;
         Image _Frame;
@@ -35,19 +40,26 @@ namespace OWE005336__Video_Annotation_Software_
         public fFrameGrabber(string filePath)
         {
             InitializeComponent();
+            //_File = MediaFile.Open(filePath);
             _Reader = new VideoFileReader();
             _Reader.Open(filePath);
 
+            _Frame = _Reader.ReadVideoFrame(0);
+            //ImageData imgData = _File.Video.ReadFrame(0);
+            
+            //ConvertImageDataToBitmap(imgData);
             VideoFrameSize = new Size(_Reader.Width, _Reader.Height);
+            //VideoFrameSize = imgData.ImageSize;
 
             ckbArchiveVideo.Checked = Properties.Settings.Default.ArchiveVideos;
-            float videoLength_s = (float)(_Reader.FrameCount) / (float)(_Reader.FrameRate);
 
             _VideoName = Path.GetFileNameWithoutExtension(filePath);
 
-            _Frame = _Reader.ReadVideoFrame(0);
+            
             pcbFrame.BackgroundImage = _Frame;
+            //tkbScan.Maximum = _File.Video.Info.FrameCount - 1;
             tkbScan.Maximum = (int)_Reader.FrameCount - 1;
+            //cpsClipSelector.RegisterNewVideo((int)_File.Video.Info.FrameCount, 1 / (float)_File.Video.Info.AvgFrameRate);
             cpsClipSelector.RegisterNewVideo((int)_Reader.FrameCount, 1 / (float)_Reader.FrameRate.Value);
             _Timer = new System.Timers.Timer(100);
             _Timer.Elapsed += _Timer_Elapsed;
@@ -59,6 +71,34 @@ namespace OWE005336__Video_Annotation_Software_
             cmbSensorType.DataSource = Enum.GetValues(typeof(SensorTypeEnum));
             cmbSensorType.SelectedItem = SensorTypeEnum.Unknown;
             cmbSensorType.SelectedIndexChanged += CmbSensorType_SelectedIndexChanged;
+            tkbScan.MouseUp += TkbScan_MouseUp;
+            tkbScan.MouseLeave += TkbScan_MouseLeave;
+        }
+
+        private void ConvertImageDataToBitmap(ImageData imgData)
+        {
+            GCHandle pinned = GCHandle.Alloc(imgData.Data.ToArray(), GCHandleType.Pinned);
+            IntPtr address = pinned.AddrOfPinnedObject();
+            _Frame = new Bitmap(imgData.ImageSize.Width, imgData.ImageSize.Height, imgData.Stride, PixelFormat.Format24bppRgb, address);
+            pinned.Free();
+        }
+
+        private void TkbScan_MouseLeave(object sender, EventArgs e)
+        {
+            if (_LastFrameIndex != tkbScan.Value)
+            {
+                _FrameRefreshRequired = true;
+                _LastFrameIndex = tkbScan.Value;
+            }
+        }
+
+        private void TkbScan_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_LastFrameIndex != tkbScan.Value)
+            {
+                _FrameRefreshRequired = true;
+                _LastFrameIndex = tkbScan.Value;
+            }
         }
 
         private void CmbSensorType_SelectedIndexChanged(object sender, EventArgs e)
@@ -82,16 +122,19 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 _FrameRefreshRequired = false;
                 _Timer.Stop();
+                this.UseWaitCursor = true;
+                //ImageData imgData = _File.Video.ReadFrame(_LastFrameIndex);
+                //ConvertImageDataToBitmap(imgData);
                 _Frame = _Reader.ReadVideoFrame(_LastFrameIndex);
                 this.BeginInvoke(new Action(() => { pcbFrame.BackgroundImage = _Frame; }));
+                this.UseWaitCursor = false;
                 _Timer.Start();
             }
         }
 
         private void tkbScan_ValueChanged(object sender, EventArgs e)
         {
-            _FrameRefreshRequired = true;
-            _LastFrameIndex = tkbScan.Value;
+            
         }
 
         private void btnSaveFrame_Click(object sender, EventArgs e)

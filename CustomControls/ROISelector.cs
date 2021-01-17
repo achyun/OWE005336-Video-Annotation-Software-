@@ -383,8 +383,7 @@ namespace OWE005336__Video_Annotation_Software_
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);
-
-
+            
             using (var bmp = new Bitmap(this.Width, this.Height))
             {
                 using (var g = Graphics.FromImage(bmp))
@@ -394,7 +393,9 @@ namespace OWE005336__Video_Annotation_Software_
 
                     if (_Frame != null)
                     {
+                        _Frame.SetResolution(g.DpiX, g.DpiY);
                         g.DrawImage(_Frame, new PointF(0, 0));
+
                         if (SelectedROIIndex > -1 && (_HighlightedROIIndex == -1 || _HighlightedROIIndex == SelectedROIIndex))
                         {
                             SolidBrush b_transparent = new SolidBrush(Color.FromArgb(100, Color.Gray));
@@ -441,6 +442,7 @@ namespace OWE005336__Video_Annotation_Software_
         #region "Helper Functions"
         public void RemoveROIByIndex(int index)
         {
+            if (index == _SelectedROIIndex) { _SelectedROIIndex = -1; }
             _ROIs.RemoveAt(index);
             this.Refresh();
         }

@@ -93,6 +93,16 @@ namespace OWE005336__Video_Annotation_Software_.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Composite_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("Composite 32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap frame_512__32x32_ {
             get {
                 object obj = ResourceManager.GetObject("frame-512 (32x32)", resourceCulture);
@@ -126,6 +136,36 @@ namespace OWE005336__Video_Annotation_Software_.Properties {
         internal static System.Drawing.Bitmap plus_icon__32x32_ {
             get {
                 object obj = ResourceManager.GetObject("plus_icon (32x32)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap refresh_icon_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("refresh icon 32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Save_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("Save 32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Save_All_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("Save All 32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

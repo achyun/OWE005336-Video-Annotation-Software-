@@ -44,10 +44,32 @@
     <Reference Include="Accord.Video.FFMPEG, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=x86">
       <HintPath>packages\Accord.Video.FFMPEG.3.8.0\lib\net46\Accord.Video.FFMPEG.dll</HintPath>
     </Reference>
+    <Reference Include="FFMediaToolkit, Version=3.1.1.0, Culture=neutral, PublicKeyToken=d189edefb5fd2265, processorArchitecture=MSIL">
+      <HintPath>packages\FFMediaToolkit.3.1.1\lib\netstandard2.0\FFMediaToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="FFmpeg.AutoGen, Version=4.3.0.1, Culture=neutral, PublicKeyToken=9b7632533a381715, processorArchitecture=MSIL">
+      <HintPath>packages\FFmpeg.AutoGen.4.3.0.1\lib\net45\FFmpeg.AutoGen.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll</HintPath>
@@ -83,6 +105,24 @@
     <Compile Include="CustomControls\LabelButton.Designer.cs">
       <DependentUpon>LabelButton.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DialogForms\fMissingFiles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fMissingFiles.Designer.cs">
+      <DependentUpon>fMissingFiles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fReviewTestResults.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fReviewTestResults.Designer.cs">
+      <DependentUpon>fReviewTestResults.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\fCompositeCreator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\fCompositeCreator.Designer.cs">
+      <DependentUpon>fCompositeCreator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\fFrameGrabber.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,6 +152,12 @@
     </Compile>
     <Compile Include="CustomControls\LabelTree.Designer.cs">
       <DependentUpon>LabelTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fReviewCOCOImages.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fReviewCOCOImages.Designer.cs">
+      <DependentUpon>fReviewCOCOImages.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -156,6 +202,15 @@
     <Compile Include="CustomControls\TagTextBox.Designer.cs">
       <DependentUpon>TagTextBox.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Forms\DialogForms\fMissingFiles.resx">
+      <DependentUpon>fMissingFiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogForms\fReviewTestResults.resx">
+      <DependentUpon>fReviewTestResults.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\fCompositeCreator.resx">
+      <DependentUpon>fCompositeCreator.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\fFrameGrabber.resx">
       <DependentUpon>fFrameGrabber.cs</DependentUpon>
     </EmbeddedResource>
@@ -176,6 +231,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\LabelTree.resx">
       <DependentUpon>LabelTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogForms\fReviewCOCOImages.resx">
+      <DependentUpon>fReviewCOCOImages.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -238,7 +296,18 @@
       <Name>LabellingDB</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\refresh icon 32x32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Composite 32x32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Save 32x32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Save All 32x32.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Accord.3.8.0\build\Accord.targets" Condition="Exists('packages\Accord.3.8.0\build\Accord.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,42 +32,15 @@ namespace OWE005336__Video_Annotation_Software_
             txtImageDir.Text = imageDirPath;
             txtVideoArchiveDir.Text = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
             txtProcessedFilesDir.Text = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_PROCESSED_FILE_ARCHIVE_DIR);
-
+            lblConnectedUser.Text = "Connected as '" + Program.ImageDatabase.GetCurrentUser() + "'";
             LoadImages();
 
             dgvImages.DragEnter += dgvImages_DragEnter;
             dgvImages.DragDrop += dgvImages_DragDrop;
             dgvImages.SelectionChanged += dgvImages_SelectionChanged;
             dgvImages.CellValueChanged += dgvImages_CellValueChanged;
-        }
 
-        private void dgvImages_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            LabelledImage lImg = (LabelledImage)dgvImages.Rows[e.RowIndex].Tag;
-
-            if (e.ColumnIndex == dgvImages.Columns["Complete"].Index)
-            {
-                if (!_PaintDataInProgress.Locked)
-                {
-                    bool completeValue = (bool)dgvImages.CurrentCell.Value;
-
-                    bool imageDataIsValid = false;
-
-                    // if we're trying to mark the image as complete then check that the data is actually complete
-                    if (completeValue) { imageDataIsValid = CheckImageDataComplete(lImg); }
-                    
-                    if (!completeValue || imageDataIsValid)
-                    {
-                        lImg.Completed = (bool)dgvImages.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-                        Program.ImageDatabase.Images_Update(lImg);
-                    }
-                    else
-                    {
-                        dgvImages.RefreshEdit();
-                    }
-                    
-                }
-            }
+            dgvImages_SelectionChanged(null, null);
         }
 
         private bool CheckImageDataComplete(LabelledImage lImage)
@@ -85,13 +59,13 @@ namespace OWE005336__Video_Annotation_Software_
                 MessageBox.Show("Please select a sensor type", "Sensory Type Unknown", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
-            if (lImage.Tags == "")
-            {
-                if (MessageBox.Show("No tags have been provided.\r\n\r\nWould you like to continue?", "Incomplete attributes", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
-                {
-                    complete = false;
-                }
-            }
+            //if (lImage.Tags == "")
+            //{
+            //    if (MessageBox.Show("No tags have been provided.\r\n\r\nWould you like to continue?", "Incomplete attributes", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
+            //    {
+            //        complete = false;
+            //    }
+            //}
 
             if (lImage.LabelledROIs.Count == 0)
             {
@@ -361,6 +335,99 @@ namespace OWE005336__Video_Annotation_Software_
                 TestAndSaveDirectoryRef(txtProcessedFilesDir.Text, ImageDatabaseAccess.SETTING_PROCESSED_FILE_ARCHIVE_DIR);
             }
         }
+
+        private void nudResultCount_ValueChanged(object sender, EventArgs e)
+        {
+            LoadImages();
+        }
+
+        private void ckbLimitToUser_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadImages();
+        }
+
+        private void txtSearchFilePathLike_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                LoadImages();
+            }
+        }
+
+        private void dgvImages_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            LabelledImage lImg = (LabelledImage)dgvImages.Rows[e.RowIndex].Tag;
+
+            if (e.ColumnIndex == dgvImages.Columns["Complete"].Index)
+            {
+                if (!_PaintDataInProgress.Locked)
+                {
+                    bool completeValue = (bool)dgvImages.CurrentCell.Value;
+
+                    bool imageDataIsValid = false;
+
+                    // if we're trying to mark the image as complete then check that the data is actually complete
+                    if (completeValue) { imageDataIsValid = CheckImageDataComplete(lImg); }
+
+                    if (!completeValue || imageDataIsValid)
+                    {
+                        lImg.Completed = (bool)dgvImages.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                        Program.ImageDatabase.Images_Update(lImg);
+                    }
+                    else
+                    {
+                        dgvImages.RefreshEdit();
+                    }
+
+                }
+            }
+        }
+
+        private void mniReviewTestData_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string[] dirs = Directory.GetDirectories(folderBrowserDialog.SelectedPath);
+                    string[] files = Directory.GetFiles(folderBrowserDialog.SelectedPath);
+                    bool folderStructureOK = false;
+
+                    string labelDir = dirs.Where(x => x.Contains("Labels")).FirstOrDefault();
+
+                    if (labelDir != null)
+                    {
+                        fReviewTestResults reviewTestResults = new fReviewTestResults(folderBrowserDialog.SelectedPath);
+                        reviewTestResults.Show();
+                        folderStructureOK = true;
+                    }
+
+                    if (!folderStructureOK) { MessageBox.Show("Unexpected folder structure"); }
+                    
+                }
+            }
+        }
+
+        private void mniImportCOCOImages_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string[] files = Directory.GetFiles(folderBrowserDialog.SelectedPath, "*.json");
+
+                    if (files.Length > 0)
+                    {
+                        fReviewCOCOImages reviewCOCOImages = new fReviewCOCOImages(files);
+                        reviewCOCOImages.Show();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No json files found");
+                    }
+                }
+            }
+        }
         #endregion
 
         #region "Helper Functions"
@@ -516,7 +583,15 @@ namespace OWE005336__Video_Annotation_Software_
         }
         private void LoadImages()
         {
-            List<LabelledImage> lImages = Program.ImageDatabase.Images_Get(ckbFilterForIncomplete.Checked, ckbFilterForNoLabels.Checked);
+            bool filterByLabel = false;
+            int labelID = -1;
+
+            if (ckbFilterByLabel.Checked && txtSearchLabel.Tag != null)
+            {
+                filterByLabel = true;
+                labelID = (int)(txtSearchLabel.Tag);
+            }
+            List<LabelledImage> lImages = Program.ImageDatabase.Images_Get(ckbFilterForIncomplete.Checked, ckbFilterForNoLabels.Checked, ckbFilterForThisUser.Checked, filterByLabel, labelID, txtSearchFilePathLike.Text, (int)nudResultCount.Value);
 
             dgvImages.Rows.Clear();
             foreach (LabelledImage limg in lImages)
@@ -578,5 +653,180 @@ namespace OWE005336__Video_Annotation_Software_
 
             return success;
         }
+
+        private void btnCreateComposite_Click(object sender, EventArgs e)
+        {
+            using (fCompositeCreator compositeCreator = new fCompositeCreator())
+            {
+                if (compositeCreator.ShowDialog() == DialogResult.OK)
+                {
+
+                }
+            }
+        }
+
+        private void mniCheckForMissingFiles_Click(object sender, EventArgs e)
+        {
+            List<string> missingFiles = Program.ImageDatabase.CheckForMissingFiles();
+
+            fMissingFiles missingFilesForm = new fMissingFiles(missingFiles);
+
+            missingFilesForm.ShowDialog();
+        }
+
+        private void ckbFilterByLabel_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((ckbFilterByLabel.Checked && txtSearchLabel.Tag != null) || !ckbFilterByLabel.Checked)
+            {
+                LoadImages();
+            }
+            
+        }
+
+        private void txtSearchLabel_DoubleClick(object sender, EventArgs e)
+        {
+            fLabelSelector labelSelector = new fLabelSelector();
+            if (labelSelector.ShowDialog() == DialogResult.OK)
+            {
+                LabelNode l = labelSelector.SelectedLabel;
+                if (l.ParentID > -1)
+                {
+                    txtSearchLabel.Tag = l.ID;
+                    txtSearchLabel.Text = l.Name;
+                    if (ckbFilterByLabel.Checked) { LoadImages(); }
+                }
+            }
+        }
+
+        private void mniReformatAllImages_Click(object sender, EventArgs e)
+        {
+            string[] extensions = { ".png", ".jpg" };
+            SelectDirAndReformatImages(extensions.ToList());
+        }
+
+        private void mniReformatPNGImages_Click(object sender, EventArgs e)
+        {
+            string[] extensions = { ".png" };
+            SelectDirAndReformatImages(extensions.ToList());
+        }
+
+        private void mniReformatJPGImages_Click(object sender, EventArgs e)
+        {
+            string[] extensions = { ".jpg" };
+            SelectDirAndReformatImages(extensions.ToList());
+        }
+
+        private async void SelectDirAndReformatImages(List<string> extensionTypes)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    bool recursive = (MessageBox.Show("Would you like to reformat images in sub-folders?", "Search sub-folders", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes);
+
+                    ToolStripStatusLabel statusLabel = new ToolStripStatusLabel("0/0");
+                    stsStatus.Items.Add(statusLabel);
+
+                    await Task.Run(() => ReformatImagesInDir(folderBrowserDialog.SelectedPath, extensionTypes, recursive, 0, 0, statusLabel));
+
+                    await Task.Delay(750);
+                    stsStatus.Items.Remove(statusLabel);
+                }
+            }
+        }
+
+        private void ReformatImagesInDir(string dirPath, List<string> extensionTypes, bool recursive, int imageFoundCount, int imageProcessedCount, ToolStripStatusLabel statusLabel)
+        {
+            string[] filePaths = Directory.GetFiles(dirPath);
+            List<string> filteredFilePaths = new List<string>();
+
+            imageFoundCount += filePaths.Length;
+
+            for (int i = 0; i < filePaths.Length; i++)
+            {
+                if (extensionTypes.Count > 0)
+                {
+                    string ext = Path.GetExtension(filePaths[i]);
+                    if (extensionTypes.Contains(ext))
+                    {
+                        filteredFilePaths.Add(filePaths[i]);
+                    }
+                }
+            }
+
+            ReformatImagesFromList(filteredFilePaths, imageFoundCount, imageProcessedCount, statusLabel);
+            imageProcessedCount = imageFoundCount;
+            BeginInvoke((Action)(() => { statusLabel.Text = imageProcessedCount.ToString() + "/" + imageFoundCount.ToString(); }));
+
+            if (recursive)
+            {
+                string[] dirPaths = Directory.GetDirectories(dirPath);
+                for (int i = 0; i < dirPaths.Length; i++)
+                {
+                    ReformatImagesInDir(dirPaths[i], extensionTypes, recursive, imageFoundCount, imageProcessedCount, statusLabel);
+                }
+                    
+            }
+        }
+
+        private void ReformatImagesFromList(List<string> filePaths, int imageFoundCount, int imageProcessedCount, ToolStripStatusLabel statusLabel)
+        {
+            foreach (string fp in filePaths)
+            {
+                string ext = Path.GetExtension(fp);
+                if (ext == ".png")
+                {
+                    ReformatImage(fp, ImageFormat.Png);
+                }
+                else if (ext == ".jpg")
+                {
+                    ReformatImage(fp, ImageFormat.Jpeg);
+                }
+                imageProcessedCount++;
+                BeginInvoke((Action)(() => { statusLabel.Text = imageProcessedCount.ToString() + "/" + imageFoundCount.ToString(); }));
+            }
+        }
+
+        private void ReformatImage(string filePath, ImageFormat destFormat)
+        {
+            Rectangle rect;
+            Bitmap newImage;
+            // Get a bitmap.
+            using (Bitmap img = new Bitmap(filePath))
+            {
+                rect = new Rectangle(0, 0, img.Width, img.Height);
+                newImage = new Bitmap(img.Width, img.Height);
+                Graphics g = Graphics.FromImage(newImage);
+                g.DrawImage(img, 0, 0);
+                g.Dispose();
+            }
+
+            if (newImage != null)
+            {
+                newImage.Save(filePath, destFormat);
+            }
+
+            newImage.Dispose();
+        }
+
+        //private void ReformatImage(string filePath, ImageFormat destFormat)
+        //{
+        //    byte[] imgBytes;
+        //    Rectangle rect;
+        //    // Get a bitmap.
+        //    using (Bitmap img = new Bitmap(filePath))
+        //    {
+        //        rect = new Rectangle(0, 0, img.Width, img.Height);
+        //        ImageConverter converter = new ImageConverter();
+        //        imgBytes = (byte[])converter.ConvertTo(img, typeof(byte[]));
+        //    }
+        //    using (var ms = new MemoryStream(imgBytes))
+        //    {
+        //        using (Bitmap newImage = new Bitmap(ms))
+        //        {
+        //            newImage.Save(filePath, destFormat);
+        //        }
+        //    }
+        //}
     }
 }

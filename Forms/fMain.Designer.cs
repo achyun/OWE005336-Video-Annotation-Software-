@@ -35,6 +35,13 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mniFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mniOpen = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniCheckForMissingFiles = new System.Windows.Forms.ToolStripMenuItem();
+            this.reformatImageFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniReformatAllImages = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniReformatPNGImages = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniReformatJPGImages = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniReviewTestData = new System.Windows.Forms.ToolStripMenuItem();
             this.tbcOptions = new System.Windows.Forms.TabControl();
             this.tbpImages = new System.Windows.Forms.TabPage();
             this.dgvImages = new System.Windows.Forms.DataGridView();
@@ -42,9 +49,17 @@
             this.Complete = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtSearchFilePathLike = new System.Windows.Forms.TextBox();
+            this.txtSearchLabel = new System.Windows.Forms.TextBox();
+            this.ckbFilterByLabel = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ckbFilterForThisUser = new System.Windows.Forms.CheckBox();
+            this.nudResultCount = new System.Windows.Forms.NumericUpDown();
             this.ckbFilterForNoLabels = new System.Windows.Forms.CheckBox();
             this.ckbFilterForIncomplete = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnCreateComposite = new System.Windows.Forms.Button();
             this.btnOpenImages = new System.Windows.Forms.Button();
             this.btnOpenVideo = new System.Windows.Forms.Button();
             this.tbpLabels = new System.Windows.Forms.TabPage();
@@ -61,21 +76,26 @@
             this.txtImageDir = new System.Windows.Forms.TextBox();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.stsStatus = new System.Windows.Forms.StatusStrip();
+            this.lblConnectedUser = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbiImage = new OWE005336__Video_Annotation_Software_.LabellingInterface();
+            this.mniImportCOCOImages = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tbcOptions.SuspendLayout();
             this.tbpImages.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).BeginInit();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudResultCount)).BeginInit();
             this.panel2.SuspendLayout();
             this.tbpLabels.SuspendLayout();
             this.tbpSettings.SuspendLayout();
+            this.stsStatus.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mniFile});
+            this.mniFile,
+            this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1209, 24);
@@ -96,6 +116,62 @@
             this.mniOpen.Size = new System.Drawing.Size(180, 22);
             this.mniOpen.Text = "Open";
             this.mniOpen.Click += new System.EventHandler(this.mniOpen_Click);
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniCheckForMissingFiles,
+            this.reformatImageFilesToolStripMenuItem,
+            this.mniReviewTestData,
+            this.mniImportCOCOImages});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // mniCheckForMissingFiles
+            // 
+            this.mniCheckForMissingFiles.Name = "mniCheckForMissingFiles";
+            this.mniCheckForMissingFiles.Size = new System.Drawing.Size(195, 22);
+            this.mniCheckForMissingFiles.Text = "Check for Missing Files";
+            this.mniCheckForMissingFiles.Click += new System.EventHandler(this.mniCheckForMissingFiles_Click);
+            // 
+            // reformatImageFilesToolStripMenuItem
+            // 
+            this.reformatImageFilesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniReformatAllImages,
+            this.mniReformatPNGImages,
+            this.mniReformatJPGImages});
+            this.reformatImageFilesToolStripMenuItem.Name = "reformatImageFilesToolStripMenuItem";
+            this.reformatImageFilesToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.reformatImageFilesToolStripMenuItem.Text = "Reformat Image Files";
+            // 
+            // mniReformatAllImages
+            // 
+            this.mniReformatAllImages.Name = "mniReformatAllImages";
+            this.mniReformatAllImages.Size = new System.Drawing.Size(129, 22);
+            this.mniReformatAllImages.Text = "All Images";
+            this.mniReformatAllImages.Click += new System.EventHandler(this.mniReformatAllImages_Click);
+            // 
+            // mniReformatPNGImages
+            // 
+            this.mniReformatPNGImages.Name = "mniReformatPNGImages";
+            this.mniReformatPNGImages.Size = new System.Drawing.Size(129, 22);
+            this.mniReformatPNGImages.Text = "*.png";
+            this.mniReformatPNGImages.Click += new System.EventHandler(this.mniReformatPNGImages_Click);
+            // 
+            // mniReformatJPGImages
+            // 
+            this.mniReformatJPGImages.Name = "mniReformatJPGImages";
+            this.mniReformatJPGImages.Size = new System.Drawing.Size(129, 22);
+            this.mniReformatJPGImages.Text = "*.jpg";
+            this.mniReformatJPGImages.Click += new System.EventHandler(this.mniReformatJPGImages_Click);
+            // 
+            // mniReviewTestData
+            // 
+            this.mniReviewTestData.Name = "mniReviewTestData";
+            this.mniReviewTestData.Size = new System.Drawing.Size(195, 22);
+            this.mniReviewTestData.Text = "Review Test Data";
+            this.mniReviewTestData.Click += new System.EventHandler(this.mniReviewTestData_Click);
             // 
             // tbcOptions
             // 
@@ -163,7 +239,7 @@
             this.dgvImages.RowTemplate.Height = 50;
             this.dgvImages.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvImages.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvImages.Size = new System.Drawing.Size(268, 554);
+            this.dgvImages.Size = new System.Drawing.Size(268, 465);
             this.dgvImages.TabIndex = 9;
             this.dgvImages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvImages_KeyDown);
             // 
@@ -191,13 +267,97 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.txtSearchFilePathLike);
+            this.panel1.Controls.Add(this.txtSearchLabel);
+            this.panel1.Controls.Add(this.ckbFilterByLabel);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.ckbFilterForThisUser);
+            this.panel1.Controls.Add(this.nudResultCount);
             this.panel1.Controls.Add(this.ckbFilterForNoLabels);
             this.panel1.Controls.Add(this.ckbFilterForIncomplete);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(3, 557);
+            this.panel1.Location = new System.Drawing.Point(3, 468);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(268, 50);
+            this.panel1.Size = new System.Drawing.Size(268, 139);
             this.panel1.TabIndex = 8;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(5, 98);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(98, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Image file path like:";
+            // 
+            // txtSearchFilePathLike
+            // 
+            this.txtSearchFilePathLike.Location = new System.Drawing.Point(115, 95);
+            this.txtSearchFilePathLike.Name = "txtSearchFilePathLike";
+            this.txtSearchFilePathLike.Size = new System.Drawing.Size(141, 20);
+            this.txtSearchFilePathLike.TabIndex = 15;
+            this.txtSearchFilePathLike.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchFilePathLike_KeyDown);
+            // 
+            // txtSearchLabel
+            // 
+            this.txtSearchLabel.Location = new System.Drawing.Point(115, 69);
+            this.txtSearchLabel.Name = "txtSearchLabel";
+            this.txtSearchLabel.ReadOnly = true;
+            this.txtSearchLabel.Size = new System.Drawing.Size(141, 20);
+            this.txtSearchLabel.TabIndex = 10;
+            this.txtSearchLabel.DoubleClick += new System.EventHandler(this.txtSearchLabel_DoubleClick);
+            // 
+            // ckbFilterByLabel
+            // 
+            this.ckbFilterByLabel.AutoSize = true;
+            this.ckbFilterByLabel.Location = new System.Drawing.Point(5, 72);
+            this.ckbFilterByLabel.Name = "ckbFilterByLabel";
+            this.ckbFilterByLabel.Size = new System.Drawing.Size(87, 17);
+            this.ckbFilterByLabel.TabIndex = 14;
+            this.ckbFilterByLabel.Text = "Filter by label";
+            this.ckbFilterByLabel.UseVisualStyleBackColor = true;
+            this.ckbFilterByLabel.CheckedChanged += new System.EventHandler(this.ckbFilterByLabel_CheckedChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(201, 7);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(61, 13);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "Result Limit";
+            // 
+            // ckbFilterForThisUser
+            // 
+            this.ckbFilterForThisUser.AutoSize = true;
+            this.ckbFilterForThisUser.Checked = true;
+            this.ckbFilterForThisUser.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckbFilterForThisUser.Location = new System.Drawing.Point(5, 49);
+            this.ckbFilterForThisUser.Name = "ckbFilterForThisUser";
+            this.ckbFilterForThisUser.Size = new System.Drawing.Size(100, 17);
+            this.ckbFilterForThisUser.TabIndex = 12;
+            this.ckbFilterForThisUser.Text = "Filter my images";
+            this.ckbFilterForThisUser.UseVisualStyleBackColor = true;
+            this.ckbFilterForThisUser.CheckedChanged += new System.EventHandler(this.ckbLimitToUser_CheckedChanged);
+            // 
+            // nudResultCount
+            // 
+            this.nudResultCount.Location = new System.Drawing.Point(204, 23);
+            this.nudResultCount.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudResultCount.Name = "nudResultCount";
+            this.nudResultCount.Size = new System.Drawing.Size(52, 20);
+            this.nudResultCount.TabIndex = 11;
+            this.nudResultCount.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudResultCount.ValueChanged += new System.EventHandler(this.nudResultCount_ValueChanged);
             // 
             // ckbFilterForNoLabels
             // 
@@ -225,6 +385,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.btnCreateComposite);
             this.panel2.Controls.Add(this.btnOpenImages);
             this.panel2.Controls.Add(this.btnOpenVideo);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -232,6 +393,17 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(268, 57);
             this.panel2.TabIndex = 10;
+            // 
+            // btnCreateComposite
+            // 
+            this.btnCreateComposite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreateComposite.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources.Composite_32x32;
+            this.btnCreateComposite.Location = new System.Drawing.Point(130, 11);
+            this.btnCreateComposite.Name = "btnCreateComposite";
+            this.btnCreateComposite.Size = new System.Drawing.Size(41, 41);
+            this.btnCreateComposite.TabIndex = 2;
+            this.btnCreateComposite.UseVisualStyleBackColor = true;
+            this.btnCreateComposite.Click += new System.EventHandler(this.btnCreateComposite_Click);
             // 
             // btnOpenImages
             // 
@@ -386,11 +558,19 @@
             // 
             // stsStatus
             // 
+            this.stsStatus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lblConnectedUser});
             this.stsStatus.Location = new System.Drawing.Point(0, 717);
             this.stsStatus.Name = "stsStatus";
             this.stsStatus.Size = new System.Drawing.Size(1209, 22);
             this.stsStatus.TabIndex = 9;
             this.stsStatus.Text = "statusStrip1";
+            // 
+            // lblConnectedUser
+            // 
+            this.lblConnectedUser.Name = "lblConnectedUser";
+            this.lblConnectedUser.Size = new System.Drawing.Size(118, 17);
+            this.lblConnectedUser.Text = "toolStripStatusLabel1";
             // 
             // lbiImage
             // 
@@ -399,6 +579,13 @@
             this.lbiImage.Name = "lbiImage";
             this.lbiImage.Size = new System.Drawing.Size(923, 693);
             this.lbiImage.TabIndex = 4;
+            // 
+            // mniImportCOCOImages
+            // 
+            this.mniImportCOCOImages.Name = "mniImportCOCOImages";
+            this.mniImportCOCOImages.Size = new System.Drawing.Size(195, 22);
+            this.mniImportCOCOImages.Text = "Import COCO Images";
+            this.mniImportCOCOImages.Click += new System.EventHandler(this.mniImportCOCOImages_Click);
             // 
             // fMain
             // 
@@ -421,10 +608,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudResultCount)).EndInit();
             this.panel2.ResumeLayout(false);
             this.tbpLabels.ResumeLayout(false);
             this.tbpSettings.ResumeLayout(false);
             this.tbpSettings.PerformLayout();
+            this.stsStatus.ResumeLayout(false);
+            this.stsStatus.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -462,6 +652,23 @@
         private System.Windows.Forms.Button btnSelectProcessedFileArchiveDir;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtProcessedFilesDir;
+        private System.Windows.Forms.NumericUpDown nudResultCount;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox ckbFilterForThisUser;
+        private System.Windows.Forms.ToolStripStatusLabel lblConnectedUser;
+        private System.Windows.Forms.Button btnCreateComposite;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mniCheckForMissingFiles;
+        private System.Windows.Forms.TextBox txtSearchLabel;
+        private System.Windows.Forms.CheckBox ckbFilterByLabel;
+        private System.Windows.Forms.ToolStripMenuItem reformatImageFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mniReformatAllImages;
+        private System.Windows.Forms.ToolStripMenuItem mniReformatPNGImages;
+        private System.Windows.Forms.ToolStripMenuItem mniReformatJPGImages;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtSearchFilePathLike;
+        private System.Windows.Forms.ToolStripMenuItem mniReviewTestData;
+        private System.Windows.Forms.ToolStripMenuItem mniImportCOCOImages;
     }
 }
 

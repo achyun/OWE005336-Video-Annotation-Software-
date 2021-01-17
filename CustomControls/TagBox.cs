@@ -80,6 +80,8 @@ namespace OWE005336__Video_Annotation_Software_
             if (e.TagNeedsAddingToDatabase)
             {
                 Program.ImageDatabase.Tags_Add(sender.Text);
+                _AllowableTags.Clear();
+                _AllowableTags.AddRange(Program.ImageDatabase.Tags_Load());
             }
             TagsChanged?.Invoke(this, new EventArgs());
             this.Focus();

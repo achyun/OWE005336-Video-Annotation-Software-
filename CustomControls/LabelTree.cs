@@ -19,9 +19,14 @@ namespace OWE005336__Video_Annotation_Software_
         ToolStripMenuItem _AddFamilyButton = new ToolStripMenuItem("Add Family");
         ToolStripMenuItem _ImportFamilyButton = new ToolStripMenuItem("Import Family");
         ToolStripMenuItem _AddLabelButton = new ToolStripMenuItem("Add Label");
+        ToolStripMenuItem _CutButton = new ToolStripMenuItem("Cut");
+        ToolStripMenuItem _PasteButton = new ToolStripMenuItem("Paste");
         ToolStripMenuItem _RenameButton = new ToolStripMenuItem("Rename");
         ToolStripMenuItem _DeleteButton = new ToolStripMenuItem("Delete");
+        
         ToolStripMenuItem _ShortcutButton = new ToolStripMenuItem("Set Shortcut");
+
+        TreeNode _CutNode = null;
 
         public LabelTree()
         {
@@ -31,6 +36,8 @@ namespace OWE005336__Video_Annotation_Software_
             _ContextMenu.Items.Add(new ToolStripSeparator());
             _ContextMenu.Items.Add(_AddLabelButton);
             _ContextMenu.Items.Add(_RenameButton);
+            _ContextMenu.Items.Add(_CutButton);
+            _ContextMenu.Items.Add(_PasteButton);
             _ContextMenu.Items.Add(_DeleteButton);
             _ContextMenu.Items.Add(new ToolStripSeparator());
             _ContextMenu.Items.Add(_ShortcutButton);
@@ -58,9 +65,33 @@ namespace OWE005336__Video_Annotation_Software_
             _ImportFamilyButton.Click += _ImportFamilyButton_Click;
             _AddLabelButton.Click += _AddButton_Click;
             _RenameButton.Click += _RenameButton_Click;
+            _CutButton.Click += _CutButton_Click;
+            _PasteButton.Click += _PasteButton_Click;
             _DeleteButton.Click += _DeleteButton_Click;
 
             this.MouseDown += LabelTree_MouseDown;
+        }
+
+        private void _PasteButton_Click(object sender, EventArgs e)
+        {
+            LabelNode parentNode = (LabelNode)this.SelectedNode.Tag;
+            LabelNode cutNode = (LabelNode)_CutNode.Tag;
+
+            cutNode.ParentID = parentNode.ID;
+
+            Program.ImageDatabase.LabelTree_UpdateLabel(cutNode);
+            _CutNode.ForeColor = Color.Black;
+
+            PopulateLabels();
+        }
+
+        private void _CutButton_Click(object sender, EventArgs e)
+        {
+            if (_CutNode != null) { _CutNode.ForeColor = Color.Black; }
+
+            _CutNode = this.SelectedNode;
+
+            if (_CutNode != null) { _CutNode.ForeColor = Color.LightGray; }
         }
 
         public void SaveTreeState()
@@ -131,6 +162,8 @@ namespace OWE005336__Video_Annotation_Software_
                 _ImportFamilyButton.Enabled = true;
                 _AddLabelButton.Enabled = false;
                 _RenameButton.Enabled = false;
+                _CutButton.Enabled = false;
+                _PasteButton.Enabled = false;
                 _DeleteButton.Enabled = false;
                 _ShortcutButton.Enabled = false;
             }
@@ -140,6 +173,8 @@ namespace OWE005336__Video_Annotation_Software_
                 _ImportFamilyButton.Enabled = false;
                 _AddLabelButton.Enabled = true;
                 _RenameButton.Enabled = true;
+                _CutButton.Enabled = true;
+                _PasteButton.Enabled = (_CutNode != null);
                 _DeleteButton.Enabled = true;
 
                 LabelNode ln = (LabelNode)this.SelectedNode.Tag;
@@ -220,7 +255,8 @@ namespace OWE005336__Video_Annotation_Software_
                 if (getString.ShowDialog() == DialogResult.OK)
                 {
                     LabelNode n = (LabelNode)this.SelectedNode.Tag;
-                    if (Program.ImageDatabase.LabelTree_RenameLabel(n.ID, getString.ReturnString))
+                    n.Name = getString.ReturnString;
+                    if (Program.ImageDatabase.LabelTree_UpdateLabel(n))
                     {
                         n.Name = getString.ReturnString;
                         this.SelectedNode.Text = getString.ReturnString;
@@ -231,22 +267,29 @@ namespace OWE005336__Video_Annotation_Software_
         private void _DeleteButton_Click(object sender, EventArgs e)
         {
             LabelNode n = (LabelNode)this.SelectedNode.Tag;
-            if (Program.ImageDatabase.LabelTree_DeleteLabel(n))
+            if (Program.ImageDatabase.LabelTree_CheckIfLabelsAreUsed(n))
             {
-                TreeNode parentNode = this.SelectedNode.Parent;
-                if (parentNode == null)
+                MessageBox.Show("Unable to delete this label as it or one of its children is referenced by a bounding box", "Unable to delete", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                if (Program.ImageDatabase.LabelTree_DeleteLabel(n))
                 {
-                    this.Nodes.Remove(this.SelectedNode);
-                }
-                else
-                {
-                    parentNode.Nodes.Remove(this.SelectedNode);
-                    LabelNode pl = (LabelNode)parentNode.Tag;
-                    if (pl.ParentID > -1)
+                    TreeNode parentNode = this.SelectedNode.Parent;
+                    if (parentNode == null)
                     {
-                        if (parentNode.Nodes.Count == 0) { parentNode.ImageIndex = 2; parentNode.SelectedImageIndex = 2; }
+                        this.Nodes.Remove(this.SelectedNode);
                     }
+                    else
+                    {
+                        parentNode.Nodes.Remove(this.SelectedNode);
+                        LabelNode pl = (LabelNode)parentNode.Tag;
+                        if (pl.ParentID > -1)
+                        {
+                            if (parentNode.Nodes.Count == 0) { parentNode.ImageIndex = 2; parentNode.SelectedImageIndex = 2; }
+                        }
 
+                    }
                 }
             }
         }
@@ -254,6 +297,9 @@ namespace OWE005336__Video_Annotation_Software_
         public void PopulateLabels()
         {
             var labels = Program.ImageDatabase.LabelTree_LoadAll();
+
+            this.Nodes.Clear();
+
             foreach (LabelNode lbl in labels)
             {
                 var n = new TreeNode(lbl.Name);

@@ -69,7 +69,4 @@
     <Build Include="tags.sql" />
     <Build Include="videos.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <RefactorLog Include="ImageDatabase.refactorlog" />
-  </ItemGroup>
 </Project>

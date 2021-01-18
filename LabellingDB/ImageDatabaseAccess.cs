@@ -133,6 +133,170 @@ namespace LabellingDB
             return missingFiles;
         }
 
+        public void CropImages(string filepathFilter, Size filterSize, Size croppedSize)
+        {
+            List<string> imgsToCrop = new List<string>();
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlCommand cmd = new SqlCommand("SELECT images.id, filepath, MIN(bbox_labels.location_x) AS 'minx', MAX(bbox_labels.location_x + bbox_labels.size_width) AS 'maxx', MIN(bbox_labels.location_y) AS 'miny', MAX(bbox_labels.location_y + bbox_labels.size_height) AS 'maxy', images.rand_id " +
+                                                "FROM images, bbox_labels " +
+                                                "WHERE bbox_labels.image_id = images.id " +
+                                                    "AND images.filepath LIKE @filepath " +
+                                                    "AND image_width = @filter_width AND image_height = @filter_height " +
+                                                    "GROUP BY images.id, images.filepath, images.rand_id", conn);
+            //SqlCommand cmd = new SqlCommand("SELECT * " + //images.id, filepath, bbox_labels.location_x AS 'minx', bbox_labels.location_x + bbox_labels.size_width AS 'maxx', bbox_labels.location_y AS 'miny', bbox_labels.location_y + bbox_labels.size_height AS 'maxy', images.rand_id " +
+            //                                    "FROM images, bbox_labels " +
+            //                                    "WHERE bbox_labels.image_id = images.id " +
+            //                                        "AND images.filepath LIKE @filepath " +
+            //                                        "AND image_width = @filter_width AND image_height = @filter_height", conn);
+            //SqlCommand cmd = new SqlCommand("SELECT * " + //images.id, filepath, bbox_labels.location_x AS 'minx', bbox_labels.location_x + bbox_labels.size_width AS 'maxx', bbox_labels.location_y AS 'miny', bbox_labels.location_y + bbox_labels.size_height AS 'maxy', images.rand_id " +
+            //                                    "FROM images " +
+            //                                    "WHERE images.filepath LIKE @filepath " +
+            //                                        "AND image_width = @filter_width AND image_height = @filter_height", conn);
+
+            SqlDataReader rdr = null;
+            string dirPath = Settings_Get(SETTING_IMAGE_DIR);
+            string filePath;
+            int id, minX, maxX, minY, maxY;
+            double randID;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@filepath", filepathFilter);
+            cmd.Parameters.AddWithValue("@filter_width", filterSize.Width);
+            cmd.Parameters.AddWithValue("@filter_height", filterSize.Height);
+
+            try
+            {
+                conn.Open();
+                rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    id = rdr.GetInt32(0);
+                    filePath = Path.Combine(dirPath, rdr.GetString(1));
+                    minX = rdr.GetInt32(2);
+                    maxX = rdr.GetInt32(3);
+                    minY = rdr.GetInt32(4);
+                    maxY = rdr.GetInt32(5);
+                    randID = rdr.GetDouble(6);
+                    if (File.Exists(filePath))
+                    {
+                        System.Diagnostics.Debug.WriteLine(filePath);
+                        CropImage(id, filePath, filterSize, minX, maxX, minY, maxY, randID, croppedSize);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string str = ex.Message;
+                str += "Test";
+                int i = 4;
+                if (i > str.Length)
+                    i += 3;
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+        }
+
+        private void CropImage(int imageID, string filepath, Size imgSize, int minX, int maxX, int minY, int maxY, double randID, Size cropSize)
+        {
+            int cropRightMax = Math.Max(Math.Min(minX + cropSize.Width, imgSize.Width), maxX);
+            int cropLeftMin = Math.Min(Math.Max(maxX - cropSize.Width, 0), minX);
+            int cropBottomMax = Math.Max(Math.Min(minY + cropSize.Height, imgSize.Height), maxY);
+            int cropTopMin = Math.Min(Math.Max(maxY - cropSize.Height, 0), minY);
+            int cropLeft, cropRight, cropTop, cropBottom;
+            int deltaX = cropRightMax - cropLeftMin;
+            int deltaY = cropBottomMax - cropTopMin;
+            int newWidth, newHeight;
+
+            if (deltaX > cropSize.Width)
+            {
+                cropLeft = Math.Min(cropLeftMin + (int)(randID * (deltaX - cropSize.Width)), minX);
+                cropRight = Math.Max(cropLeft + cropSize.Width, maxX + 1);
+                newWidth = cropRight - cropLeft;
+            }
+            else
+            {
+                cropLeft = cropLeftMin;
+                cropRight = cropRightMax;
+                newWidth = cropRight - cropLeft;
+            }
+
+            if (deltaY > cropSize.Height)
+            {
+                cropTop = Math.Min(cropTopMin + (int)(randID * (deltaY - cropSize.Height)), minY);
+                cropBottom = Math.Max(cropTop + cropSize.Height, maxY + 1);
+                newHeight = cropBottom - cropTop;
+            }
+            else
+            {
+                cropTop = cropTopMin;
+                cropBottom = cropBottomMax;
+                newHeight = cropBottom - cropTop;
+            }
+
+            byte[] b = File.ReadAllBytes(filepath);
+            MemoryStream ms = new MemoryStream(b);
+            Image origianlImage = Image.FromStream(ms);
+
+            Image croppedImage = new Bitmap(newWidth, newHeight);
+            Rectangle cropRect = new Rectangle(new Point(cropLeft, cropTop), new Size(newWidth, newHeight));
+            using (Graphics g = Graphics.FromImage(croppedImage))
+            {
+                g.DrawImage(origianlImage, new Rectangle(0, 0, croppedImage.Width, croppedImage.Height),
+                               cropRect,
+                               GraphicsUnit.Pixel);
+            }
+
+            try
+            {
+                System.Diagnostics.Debug.WriteLine(cropRect.ToString());
+                croppedImage.Save(filepath);
+                CropUpdateBboxLocations(imageID, cropLeft, cropTop, newWidth, newHeight);
+            }
+            catch (Exception ex) 
+            {
+            
+            }
+            
+        }
+
+        private void CropUpdateBboxLocations(int imageID, int x, int y, int width, int height)
+        {
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+
+            string commandStringBbox = "UPDATE bbox_labels SET bbox_labels.location_x = bbox_labels.location_x - @x, bbox_labels.location_y = bbox_labels.location_y - @y WHERE image_id = @image_id";
+            string commandStringImgs = "UPDATE images SET image_width = @width, image_height = @height WHERE id = @image_id";
+            SqlCommand cmdBbox = new SqlCommand(commandStringBbox, conn);
+            SqlCommand cmdImgs = new SqlCommand(commandStringImgs, conn);
+            cmdBbox.Parameters.Add("@image_id", SqlDbType.Int).Value = imageID;
+            cmdBbox.Parameters.Add("@x", SqlDbType.Int).Value = x;
+            cmdBbox.Parameters.Add("@y", SqlDbType.Int).Value = y;
+            cmdImgs.Parameters.Add("@image_id", SqlDbType.Int).Value = imageID;
+            cmdImgs.Parameters.Add("@width", SqlDbType.Int).Value = width;
+            cmdImgs.Parameters.Add("@height", SqlDbType.Int).Value = height;
+
+            cmdBbox.CommandType = CommandType.Text;
+            cmdImgs.CommandType = CommandType.Text;
+
+            try
+            {
+                conn.Open();
+
+                
+                cmdBbox.ExecuteNonQuery();
+                cmdImgs.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'Images_Update' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+            }
+        }
+
         #region "LabelTree"
         public List<LabelNode> LabelTree_LoadByParentID(int parentID = -1)
         {

@@ -33,6 +33,9 @@ namespace OWE005336__Video_Annotation_Software_
             txtVideoArchiveDir.Text = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_VIDEO_ARCHIVE_DIR);
             txtProcessedFilesDir.Text = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_PROCESSED_FILE_ARCHIVE_DIR);
             lblConnectedUser.Text = "Connected as '" + Program.ImageDatabase.GetCurrentUser() + "'";
+
+
+            //Program.ImageDatabase.CropImages("%2021-01-17%", new Size(1920, 1080), new Size(1080, 1080));
             LoadImages();
 
             dgvImages.DragEnter += dgvImages_DragEnter;

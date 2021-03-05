@@ -111,6 +111,12 @@
     <Compile Include="Forms\DialogForms\fMissingFiles.Designer.cs">
       <DependentUpon>fMissingFiles.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DialogForms\fProcessTrackerImages.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fProcessTrackerImages.Designer.cs">
+      <DependentUpon>fProcessTrackerImages.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\DialogForms\fReviewTestResults.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,6 +210,9 @@
     </Compile>
     <EmbeddedResource Include="Forms\DialogForms\fMissingFiles.resx">
       <DependentUpon>fMissingFiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DialogForms\fProcessTrackerImages.resx">
+      <DependentUpon>fProcessTrackerImages.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DialogForms\fReviewTestResults.resx">
       <DependentUpon>fReviewTestResults.cs</DependentUpon>

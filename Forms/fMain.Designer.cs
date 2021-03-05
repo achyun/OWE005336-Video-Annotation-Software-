@@ -42,6 +42,7 @@
             this.mniReformatPNGImages = new System.Windows.Forms.ToolStripMenuItem();
             this.mniReformatJPGImages = new System.Windows.Forms.ToolStripMenuItem();
             this.mniReviewTestData = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniImportCOCOImages = new System.Windows.Forms.ToolStripMenuItem();
             this.tbcOptions = new System.Windows.Forms.TabControl();
             this.tbpImages = new System.Windows.Forms.TabPage();
             this.dgvImages = new System.Windows.Forms.DataGridView();
@@ -59,9 +60,6 @@
             this.ckbFilterForNoLabels = new System.Windows.Forms.CheckBox();
             this.ckbFilterForIncomplete = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.btnCreateComposite = new System.Windows.Forms.Button();
-            this.btnOpenImages = new System.Windows.Forms.Button();
-            this.btnOpenVideo = new System.Windows.Forms.Button();
             this.tbpLabels = new System.Windows.Forms.TabPage();
             this.trvLabels = new OWE005336__Video_Annotation_Software_.LabelTree();
             this.tbpSettings = new System.Windows.Forms.TabPage();
@@ -78,7 +76,10 @@
             this.stsStatus = new System.Windows.Forms.StatusStrip();
             this.lblConnectedUser = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbiImage = new OWE005336__Video_Annotation_Software_.LabellingInterface();
-            this.mniImportCOCOImages = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnCreateComposite = new System.Windows.Forms.Button();
+            this.btnOpenImages = new System.Windows.Forms.Button();
+            this.btnOpenVideo = new System.Windows.Forms.Button();
+            this.mniReviewTrackerImages = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tbcOptions.SuspendLayout();
             this.tbpImages.SuspendLayout();
@@ -113,7 +114,7 @@
             // mniOpen
             // 
             this.mniOpen.Name = "mniOpen";
-            this.mniOpen.Size = new System.Drawing.Size(180, 22);
+            this.mniOpen.Size = new System.Drawing.Size(103, 22);
             this.mniOpen.Text = "Open";
             this.mniOpen.Click += new System.EventHandler(this.mniOpen_Click);
             // 
@@ -123,7 +124,8 @@
             this.mniCheckForMissingFiles,
             this.reformatImageFilesToolStripMenuItem,
             this.mniReviewTestData,
-            this.mniImportCOCOImages});
+            this.mniImportCOCOImages,
+            this.mniReviewTrackerImages});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -172,6 +174,13 @@
             this.mniReviewTestData.Size = new System.Drawing.Size(195, 22);
             this.mniReviewTestData.Text = "Review Test Data";
             this.mniReviewTestData.Click += new System.EventHandler(this.mniReviewTestData_Click);
+            // 
+            // mniImportCOCOImages
+            // 
+            this.mniImportCOCOImages.Name = "mniImportCOCOImages";
+            this.mniImportCOCOImages.Size = new System.Drawing.Size(195, 22);
+            this.mniImportCOCOImages.Text = "Import COCO Images";
+            this.mniImportCOCOImages.Click += new System.EventHandler(this.mniImportCOCOImages_Click);
             // 
             // tbcOptions
             // 
@@ -394,39 +403,6 @@
             this.panel2.Size = new System.Drawing.Size(268, 57);
             this.panel2.TabIndex = 10;
             // 
-            // btnCreateComposite
-            // 
-            this.btnCreateComposite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreateComposite.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources.Composite_32x32;
-            this.btnCreateComposite.Location = new System.Drawing.Point(130, 11);
-            this.btnCreateComposite.Name = "btnCreateComposite";
-            this.btnCreateComposite.Size = new System.Drawing.Size(41, 41);
-            this.btnCreateComposite.TabIndex = 2;
-            this.btnCreateComposite.UseVisualStyleBackColor = true;
-            this.btnCreateComposite.Click += new System.EventHandler(this.btnCreateComposite_Click);
-            // 
-            // btnOpenImages
-            // 
-            this.btnOpenImages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenImages.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources._1200px_OneDrive_Folder_Icon__32x32_;
-            this.btnOpenImages.Location = new System.Drawing.Point(177, 11);
-            this.btnOpenImages.Name = "btnOpenImages";
-            this.btnOpenImages.Size = new System.Drawing.Size(41, 41);
-            this.btnOpenImages.TabIndex = 1;
-            this.btnOpenImages.UseVisualStyleBackColor = true;
-            this.btnOpenImages.Click += new System.EventHandler(this.btnOpenImages_Click);
-            // 
-            // btnOpenVideo
-            // 
-            this.btnOpenVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenVideo.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources.frame_512__32x32_;
-            this.btnOpenVideo.Location = new System.Drawing.Point(224, 11);
-            this.btnOpenVideo.Name = "btnOpenVideo";
-            this.btnOpenVideo.Size = new System.Drawing.Size(41, 41);
-            this.btnOpenVideo.TabIndex = 0;
-            this.btnOpenVideo.UseVisualStyleBackColor = true;
-            this.btnOpenVideo.Click += new System.EventHandler(this.btnOpenVideo_Click);
-            // 
             // tbpLabels
             // 
             this.tbpLabels.Controls.Add(this.trvLabels);
@@ -580,12 +556,45 @@
             this.lbiImage.Size = new System.Drawing.Size(923, 693);
             this.lbiImage.TabIndex = 4;
             // 
-            // mniImportCOCOImages
+            // btnCreateComposite
             // 
-            this.mniImportCOCOImages.Name = "mniImportCOCOImages";
-            this.mniImportCOCOImages.Size = new System.Drawing.Size(195, 22);
-            this.mniImportCOCOImages.Text = "Import COCO Images";
-            this.mniImportCOCOImages.Click += new System.EventHandler(this.mniImportCOCOImages_Click);
+            this.btnCreateComposite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreateComposite.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources.Composite_32x32;
+            this.btnCreateComposite.Location = new System.Drawing.Point(130, 11);
+            this.btnCreateComposite.Name = "btnCreateComposite";
+            this.btnCreateComposite.Size = new System.Drawing.Size(41, 41);
+            this.btnCreateComposite.TabIndex = 2;
+            this.btnCreateComposite.UseVisualStyleBackColor = true;
+            this.btnCreateComposite.Click += new System.EventHandler(this.btnCreateComposite_Click);
+            // 
+            // btnOpenImages
+            // 
+            this.btnOpenImages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOpenImages.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources._1200px_OneDrive_Folder_Icon__32x32_;
+            this.btnOpenImages.Location = new System.Drawing.Point(177, 11);
+            this.btnOpenImages.Name = "btnOpenImages";
+            this.btnOpenImages.Size = new System.Drawing.Size(41, 41);
+            this.btnOpenImages.TabIndex = 1;
+            this.btnOpenImages.UseVisualStyleBackColor = true;
+            this.btnOpenImages.Click += new System.EventHandler(this.btnOpenImages_Click);
+            // 
+            // btnOpenVideo
+            // 
+            this.btnOpenVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOpenVideo.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources.frame_512__32x32_;
+            this.btnOpenVideo.Location = new System.Drawing.Point(224, 11);
+            this.btnOpenVideo.Name = "btnOpenVideo";
+            this.btnOpenVideo.Size = new System.Drawing.Size(41, 41);
+            this.btnOpenVideo.TabIndex = 0;
+            this.btnOpenVideo.UseVisualStyleBackColor = true;
+            this.btnOpenVideo.Click += new System.EventHandler(this.btnOpenVideo_Click);
+            // 
+            // mniReviewTrackerImages
+            // 
+            this.mniReviewTrackerImages.Name = "mniReviewTrackerImages";
+            this.mniReviewTrackerImages.Size = new System.Drawing.Size(195, 22);
+            this.mniReviewTrackerImages.Text = "Review Tracker Images";
+            this.mniReviewTrackerImages.Click += new System.EventHandler(this.mniReviewTrackerImages_Click);
             // 
             // fMain
             // 
@@ -669,6 +678,7 @@
         private System.Windows.Forms.TextBox txtSearchFilePathLike;
         private System.Windows.Forms.ToolStripMenuItem mniReviewTestData;
         private System.Windows.Forms.ToolStripMenuItem mniImportCOCOImages;
+        private System.Windows.Forms.ToolStripMenuItem mniReviewTrackerImages;
     }
 }
 

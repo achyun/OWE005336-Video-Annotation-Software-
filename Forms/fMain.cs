@@ -812,6 +812,18 @@ namespace OWE005336__Video_Annotation_Software_
             newImage.Dispose();
         }
 
+        private void mniReviewTrackerImages_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    fProcessTrackerImages form = new fProcessTrackerImages(folderBrowserDialog.SelectedPath);
+                    form.ShowDialog();
+                }
+            }
+        }
+
         //private void ReformatImage(string filePath, ImageFormat destFormat)
         //{
         //    byte[] imgBytes;

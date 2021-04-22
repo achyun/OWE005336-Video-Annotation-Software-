@@ -1644,7 +1644,7 @@ namespace LabellingDB
 
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT id, name, sql, created_by, pad_train, pad_valid, pad_test, pct_train, pct_valid, pct_test, min_pixels FROM classificationexporttasks", conn);
+            SqlCommand cmd = new SqlCommand("SELECT id, name, sql, created_by, pad_train, pad_valid, pad_test, pct_train, pct_valid, pct_test, min_pixels_train, min_pixels_valid, min_pixels_test FROM classificationexporttasks", conn);
 
             if (id >= 0)
             {
@@ -1665,13 +1665,18 @@ namespace LabellingDB
                     t.Name = rdr.GetString(1);
                     t.SQL = rdr.GetString(2);
                     t.CreatedBy = rdr.GetString(3);
+
                     t.PadTrainingData = rdr.GetBoolean(4);
                     t.PadValidationData = rdr.GetBoolean(5);
                     t.PadTestData = rdr.GetBoolean(6);
+
                     t.TrainingPercent = rdr.GetDouble(7);
                     t.ValidationPercent = rdr.GetDouble(8);
                     t.TestPercent = rdr.GetDouble(9);
-                    t.MinPixels = rdr.GetInt32(10);
+
+                    t.MinPixelsTrain = rdr.GetInt32(10);
+                    t.MinPixelsValidation = rdr.GetInt32(11);
+                    t.MinPixelsTest = rdr.GetInt32(12);
                     tasks.Add(t);
                 }
             }
@@ -1728,7 +1733,11 @@ namespace LabellingDB
         {
             bool success = false;
             SqlConnection conn = new SqlConnection(_ConnectionString);
-            SqlCommand cmd = new SqlCommand("UPDATE classificationexporttasks SET classificationexporttasks.name = @name, classificationexporttasks.sql = @sql, pad_train = @pad_train, pad_valid = @pad_valid, pad_test = @pad_test, pct_train = @pct_train, pct_valid = @pct_valid, pct_test = @pct_test, min_pixels = @min_pixels WHERE id = @id", conn);
+            SqlCommand cmd = new SqlCommand("UPDATE classificationexporttasks SET classificationexporttasks.name = @name, classificationexporttasks.sql = @sql, " + 
+                                                    "pad_train = @pad_train, pad_valid = @pad_valid, pad_test = @pad_test, " + 
+                                                    "pct_train = @pct_train, pct_valid = @pct_valid, pct_test = @pct_test, " +
+                                                    "min_pixels_train = @min_pixels_train, min_pixels_valid = @min_pixels_valid, min_pixels_test = @min_pixels_test " + 
+                                            "WHERE id = @id", conn);
 
             cmd.Parameters.Add("@id", SqlDbType.Int).Value = task.ID;
             cmd.Parameters.Add("@name", SqlDbType.NVarChar).Value = task.Name;
@@ -1742,7 +1751,9 @@ namespace LabellingDB
             cmd.Parameters.Add("@pct_valid", SqlDbType.Float).Value = task.ValidationPercent;
             cmd.Parameters.Add("@pct_test", SqlDbType.Float).Value = task.TestPercent;
 
-            cmd.Parameters.Add("@min_pixels", SqlDbType.Int).Value = task.MinPixels;
+            cmd.Parameters.Add("@min_pixels_train", SqlDbType.Int).Value = task.MinPixelsTrain;
+            cmd.Parameters.Add("@min_pixels_valid", SqlDbType.Int).Value = task.MinPixelsValidation;
+            cmd.Parameters.Add("@min_pixels_test", SqlDbType.Int).Value = task.MinPixelsTest;
 
             try
             {
@@ -1940,7 +1951,9 @@ namespace LabellingDB
         public double TrainingPercent = 75;// { get; set; }
         public double ValidationPercent = 15;// { get; set; }
         public double TestPercent = 10;// { get; set; }
-        public int MinPixels = 0;
+        public int MinPixelsTrain = 0;
+        public int MinPixelsValidation = 0;
+        public int MinPixelsTest = 0;
     }
 
     public enum SensorTypeEnum

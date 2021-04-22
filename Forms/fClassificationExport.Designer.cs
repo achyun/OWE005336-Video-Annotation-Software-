@@ -32,6 +32,9 @@
             this.txtSQL = new System.Windows.Forms.TextBox();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.nudMinPixelsTrain = new System.Windows.Forms.NumericUpDown();
             this.btnSave = new System.Windows.Forms.Button();
             this.ckbPadTrainData = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -52,11 +55,15 @@
             this.dgvResults = new System.Windows.Forms.DataGridView();
             this.panel4 = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
-            this.nudMinPixels = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.nudMinPixelsValidation = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.nudMinPixelsTest = new System.Windows.Forms.NumericUpDown();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsTrain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTrainPct)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTestPct)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValidPct)).BeginInit();
@@ -64,7 +71,8 @@
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).BeginInit();
             this.panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMinPixels)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsValidation)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsTest)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -99,9 +107,15 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label9);
+            this.panel3.Controls.Add(this.label10);
+            this.panel3.Controls.Add(this.nudMinPixelsTest);
+            this.panel3.Controls.Add(this.label7);
+            this.panel3.Controls.Add(this.label8);
+            this.panel3.Controls.Add(this.nudMinPixelsValidation);
             this.panel3.Controls.Add(this.label6);
             this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.nudMinPixels);
+            this.panel3.Controls.Add(this.nudMinPixelsTrain);
             this.panel3.Controls.Add(this.btnSave);
             this.panel3.Controls.Add(this.ckbPadTrainData);
             this.panel3.Controls.Add(this.label3);
@@ -117,6 +131,36 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(828, 71);
             this.panel3.TabIndex = 12;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(380, 4);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(106, 13);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Min Train Image Size";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(574, 4);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(33, 13);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "pixels";
+            // 
+            // nudMinPixelsTrain
+            // 
+            this.nudMinPixelsTrain.Location = new System.Drawing.Point(510, 2);
+            this.nudMinPixelsTrain.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudMinPixelsTrain.Name = "nudMinPixelsTrain";
+            this.nudMinPixelsTrain.Size = new System.Drawing.Size(63, 20);
+            this.nudMinPixelsTrain.TabIndex = 12;
             // 
             // btnSave
             // 
@@ -315,35 +359,65 @@
             this.label4.TabIndex = 17;
             this.label4.Text = "Output Directory";
             // 
-            // nudMinPixels
+            // label7
             // 
-            this.nudMinPixels.Location = new System.Drawing.Point(469, 3);
-            this.nudMinPixels.Maximum = new decimal(new int[] {
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(380, 26);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(128, 13);
+            this.label7.TabIndex = 17;
+            this.label7.Text = "Min Validation Image Size";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(574, 26);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(33, 13);
+            this.label8.TabIndex = 16;
+            this.label8.Text = "pixels";
+            // 
+            // nudMinPixelsValidation
+            // 
+            this.nudMinPixelsValidation.Location = new System.Drawing.Point(510, 24);
+            this.nudMinPixelsValidation.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
-            this.nudMinPixels.Name = "nudMinPixels";
-            this.nudMinPixels.Size = new System.Drawing.Size(63, 20);
-            this.nudMinPixels.TabIndex = 12;
+            this.nudMinPixelsValidation.Name = "nudMinPixelsValidation";
+            this.nudMinPixelsValidation.Size = new System.Drawing.Size(63, 20);
+            this.nudMinPixelsValidation.TabIndex = 15;
             // 
-            // label5
+            // label9
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(533, 5);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(33, 13);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "pixels";
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(380, 49);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(103, 13);
+            this.label9.TabIndex = 20;
+            this.label9.Text = "Min Test Image Size";
             // 
-            // label6
+            // label10
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(384, 5);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(79, 13);
-            this.label6.TabIndex = 14;
-            this.label6.Text = "Min Image Size";
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(574, 49);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(33, 13);
+            this.label10.TabIndex = 19;
+            this.label10.Text = "pixels";
+            // 
+            // nudMinPixelsTest
+            // 
+            this.nudMinPixelsTest.Location = new System.Drawing.Point(510, 47);
+            this.nudMinPixelsTest.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudMinPixelsTest.Name = "nudMinPixelsTest";
+            this.nudMinPixelsTest.Size = new System.Drawing.Size(63, 20);
+            this.nudMinPixelsTest.TabIndex = 18;
             // 
             // fClassificationExport
             // 
@@ -359,6 +433,7 @@
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsTrain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTrainPct)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTestPct)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValidPct)).EndInit();
@@ -367,7 +442,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).EndInit();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMinPixels)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsValidation)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsTest)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -400,6 +476,12 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown nudMinPixels;
+        private System.Windows.Forms.NumericUpDown nudMinPixelsTrain;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown nudMinPixelsTest;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.NumericUpDown nudMinPixelsValidation;
     }
 }

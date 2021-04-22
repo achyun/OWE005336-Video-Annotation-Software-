@@ -42,7 +42,9 @@ namespace OWE005336__Video_Annotation_Software_
                     task.TestPercent = 100.0 * (double)nudTestPct.Value / total;
                 }
 
-                task.MinPixels = (int)nudMinPixels.Value;
+                task.MinPixelsTrain = (int)nudMinPixelsTrain.Value;
+                task.MinPixelsValidation = (int)nudMinPixelsValidation.Value;
+                task.MinPixelsTest = (int)nudMinPixelsTest.Value;
 
                 if (!Program.ImageDatabase.UpdateClassificationExportTask(task))
                 {
@@ -94,7 +96,9 @@ namespace OWE005336__Video_Annotation_Software_
             nudValidPct.Value = (decimal)task.ValidationPercent;
             nudTestPct.Value = (decimal)task.TestPercent;
 
-            nudMinPixels.Value = (decimal)task.MinPixels;
+            nudMinPixelsTrain.Value = (decimal)task.MinPixelsTrain;
+            nudMinPixelsValidation.Value = (decimal)task.MinPixelsValidation;
+            nudMinPixelsTest.Value = (decimal)task.MinPixelsTest;
 
             RunTaskQuery(task);
         }
@@ -164,7 +168,6 @@ namespace OWE005336__Video_Annotation_Software_
             bool padTrain = ckbPadTrainData.Checked;
             bool padValid = ckbPadValidationData.Checked;
             bool padTest = ckbPadTestData.Checked;
-            int minPixels = (int)nudMinPixels.Value;
             double boundTrain = (double)nudTrainPct.Value / total;
             double boundValid = boundTrain + (double)nudValidPct.Value / total;
             string imageDirPath = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
@@ -177,6 +180,9 @@ namespace OWE005336__Video_Annotation_Software_
             string trainDirPath = Path.Combine(subDirPath, "train");
             string validDirPath = Path.Combine(subDirPath, "valid");
             string testDirPath = Path.Combine(subDirPath, "test");
+            int minPixelsTrain = (int)nudMinPixelsTrain.Value;
+            int minPixelsValid = (int)nudMinPixelsValidation.Value;
+            int minPixelsTest = (int)nudMinPixelsTest.Value;
 
             btnSave_Click(null, null);
 
@@ -215,9 +221,10 @@ namespace OWE005336__Video_Annotation_Software_
                             double rand = randGen.NextDouble();
                             string targetDir;
                             bool doPad = false;
-                            if (rand < boundTrain) { targetDir = trainDirPath; doPad = padTrain; }
-                            else if (rand < boundValid) { targetDir = validDirPath; doPad = padValid; }
-                            else { targetDir = testDirPath; doPad = padTest; }
+                            int minPixels;
+                            if (rand < boundTrain) { targetDir = trainDirPath; doPad = padTrain; minPixels = minPixelsTrain; }
+                            else if (rand < boundValid) { targetDir = validDirPath; doPad = padValid; minPixels = minPixelsValid; }
+                            else { targetDir = testDirPath; doPad = padTest; minPixels = minPixelsTest; }
 
                             try
                             {
@@ -231,10 +238,10 @@ namespace OWE005336__Video_Annotation_Software_
                                 Rectangle cropRect = new Rectangle(int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]));
                                 if (cropRect.Width >= minPixels || cropRect.Height >= minPixels)
                                 {
+                                    if (doPad) { cropRect = PadRectangleToSquare(cropRect); }
                                     Bitmap croppedbmp = CropBitmap(origImg, cropRect);
                                     croppedbmp.Save(newPath);
                                 }
-
                             }
                             catch (Exception ex)
                             {
@@ -253,8 +260,39 @@ namespace OWE005336__Video_Annotation_Software_
             progress.Close();
         }
 
+        private Rectangle PadRectangleToSquare(Rectangle rect)
+        {
+            if (rect.Width > rect.Height)
+            {
+                rect.Y = rect.Y + (int)((rect.Height - rect.Width) / 2);
+                rect.Height = rect.Width;
+            }
+            else if (rect.Height > rect.Width)
+            {
+                rect.X = rect.X + (int)((rect.Width - rect.Height) / 2);
+                rect.Width = rect.Height;
+            }
+
+            return rect;
+        }
+
         private Bitmap CropBitmap(Bitmap src, Rectangle cropRect)
         {
+            int left = cropRect.Left;
+            int right = cropRect.Right;
+            int top = cropRect.Top;
+            int bottom = cropRect.Bottom;
+
+            left = Math.Min(Math.Max(0, left), src.Width - 1);
+            right = Math.Min(Math.Max(left + 1, right), src.Width);
+            top = Math.Min(Math.Max(0, top), src.Height - 1);
+            bottom = Math.Min(Math.Max(top + 1, bottom), src.Height);
+
+            cropRect.X = left;
+            cropRect.Y = top;
+            cropRect.Width = right - left;
+            cropRect.Height = top - bottom;
+
             Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
 
             using (Graphics g = Graphics.FromImage(target))

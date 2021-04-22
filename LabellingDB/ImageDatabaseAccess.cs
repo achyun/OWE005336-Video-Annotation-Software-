@@ -1039,6 +1039,7 @@ namespace LabellingDB
             finally
             {
                 if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
             }
 
             return limg;
@@ -1626,6 +1627,203 @@ namespace LabellingDB
             return success;
         }
         #endregion
+
+        #region "Classification Export Tasks"
+
+        public ClassificationExportTask LoadClassificationExportTask(int id)
+        {
+            List<ClassificationExportTask> tasks = LoadClassificationExportTasks(false, id);
+
+            if (tasks.Count > 0) { return tasks[0]; }
+            else { return null; }
+        }
+
+        public List<ClassificationExportTask> LoadClassificationExportTasks(bool filterForThisUser, int id = -1)
+        {
+            List<ClassificationExportTask> tasks = new List<ClassificationExportTask>();
+
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlDataReader rdr = null;
+            SqlCommand cmd = new SqlCommand("SELECT id, name, sql, created_by, pad_train, pad_valid, pad_test, pct_train, pct_valid, pct_test, min_pixels FROM classificationexporttasks", conn);
+
+            if (id >= 0)
+            {
+                cmd.CommandText += " WHERE id = @id";
+                cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
+            }
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    ClassificationExportTask t = new ClassificationExportTask();
+                    t.ID = rdr.GetInt32(0);
+                    t.Name = rdr.GetString(1);
+                    t.SQL = rdr.GetString(2);
+                    t.CreatedBy = rdr.GetString(3);
+                    t.PadTrainingData = rdr.GetBoolean(4);
+                    t.PadValidationData = rdr.GetBoolean(5);
+                    t.PadTestData = rdr.GetBoolean(6);
+                    t.TrainingPercent = rdr.GetDouble(7);
+                    t.ValidationPercent = rdr.GetDouble(8);
+                    t.TestPercent = rdr.GetDouble(9);
+                    t.MinPixels = rdr.GetInt32(10);
+                    tasks.Add(t);
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'Tags_Load' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return tasks;
+        }
+
+        public ClassificationExportTask AddClassificationExportTask(string name)
+        {
+            ClassificationExportTask task = null;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlCommand cmd = new SqlCommand("INSERT INTO classificationexporttasks (classificationexporttasks.name, sql) VALUES(@name, @sql); " +
+                                            "SELECT SCOPE_IDENTITY()", conn);
+            SqlDataReader rdr = null;
+
+            cmd.Parameters.AddWithValue("@name", name);
+            cmd.Parameters.AddWithValue("@sql", "");
+            cmd.CommandType = CommandType.Text;
+
+            try
+            {
+                conn.Open();
+                rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                {
+                    task = new ClassificationExportTask();
+                    task.ID = Decimal.ToInt32(rdr.GetDecimal(0));
+                    task.Name = name;
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'Images_AddDBEntry' (" + fileName + ") : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return task;
+        }
+
+        public bool UpdateClassificationExportTask(ClassificationExportTask task)
+        {
+            bool success = false;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlCommand cmd = new SqlCommand("UPDATE classificationexporttasks SET classificationexporttasks.name = @name, classificationexporttasks.sql = @sql, pad_train = @pad_train, pad_valid = @pad_valid, pad_test = @pad_test, pct_train = @pct_train, pct_valid = @pct_valid, pct_test = @pct_test, min_pixels = @min_pixels WHERE id = @id", conn);
+
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = task.ID;
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar).Value = task.Name;
+            cmd.Parameters.Add("@sql", SqlDbType.NVarChar).Value = task.SQL;
+
+            cmd.Parameters.Add("@pad_train", SqlDbType.Bit).Value = task.PadTrainingData;
+            cmd.Parameters.Add("@pad_valid", SqlDbType.Bit).Value = task.PadValidationData;
+            cmd.Parameters.Add("@pad_test", SqlDbType.Bit).Value = task.PadTestData;
+
+            cmd.Parameters.Add("@pct_train", SqlDbType.Float).Value = task.TrainingPercent;
+            cmd.Parameters.Add("@pct_valid", SqlDbType.Float).Value = task.ValidationPercent;
+            cmd.Parameters.Add("@pct_test", SqlDbType.Float).Value = task.TestPercent;
+
+            cmd.Parameters.Add("@min_pixels", SqlDbType.Int).Value = task.MinPixels;
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'BBoxLabels_UpdateLabel' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+            }
+
+            return success;
+        }
+
+        public bool DeleteClassificationExportTask(int id)
+        {
+            bool success = false;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlCommand cmd = new SqlCommand("DELETE FROM classificationexporttasks WHERE id = @id", conn);
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'BBoxLabels_UpdateLabel' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+            }
+
+            return success;
+        }
+
+        public DataTable RunCustomQuery(string query, out string err)
+        {
+            DataTable dt = new DataTable();
+            err = "";
+
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommand cmd = new SqlCommand(query, conn);
+
+            adapter.SelectCommand = cmd;
+            cmd.CommandType = CommandType.Text;
+
+            try
+            {
+                conn.Open();
+                adapter.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                err = ex.Message;
+                //MessageBox.Show("Error in 'Images_Get' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                adapter.Dispose();
+            }
+
+            return dt;
+        }
+
+        #endregion
     }
 
     public class LabelNode
@@ -1717,6 +1915,32 @@ namespace LabellingDB
     {
         public int ID { get; set; }
         public string TagText { get; set; }
+    }
+
+    public class ClassificationExportTask
+    {
+        public ClassificationExportTask() {}
+        public ClassificationExportTask Clone()
+        {
+            return (ClassificationExportTask)this.MemberwiseClone();
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public int ID;// { get; set; }
+        public string Name { get; set; }
+        public string CreatedBy;// { get; set; }
+        public string SQL = "";// { get; set; }
+        public bool PadTrainingData;// { get; set; }
+        public bool PadValidationData;// { get; set; }
+        public bool PadTestData;// { get; set; }
+        public double TrainingPercent = 75;// { get; set; }
+        public double ValidationPercent = 15;// { get; set; }
+        public double TestPercent = 10;// { get; set; }
+        public int MinPixels = 0;
     }
 
     public enum SensorTypeEnum

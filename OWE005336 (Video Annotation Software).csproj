@@ -123,6 +123,12 @@
     <Compile Include="Forms\DialogForms\fReviewTestResults.Designer.cs">
       <DependentUpon>fReviewTestResults.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\fClassificationExport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\fClassificationExport.Designer.cs">
+      <DependentUpon>fClassificationExport.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\fCompositeCreator.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -216,6 +222,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DialogForms\fReviewTestResults.resx">
       <DependentUpon>fReviewTestResults.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\fClassificationExport.resx">
+      <DependentUpon>fClassificationExport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\fCompositeCreator.resx">
       <DependentUpon>fCompositeCreator.cs</DependentUpon>

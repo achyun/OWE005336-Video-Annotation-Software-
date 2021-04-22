@@ -824,6 +824,12 @@ namespace OWE005336__Video_Annotation_Software_
             }
         }
 
+        private void mniExportClassificationimages_Click(object sender, EventArgs e)
+        {
+            fClassificationExport form = new fClassificationExport();
+            form.ShowDialog();
+        }
+
         //private void ReformatImage(string filePath, ImageFormat destFormat)
         //{
         //    byte[] imgBytes;

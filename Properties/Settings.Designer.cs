@@ -130,5 +130,17 @@ namespace OWE005336__Video_Annotation_Software_.Properties {
                 this["LastSensorType"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\\\")]
+        public string ClassificationExportLocation {
+            get {
+                return ((string)(this["ClassificationExportLocation"]));
+            }
+            set {
+                this["ClassificationExportLocation"] = value;
+            }
+        }
     }
 }

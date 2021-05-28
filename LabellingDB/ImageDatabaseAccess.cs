@@ -1731,6 +1731,11 @@ namespace LabellingDB
 
         public bool UpdateClassificationExportTask(ClassificationExportTask task)
         {
+            if (task.ID < 0)
+            {
+                //This represents a task that isn't actually stored in the database, e.g. a historic task loaded from a file.
+                return false;
+            }
             bool success = false;
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlCommand cmd = new SqlCommand("UPDATE classificationexporttasks SET classificationexporttasks.name = @name, classificationexporttasks.sql = @sql, " + 

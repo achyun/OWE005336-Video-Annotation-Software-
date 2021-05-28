@@ -13,6 +13,7 @@ using LabellingDB;
 using Accord;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Core;
 
 namespace OWE005336__Video_Annotation_Software_
 {
@@ -32,6 +33,7 @@ namespace OWE005336__Video_Annotation_Software_
             if (dgvTasks.SelectedRows.Count > 0)
             {
                 ClassificationExportTask task = (ClassificationExportTask)dgvTasks.SelectedRows[0].DataBoundItem;
+
                 task.SQL = txtSQL.Text;
 
                 task.PadTrainingData = ckbPadTrainData.Checked;
@@ -50,14 +52,15 @@ namespace OWE005336__Video_Annotation_Software_
                 task.MinPixelsValidation = (int)nudMinPixelsValidation.Value;
                 task.MinPixelsTest = (int)nudMinPixelsTest.Value;
 
-                if (!Program.ImageDatabase.UpdateClassificationExportTask(task))
+                if (task.ID >= 0) //IF ID < 0 this isn't a task stored in the database (e.g. a historic task loaded from a file), do not attempt to save
                 {
-                    MessageBox.Show("Update Failed");
+                    if (!Program.ImageDatabase.UpdateClassificationExportTask(task))
+                    {
+                        MessageBox.Show("Update Failed");
+                    }
                 }
-                else
-                {
-                    PaintClassificationExportTask(task);
-                }
+
+                PaintClassificationExportTask(task);
             }
         }
 
@@ -120,9 +123,12 @@ namespace OWE005336__Video_Annotation_Software_
         {
             ClassificationExportTask t = (ClassificationExportTask)dgvTasks.Rows[e.RowIndex].DataBoundItem;
 
-            if (!Program.ImageDatabase.UpdateClassificationExportTask(t))
+            if (t.ID >= 0) //IF ID < 0 this isn't a task stored in the database (e.g. a historic task loaded from a file), do not attempt to save
             {
-                MessageBox.Show("Update Failed");
+                if (!Program.ImageDatabase.UpdateClassificationExportTask(t))
+                {
+                    MessageBox.Show("Update Failed");
+                }
             }
         }
 
@@ -366,6 +372,44 @@ namespace OWE005336__Video_Annotation_Software_
                     Properties.Settings.Default.Save();
                 }
             }
+        }
+
+        private void btnOpenPrevScript_Click(object sender, EventArgs e)
+        {
+            //Allow the user to select a *.sql file representing a previous run, and run that
+            string filePath = string.Empty;
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = txtOutputDir.Text;
+                openFileDialog.Filter = "yaml files (*.yaml)|*.yaml|All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    //Get the path of specified file
+                    filePath = openFileDialog.FileName;
+                }
+            }
+
+            var deserializer = new DeserializerBuilder().WithNamingConvention(PascalCaseNamingConvention.Instance).Build();
+            ClassificationExportTask task;
+            try
+            {
+                task = deserializer.Deserialize<ClassificationExportTask>(File.ReadAllText(filePath));
+            }
+            catch(YamlException ex)
+            {
+                MessageBox.Show($"Error reading task: {ex}", "Error Reading Task", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            //Set ID to -1 to show that this task isn't stored in the database
+            task.ID = -1;
+
+            var taskList = dgvTasks.DataSource as BindingList<ClassificationExportTask>;
+            taskList.Add(task);
         }
     }
 }

@@ -63,6 +63,7 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnOpenPrevScript = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsTest)).BeginInit();
@@ -109,6 +110,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnOpenPrevScript);
             this.panel3.Controls.Add(this.label9);
             this.panel3.Controls.Add(this.label10);
             this.panel3.Controls.Add(this.nudMinPixelsTest);
@@ -422,6 +424,19 @@
             this.label4.TabIndex = 17;
             this.label4.Text = "Output Directory";
             // 
+            // btnOpenPrevScript
+            // 
+            this.btnOpenPrevScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOpenPrevScript.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources._1200px_OneDrive_Folder_Icon__32x32_;
+            this.btnOpenPrevScript.Location = new System.Drawing.Point(696, 17);
+            this.btnOpenPrevScript.Name = "btnOpenPrevScript";
+            this.btnOpenPrevScript.Size = new System.Drawing.Size(41, 41);
+            this.btnOpenPrevScript.TabIndex = 21;
+            this.btnOpenPrevScript.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTip1.SetToolTip(this.btnOpenPrevScript, "Open previous export script");
+            this.btnOpenPrevScript.UseVisualStyleBackColor = true;
+            this.btnOpenPrevScript.Click += new System.EventHandler(this.btnOpenPrevScript_Click);
+            // 
             // fClassificationExport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -487,5 +502,6 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.NumericUpDown nudMinPixelsValidation;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btnOpenPrevScript;
     }
 }

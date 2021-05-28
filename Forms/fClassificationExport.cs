@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabellingDB;
 using Accord;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace OWE005336__Video_Annotation_Software_
 {
@@ -154,9 +156,7 @@ namespace OWE005336__Video_Annotation_Software_
 
         private async void btnExport_Click(object sender, EventArgs e)
         {
-            double total = (double)(nudTrainPct.Value + nudValidPct.Value + nudTestPct.Value);
-
-            if (total <= 0)
+            if ((nudTrainPct.Value + nudTestPct.Value + nudTestPct.Value) <= 0)
             {
                 MessageBox.Show("Invalid train/validate/test percentages");
                 return;
@@ -167,11 +167,18 @@ namespace OWE005336__Video_Annotation_Software_
                 return;
             }
 
-            bool padTrain = ckbPadTrainData.Checked;
-            bool padValid = ckbPadValidationData.Checked;
-            bool padTest = ckbPadTestData.Checked;
-            double boundTrain = (double)nudTrainPct.Value / total;
-            double boundValid = boundTrain + (double)nudValidPct.Value / total;
+            ClassificationExportTask t = (dgvTasks.SelectedRows.Count > 0) ? (ClassificationExportTask)dgvTasks.SelectedRows[0].DataBoundItem : new ClassificationExportTask() { Name = "" };
+            t.SQL = txtSQL.Text;
+            t.PadTrainingData = ckbPadTrainData.Checked;
+            t.PadValidationData = ckbPadValidationData.Checked;
+            t.PadTestData = ckbPadTestData.Checked;
+            t.TrainingPercent = (double)nudTrainPct.Value;
+            t.ValidationPercent = (double)nudValidPct.Value;
+            t.TestPercent = (double)nudTestPct.Value;
+            t.MinPixelsTrain = (int)nudMinPixelsTrain.Value;
+            t.MinPixelsValidation = (int)nudMinPixelsValidation.Value;
+            t.MinPixelsTest = (int)nudMinPixelsTest.Value;
+
             string imageDirPath = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
             DateTime localDate = DateTime.Now;
             string subDirPath = localDate.Year.ToString() + localDate.Month.ToString("00") + localDate.Day.ToString("00") + "_" + localDate.Hour.ToString("00") + localDate.Minute.ToString("00") + localDate.Second.ToString("00") + "_" + dgvTasks.SelectedRows[0].Cells[0].Value.ToString();
@@ -182,9 +189,7 @@ namespace OWE005336__Video_Annotation_Software_
             string trainDirPath = Path.Combine(subDirPath, "train");
             string validDirPath = Path.Combine(subDirPath, "valid");
             string testDirPath = Path.Combine(subDirPath, "test");
-            int minPixelsTrain = (int)nudMinPixelsTrain.Value;
-            int minPixelsValid = (int)nudMinPixelsValidation.Value;
-            int minPixelsTest = (int)nudMinPixelsTest.Value;
+
 
             btnSave_Click(null, null);
 
@@ -201,11 +206,19 @@ namespace OWE005336__Video_Annotation_Software_
                 return;
             }
 
+            //Save the SQL query used for this task as a .sql file in the root folder
+            var filename = $"{DateTime.Now:yyyy-MM-dd} {t.Name}.yaml";
+            var serializer = (new SerializerBuilder()).WithNamingConvention(PascalCaseNamingConvention.Instance).Build();
+            System.IO.File.AppendAllText(Path.Combine(subDirPath, filename), serializer.Serialize(t));
+
             fProgressBar progress = new fProgressBar("Exporting images", "Exporting images from row 1 of " + dt.Rows.Count);
             progress.Show();
 
                 
             Random randGen = new Random();
+            double total = t.TrainingPercent + t.ValidationPercent + t.TestPercent;
+            double boundTrain = t.TrainingPercent / total;
+            double boundValid = boundTrain + t.ValidationPercent / total;
 
             await Task.Run(() =>
             {
@@ -231,9 +244,9 @@ namespace OWE005336__Video_Annotation_Software_
                                 string targetDir;
                                 bool doPad = false;
                                 int minPixels;
-                                if (rand < boundTrain) { targetDir = trainDirPath; doPad = padTrain; minPixels = minPixelsTrain; }
-                                else if (rand < boundValid) { targetDir = validDirPath; doPad = padValid; minPixels = minPixelsValid; }
-                                else { targetDir = testDirPath; doPad = padTest; minPixels = minPixelsTest; }
+                                if (rand < boundTrain) { targetDir = trainDirPath; doPad = t.PadTrainingData; minPixels = t.MinPixelsTrain; }
+                                else if (rand < boundValid) { targetDir = validDirPath; doPad = t.PadValidationData; minPixels = t.MinPixelsValidation; }
+                                else { targetDir = testDirPath; doPad = t.PadTestData; minPixels = t.MinPixelsTest; }
                                 //Debug.WriteLine("Idx: " + i.ToString());
                                 try
                                 {

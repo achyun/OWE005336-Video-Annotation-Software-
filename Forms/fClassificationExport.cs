@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabellingDB;
+using Accord;
 
 namespace OWE005336__Video_Annotation_Software_
 {
@@ -207,54 +209,73 @@ namespace OWE005336__Video_Annotation_Software_
 
             await Task.Run(() =>
             {
+                
                 foreach (DataRow r in dt.Rows)
                 {
                     string imgPath = Path.Combine(imageDirPath, r.ItemArray[1].ToString());
-                    if (File.Exists(imgPath))
+                    try
                     {
-                        Bitmap origImg = new Bitmap(imgPath);
-                        string bbox_string = r.ItemArray[2].ToString();
-                        string[] bboxes = bbox_string.Split('|');
-
-                        for(int i = 0; i < bboxes.Length; i++)
+                        //Debug.WriteLine("Start new: " + imgPath);
+                        if (File.Exists(imgPath))
                         {
-                            double rand = randGen.NextDouble();
-                            string targetDir;
-                            bool doPad = false;
-                            int minPixels;
-                            if (rand < boundTrain) { targetDir = trainDirPath; doPad = padTrain; minPixels = minPixelsTrain; }
-                            else if (rand < boundValid) { targetDir = validDirPath; doPad = padValid; minPixels = minPixelsValid; }
-                            else { targetDir = testDirPath; doPad = padTest; minPixels = minPixelsTest; }
+                            //Debug.WriteLine("File exists...");
+                            Bitmap origImg = new Bitmap(imgPath);
+                            //Debug.WriteLine("File loaded...");
+                            string bbox_string = r.ItemArray[2].ToString();
+                            //Debug.WriteLine("BBox String: " + bbox_string);
+                            string[] bboxes = bbox_string.Split('|');
 
-                            try
+                            for (int i = 0; i < bboxes.Length; i++)
                             {
-                                string[] values = bboxes[i].Split(',');
-                                string catDirPath = Path.Combine(targetDir, values[0]);
-                                string newPath = Path.Combine(catDirPath, Path.GetFileNameWithoutExtension(imgPath) + "_" + i.ToString() + ".png");
-                                if (!Directory.Exists(catDirPath))
+                                double rand = randGen.NextDouble();
+                                string targetDir;
+                                bool doPad = false;
+                                int minPixels;
+                                if (rand < boundTrain) { targetDir = trainDirPath; doPad = padTrain; minPixels = minPixelsTrain; }
+                                else if (rand < boundValid) { targetDir = validDirPath; doPad = padValid; minPixels = minPixelsValid; }
+                                else { targetDir = testDirPath; doPad = padTest; minPixels = minPixelsTest; }
+                                //Debug.WriteLine("Idx: " + i.ToString());
+                                try
                                 {
-                                    Directory.CreateDirectory(catDirPath);
+                                    string[] values = bboxes[i].Split(',');
+                                    //Debug.WriteLine(bboxes[i]);
+                                    string catDirPath = Path.Combine(targetDir, values[0]);
+                                    string newPath = Path.Combine(catDirPath, Path.GetFileNameWithoutExtension(imgPath) + "_" + i.ToString() + ".png");
+                                    //Debug.WriteLine(newPath);
+                                    if (!Directory.Exists(catDirPath))
+                                    {
+                                        Directory.CreateDirectory(catDirPath);
+                                    }
+                                    
+                                    Rectangle cropRect = new Rectangle(int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]));
+                                    if (cropRect.Width >= minPixels || cropRect.Height >= minPixels)
+                                    {
+                                        if (doPad) { cropRect = PadRectangleToSquare(cropRect); }
+                                        //Debug.WriteLine(newPath + ", " + cropRect.ToString());
+                                        Bitmap croppedbmp = CropBitmap(origImg, cropRect);
+                                        croppedbmp.Save(newPath);
+                                        //Debug.WriteLine("Save Complete");
+                                                       
+                                    }
                                 }
-                                Rectangle cropRect = new Rectangle(int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]));
-                                if (cropRect.Width >= minPixels || cropRect.Height >= minPixels)
+                                catch (Exception ex)
                                 {
-                                    if (doPad) { cropRect = PadRectangleToSquare(cropRect); }
-                                    Bitmap croppedbmp = CropBitmap(origImg, cropRect);
-                                    croppedbmp.Save(newPath);
+                                    MessageBox.Show("Error exporting image from: " + imgPath + "\r\n   With bounding box string: " + bbox_string + "\r\n" + ex.Message);
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show("Error exporting image from: " + imgPath + "\r\n   With bounding box string: " + bbox_string + "\r\n" + ex.Message);
                             }
                         }
-                    }
-                    rowIndex += 1;
+                        rowIndex += 1;
 
-                    percent = 100 * rowIndex / dt.Rows.Count;
-                    progress.BeginInvoke((Action)(() => progress.UpdateProgress(percent, "Exporting images from row 1 of " + rowIndex.ToString() + " of " + dt.Rows.Count)));
-                    if (progress.Cancelled) { break; }
+                        percent = 100 * rowIndex / dt.Rows.Count;
+                        progress.BeginInvoke((Action)(() => progress.UpdateProgress(percent, "Exporting images from row " + rowIndex.ToString() + " of " + dt.Rows.Count)));
+                        if (progress.Cancelled) { break; }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Corrupted file: " + imgPath);
+                    }
                 }
+                
             });
 
             progress.Close();
@@ -291,7 +312,7 @@ namespace OWE005336__Video_Annotation_Software_
             cropRect.X = left;
             cropRect.Y = top;
             cropRect.Width = right - left;
-            cropRect.Height = top - bottom;
+            cropRect.Height = bottom - top;
 
             Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
 

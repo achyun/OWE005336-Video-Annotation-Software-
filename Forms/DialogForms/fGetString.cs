@@ -12,11 +12,12 @@ namespace OWE005336__Video_Annotation_Software_
 {
     public partial class fGetString : Form
     {
-        public fGetString(string stringDescription)
+        public fGetString(string stringDescription, string currentString = "")
         {
             InitializeComponent();
             lblName.Text = stringDescription;
             this.Text = stringDescription;
+            if (currentString != "") { txtString.Text = currentString; }
             txtString.Focus();
         }
 

@@ -250,11 +250,12 @@ namespace OWE005336__Video_Annotation_Software_
         }
         private void _RenameButton_Click(object sender, EventArgs e)
         {
-            using (fGetString getString = new fGetString("Label Name"))
+            LabelNode n = (LabelNode)this.SelectedNode.Tag;
+
+            using (fGetString getString = new fGetString("Label Name", n.Name))
             {
                 if (getString.ShowDialog() == DialogResult.OK)
                 {
-                    LabelNode n = (LabelNode)this.SelectedNode.Tag;
                     n.Name = getString.ReturnString;
                     if (Program.ImageDatabase.LabelTree_UpdateLabel(n))
                     {

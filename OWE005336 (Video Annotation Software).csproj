@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\PaintLocker.cs" />
+    <Compile Include="Classes\DatasetSerializer.cs" />
     <Compile Include="CustomControls\ClipSelector.cs">
       <SubType>Component</SubType>
     </Compile>

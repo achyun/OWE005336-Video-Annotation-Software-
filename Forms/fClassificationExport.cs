@@ -187,8 +187,8 @@ namespace OWE005336__Video_Annotation_Software_
 
             string imageDirPath = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
             DateTime localDate = DateTime.Now;
-            string subDirPath = localDate.Year.ToString() + localDate.Month.ToString("00") + localDate.Day.ToString("00") + "_" + localDate.Hour.ToString("00") + localDate.Minute.ToString("00") + localDate.Second.ToString("00") + "_" + dgvTasks.SelectedRows[0].Cells[0].Value.ToString();
-            subDirPath = Path.Combine(txtOutputDir.Text, subDirPath);
+            string exportName = localDate.Year.ToString() + localDate.Month.ToString("00") + localDate.Day.ToString("00") + "_" + dgvTasks.SelectedRows[0].Cells[0].Value.ToString();
+            string subDirPath = Path.Combine(txtOutputDir.Text, exportName);
             DataTable dt = (DataTable)dgvResults.DataSource;
             int rowIndex = 0;
             float percent;
@@ -213,9 +213,8 @@ namespace OWE005336__Video_Annotation_Software_
             }
 
             //Save the SQL query used for this task as a .sql file in the root folder
-            var filename = $"{DateTime.Now:yyyy-MM-dd} {t.Name}.yaml";
-            var serializer = (new SerializerBuilder()).WithNamingConvention(PascalCaseNamingConvention.Instance).Build();
-            System.IO.File.AppendAllText(Path.Combine(subDirPath, filename), serializer.Serialize(t));
+            var yamlSerializer = (new SerializerBuilder()).WithNamingConvention(PascalCaseNamingConvention.Instance).Build();
+            System.IO.File.AppendAllText(Path.Combine(subDirPath, "exportSettings.yaml"), yamlSerializer.Serialize(t));
 
             fProgressBar progress = new fProgressBar("Exporting images", "Exporting images from row 1 of " + dt.Rows.Count);
             progress.Show();
@@ -225,6 +224,8 @@ namespace OWE005336__Video_Annotation_Software_
             double total = t.TrainingPercent + t.ValidationPercent + t.TestPercent;
             double boundTrain = t.TrainingPercent / total;
             double boundValid = boundTrain + t.ValidationPercent / total;
+
+            var datasetSerializer = new DatasetSerializer(new DatasetSerializerSettings() { });
 
             await Task.Run(() =>
             {
@@ -250,9 +251,10 @@ namespace OWE005336__Video_Annotation_Software_
                                 string targetDir;
                                 bool doPad = false;
                                 int minPixels;
-                                if (rand < boundTrain) { targetDir = trainDirPath; doPad = t.PadTrainingData; minPixels = t.MinPixelsTrain; }
-                                else if (rand < boundValid) { targetDir = validDirPath; doPad = t.PadValidationData; minPixels = t.MinPixelsValidation; }
-                                else { targetDir = testDirPath; doPad = t.PadTestData; minPixels = t.MinPixelsTest; }
+                                List<LabelledImage> targetDataset;
+                                if (rand < boundTrain) { targetDir = trainDirPath; doPad = t.PadTrainingData; minPixels = t.MinPixelsTrain; targetDataset = datasetSerializer.TrainingDataset; }
+                                else if (rand < boundValid) { targetDir = validDirPath; doPad = t.PadValidationData; minPixels = t.MinPixelsValidation; targetDataset = datasetSerializer.ValidationDataset; }
+                                else { targetDir = testDirPath; doPad = t.PadTestData; minPixels = t.MinPixelsTest; targetDataset = datasetSerializer.TestDataset; }
                                 //Debug.WriteLine("Idx: " + i.ToString());
                                 try
                                 {
@@ -274,7 +276,12 @@ namespace OWE005336__Video_Annotation_Software_
                                         Bitmap croppedbmp = CropBitmap(origImg, cropRect);
                                         croppedbmp.Save(newPath);
                                         //Debug.WriteLine("Save Complete");
-                                                       
+
+                                        //Add to correct data set
+                                        LabelledImage img = new LabelledImage(origImg.Size);
+                                        img.Filepath = r.ItemArray[1].ToString();
+                                        img.LabelledROIs.Add(new LabelledROI(0, 0, cropRect) { LabelName = values[0] });
+                                        targetDataset.Add(img);
                                     }
                                 }
                                 catch (Exception ex)
@@ -294,7 +301,8 @@ namespace OWE005336__Video_Annotation_Software_
                         Debug.WriteLine("Corrupted file: " + imgPath);
                     }
                 }
-                
+                //Write configuration data
+                datasetSerializer.Serialize(subDirPath, exportName);
             });
 
             progress.Close();

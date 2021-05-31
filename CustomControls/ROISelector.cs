@@ -493,6 +493,7 @@ namespace OWE005336__Video_Annotation_Software_
         private float _DefaultFontSize = 10;
         private Font _Font = new Font("Calibri", 10);
         private const int GRAB_WIDTH = 3;
+        public object Tag;
         public ROIObject(RectangleF roi, float scale, string name)
         {
             Name = name;

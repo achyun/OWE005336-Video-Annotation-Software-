@@ -28,27 +28,41 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.roiSelector = new OWE005336__Video_Annotation_Software_.ROISelector();
             this.dgvImages = new System.Windows.Forms.DataGridView();
             this.Thumbnail = new System.Windows.Forms.DataGridViewImageColumn();
+            this.FileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitter1 = new System.Windows.Forms.Splitter();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.btnFinish = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblAddedCount = new System.Windows.Forms.Label();
+            this.lblImageCount = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.cmbSensorType = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.txtLabel = new System.Windows.Forms.TextBox();
+            this.btnSelectLabel = new System.Windows.Forms.Button();
+            this.Label = new System.Windows.Forms.Label();
+            this.tips = new System.Windows.Forms.ToolTip(this.components);
+            this.tgbTags = new OWE005336__Video_Annotation_Software_.TagBox();
+            this.roiSelector = new OWE005336__Video_Annotation_Software_.ROISelector();
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.panel6.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // roiSelector
-            // 
-            this.roiSelector.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.roiSelector.Location = new System.Drawing.Point(0, 0);
-            this.roiSelector.Name = "roiSelector";
-            this.roiSelector.SelectedROIIndex = -1;
-            this.roiSelector.Size = new System.Drawing.Size(800, 450);
-            this.roiSelector.TabIndex = 0;
-            this.roiSelector.Text = "roiSelector1";
             // 
             // dgvImages
             // 
@@ -66,6 +80,7 @@
             this.dgvImages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvImages.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Thumbnail,
+            this.FileName,
             this.FilePath});
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
@@ -90,9 +105,11 @@
             this.dgvImages.RowTemplate.Height = 50;
             this.dgvImages.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvImages.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvImages.Size = new System.Drawing.Size(268, 450);
+            this.dgvImages.Size = new System.Drawing.Size(268, 607);
             this.dgvImages.TabIndex = 10;
             this.dgvImages.SelectionChanged += new System.EventHandler(this.dgvImages_SelectionChanged);
+            this.dgvImages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvImages_KeyDown);
+            this.dgvImages.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvImages_KeyUp);
             // 
             // Thumbnail
             // 
@@ -102,6 +119,11 @@
             this.Thumbnail.ReadOnly = true;
             this.Thumbnail.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Thumbnail.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // FileName
+            // 
+            this.FileName.HeaderText = "Name";
+            this.FileName.Name = "FileName";
             // 
             // FilePath
             // 
@@ -114,34 +136,223 @@
             // 
             this.splitter1.Location = new System.Drawing.Point(268, 0);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(6, 450);
+            this.splitter1.Size = new System.Drawing.Size(6, 607);
             this.splitter1.TabIndex = 11;
             this.splitter1.TabStop = false;
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.panel4);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(1136, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(200, 607);
+            this.panel1.TabIndex = 13;
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.panel6);
+            this.panel4.Controls.Add(this.tgbTags);
+            this.panel4.Controls.Add(this.label1);
+            this.panel4.Controls.Add(this.cmbSensorType);
+            this.panel4.Controls.Add(this.label2);
+            this.panel4.Controls.Add(this.panel5);
+            this.panel4.Controls.Add(this.Label);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel4.Location = new System.Drawing.Point(0, 321);
+            this.panel4.Name = "panel4";
+            this.panel4.Padding = new System.Windows.Forms.Padding(5);
+            this.panel4.Size = new System.Drawing.Size(200, 286);
+            this.panel4.TabIndex = 14;
+            // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.btnFinish);
+            this.panel6.Controls.Add(this.btnCancel);
+            this.panel6.Controls.Add(this.btnSave);
+            this.panel6.Controls.Add(this.groupBox1);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel6.Location = new System.Drawing.Point(5, 203);
+            this.panel6.Name = "panel6";
+            this.panel6.Padding = new System.Windows.Forms.Padding(5);
+            this.panel6.Size = new System.Drawing.Size(190, 78);
+            this.panel6.TabIndex = 19;
+            // 
+            // btnFinish
+            // 
+            this.btnFinish.Location = new System.Drawing.Point(112, 52);
+            this.btnFinish.Name = "btnFinish";
+            this.btnFinish.Size = new System.Drawing.Size(75, 23);
+            this.btnFinish.TabIndex = 11;
+            this.btnFinish.Text = "Finish";
+            this.btnFinish.UseVisualStyleBackColor = true;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources.CancelIcon;
+            this.btnCancel.Location = new System.Drawing.Point(96, 7);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(41, 41);
+            this.btnCancel.TabIndex = 2;
+            this.btnCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.tips.SetToolTip(this.btnCancel, "Reject Image");
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
             // btnSave
             // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSave.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources.OkTick;
-            this.btnSave.Location = new System.Drawing.Point(747, 397);
+            this.btnSave.Location = new System.Drawing.Point(143, 7);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(41, 41);
-            this.btnSave.TabIndex = 12;
+            this.btnSave.TabIndex = 1;
             this.btnSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.tips.SetToolTip(this.btnSave, "Import Image");
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.lblAddedCount);
+            this.groupBox1.Controls.Add(this.lblImageCount);
+            this.groupBox1.Location = new System.Drawing.Point(8, 1);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(152, 47);
+            this.groupBox1.TabIndex = 10;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Save";
+            // 
+            // lblAddedCount
+            // 
+            this.lblAddedCount.AutoSize = true;
+            this.lblAddedCount.Location = new System.Drawing.Point(46, 16);
+            this.lblAddedCount.Name = "lblAddedCount";
+            this.lblAddedCount.Size = new System.Drawing.Size(13, 13);
+            this.lblAddedCount.TabIndex = 9;
+            this.lblAddedCount.Text = "0";
+            // 
+            // lblImageCount
+            // 
+            this.lblImageCount.AutoSize = true;
+            this.lblImageCount.Location = new System.Drawing.Point(6, 16);
+            this.lblImageCount.Name = "lblImageCount";
+            this.lblImageCount.Size = new System.Drawing.Size(41, 13);
+            this.lblImageCount.TabIndex = 7;
+            this.lblImageCount.Text = "Added:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(5, 73);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Tags";
+            // 
+            // cmbSensorType
+            // 
+            this.cmbSensorType.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cmbSensorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSensorType.FormattingEnabled = true;
+            this.cmbSensorType.Location = new System.Drawing.Point(5, 52);
+            this.cmbSensorType.Name = "cmbSensorType";
+            this.cmbSensorType.Size = new System.Drawing.Size(190, 21);
+            this.cmbSensorType.TabIndex = 17;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label2.Location = new System.Drawing.Point(5, 39);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(67, 13);
+            this.label2.TabIndex = 16;
+            this.label2.Text = "Sensor Type";
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.txtLabel);
+            this.panel5.Controls.Add(this.btnSelectLabel);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.panel5.Location = new System.Drawing.Point(5, 18);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(190, 21);
+            this.panel5.TabIndex = 18;
+            // 
+            // txtLabel
+            // 
+            this.txtLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLabel.Location = new System.Drawing.Point(0, 0);
+            this.txtLabel.Name = "txtLabel";
+            this.txtLabel.ReadOnly = true;
+            this.txtLabel.Size = new System.Drawing.Size(165, 20);
+            this.txtLabel.TabIndex = 11;
+            this.txtLabel.DoubleClick += new System.EventHandler(this.txtLabel_DoubleClick);
+            // 
+            // btnSelectLabel
+            // 
+            this.btnSelectLabel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnSelectLabel.Location = new System.Drawing.Point(165, 0);
+            this.btnSelectLabel.Name = "btnSelectLabel";
+            this.btnSelectLabel.Size = new System.Drawing.Size(25, 21);
+            this.btnSelectLabel.TabIndex = 14;
+            this.btnSelectLabel.Text = "...";
+            this.btnSelectLabel.UseVisualStyleBackColor = true;
+            this.btnSelectLabel.Click += new System.EventHandler(this.btnSelectLabel_Click);
+            // 
+            // Label
+            // 
+            this.Label.AutoSize = true;
+            this.Label.Dock = System.Windows.Forms.DockStyle.Top;
+            this.Label.Location = new System.Drawing.Point(5, 5);
+            this.Label.Name = "Label";
+            this.Label.Size = new System.Drawing.Size(33, 13);
+            this.Label.TabIndex = 9;
+            this.Label.Text = "Label";
+            // 
+            // tgbTags
+            // 
+            this.tgbTags.AutoScroll = true;
+            this.tgbTags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tgbTags.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tgbTags.Location = new System.Drawing.Point(5, 86);
+            this.tgbTags.Name = "tgbTags";
+            this.tgbTags.Size = new System.Drawing.Size(190, 117);
+            this.tgbTags.TabIndex = 15;
+            // 
+            // roiSelector
+            // 
+            this.roiSelector.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.roiSelector.Location = new System.Drawing.Point(0, 0);
+            this.roiSelector.Name = "roiSelector";
+            this.roiSelector.SelectedROIIndex = -1;
+            this.roiSelector.Size = new System.Drawing.Size(1336, 607);
+            this.roiSelector.TabIndex = 0;
+            this.roiSelector.Text = "roiSelector1";
             // 
             // fProcessTrackerImages
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.btnSave);
+            this.ClientSize = new System.Drawing.Size(1336, 607);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.dgvImages);
             this.Controls.Add(this.roiSelector);
             this.Name = "fProcessTrackerImages";
-            this.Text = "fProcessTrackerImages";
+            this.Text = "Review Images from CV System";
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.panel6.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -151,8 +362,26 @@
         private ROISelector roiSelector;
         private System.Windows.Forms.DataGridView dgvImages;
         private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.DataGridViewImageColumn Thumbnail;
-        private System.Windows.Forms.DataGridViewTextBoxColumn FilePath;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label lblImageCount;
+        private TagBox tgbTags;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox cmbSensorType;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.TextBox txtLabel;
+        private System.Windows.Forms.Button btnSelectLabel;
+        private System.Windows.Forms.Label Label;
+        private System.Windows.Forms.Button btnFinish;
+        private System.Windows.Forms.ToolTip tips;
+        private System.Windows.Forms.DataGridViewImageColumn Thumbnail;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FileName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FilePath;
+        private System.Windows.Forms.Label lblAddedCount;
     }
 }

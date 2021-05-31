@@ -13,6 +13,7 @@ using System.Data;
 using System.Data.Sql;
 using System.Data.SqlClient;
 using LabellingDB;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace OWE005336__Video_Annotation_Software_
 {
@@ -814,13 +815,18 @@ namespace OWE005336__Video_Annotation_Software_
 
         private void mniReviewTrackerImages_Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            var folderBrowserDialog = new CommonOpenFileDialog()
             {
-                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
-                {
-                    fProcessTrackerImages form = new fProcessTrackerImages(folderBrowserDialog.SelectedPath);
-                    form.ShowDialog();
-                }
+                AllowNonFileSystemItems = false,
+                Multiselect = false,
+                IsFolderPicker = true,
+                Title = "Select folder with images to import"
+            };
+
+            if (folderBrowserDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                fProcessTrackerImages form = new fProcessTrackerImages(folderBrowserDialog.FileName);
+                form.ShowDialog();
             }
         }
 

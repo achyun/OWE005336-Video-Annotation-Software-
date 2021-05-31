@@ -271,5 +271,15 @@ namespace OWE005336__Video_Annotation_Software_
                 e.Handled = true;
             }
         }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            dgvImages_KeyUp(sender, new KeyEventArgs(Keys.Delete));
+        }
+
+        private void btnFinish_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

@@ -43,7 +43,7 @@ namespace OWE005336__Video_Annotation_Software_
             foreach (string s in filePaths)
             {
                 _PaintDataInProgress.Lock();
-                dgvImages.Rows.Add(new object[] { null, Path.GetFileName(s), s });
+                dgvImages.Rows.Add(new object[] { null, Path.GetFileName(s), s, "" });
                 _PaintDataInProgress.Unlock();
             }
 
@@ -108,9 +108,9 @@ namespace OWE005336__Video_Annotation_Software_
 
                     if (File.Exists(txtfilepath))
                     {
-                        StreamReader fs = new StreamReader(txtfilepath);
-                        string line = fs.ReadLine();
-                        while (line != null)
+                        dgvImages.SelectedRows[0].Cells[3].Value = txtfilepath;
+                        var lines = File.ReadAllLines(txtfilepath);
+                        foreach(var line in lines)
                         {
                             string[] str_values = line.Split(' ');
 
@@ -144,7 +144,6 @@ namespace OWE005336__Video_Annotation_Software_
                                 // The line was incorrectly formatted, ignore
                                 continue;
                             }
-                            line = fs.ReadLine();
                         }
                     }
 
@@ -167,8 +166,19 @@ namespace OWE005336__Video_Annotation_Software_
             return Image.FromStream(ms);
         }
 
-        protected void RemoveImageFromList(int index)
+        protected void RemoveImageFromList(int index, bool deleteFile = true)
         {
+            if (deleteFile)
+            {
+                //Delete the image file and any associated metadata file.
+                string filePath = (string)dgvImages.Rows[index].Cells[2].Value;
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+
+                string metadataFilePath = (string)dgvImages.Rows[index].Cells[3].Value;
+                if (!string.IsNullOrEmpty(metadataFilePath) && File.Exists(metadataFilePath))
+                    File.Delete(metadataFilePath);
+            }
 
             _PaintDataInProgress.Lock();
             dgvImages.Rows.RemoveAt(index);
@@ -176,6 +186,7 @@ namespace OWE005336__Video_Annotation_Software_
 
             dgvImages_SelectionChanged(dgvImages, new EventArgs());
         }
+
         private async void btnSave_Click(object sender, EventArgs e)
         {
             DataGridViewRow selectedRow = dgvImages.SelectedRows[0];
@@ -239,7 +250,7 @@ namespace OWE005336__Video_Annotation_Software_
                 int firstSelectedIndex = dgvImages.SelectedRows[0].Index;
                 foreach (DataGridViewRow row in dgvImages.SelectedRows)
                 {
-                    RemoveImageFromList(row.Index);
+                    RemoveImageFromList(row.Index, true);
                 }
                 if (dgvImages.Rows.Count > firstSelectedIndex)
                     dgvImages.Rows[firstSelectedIndex].Selected = true;

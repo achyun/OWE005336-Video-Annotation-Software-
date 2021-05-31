@@ -33,9 +33,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvImages = new System.Windows.Forms.DataGridView();
-            this.Thumbnail = new System.Windows.Forms.DataGridViewImageColumn();
-            this.FileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -56,6 +53,10 @@
             this.tips = new System.Windows.Forms.ToolTip(this.components);
             this.tgbTags = new OWE005336__Video_Annotation_Software_.TagBox();
             this.roiSelector = new OWE005336__Video_Annotation_Software_.ROISelector();
+            this.Thumbnail = new System.Windows.Forms.DataGridViewImageColumn();
+            this.FileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MetadataFilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -81,7 +82,8 @@
             this.dgvImages.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Thumbnail,
             this.FileName,
-            this.FilePath});
+            this.FilePath,
+            this.MetadataFilePath});
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -110,27 +112,6 @@
             this.dgvImages.SelectionChanged += new System.EventHandler(this.dgvImages_SelectionChanged);
             this.dgvImages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvImages_KeyDown);
             this.dgvImages.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvImages_KeyUp);
-            // 
-            // Thumbnail
-            // 
-            this.Thumbnail.HeaderText = "Thumbnail";
-            this.Thumbnail.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.Thumbnail.Name = "Thumbnail";
-            this.Thumbnail.ReadOnly = true;
-            this.Thumbnail.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Thumbnail.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // FileName
-            // 
-            this.FileName.HeaderText = "Name";
-            this.FileName.Name = "FileName";
-            // 
-            // FilePath
-            // 
-            this.FilePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.FilePath.HeaderText = "File Path";
-            this.FilePath.Name = "FilePath";
-            this.FilePath.ReadOnly = true;
             // 
             // splitter1
             // 
@@ -333,6 +314,32 @@
             this.roiSelector.TabIndex = 0;
             this.roiSelector.Text = "roiSelector1";
             // 
+            // Thumbnail
+            // 
+            this.Thumbnail.HeaderText = "Thumbnail";
+            this.Thumbnail.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.Thumbnail.Name = "Thumbnail";
+            this.Thumbnail.ReadOnly = true;
+            this.Thumbnail.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Thumbnail.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // FileName
+            // 
+            this.FileName.HeaderText = "Name";
+            this.FileName.Name = "FileName";
+            // 
+            // FilePath
+            // 
+            this.FilePath.HeaderText = "File Path";
+            this.FilePath.Name = "FilePath";
+            this.FilePath.ReadOnly = true;
+            // 
+            // MetadataFilePath
+            // 
+            this.MetadataFilePath.HeaderText = "Metadata File Path";
+            this.MetadataFilePath.Name = "MetadataFilePath";
+            this.MetadataFilePath.ReadOnly = true;
+            // 
             // fProcessTrackerImages
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -379,9 +386,10 @@
         private System.Windows.Forms.Label Label;
         private System.Windows.Forms.Button btnFinish;
         private System.Windows.Forms.ToolTip tips;
+        private System.Windows.Forms.Label lblAddedCount;
         private System.Windows.Forms.DataGridViewImageColumn Thumbnail;
         private System.Windows.Forms.DataGridViewTextBoxColumn FileName;
         private System.Windows.Forms.DataGridViewTextBoxColumn FilePath;
-        private System.Windows.Forms.Label lblAddedCount;
+        private System.Windows.Forms.DataGridViewTextBoxColumn MetadataFilePath;
     }
 }

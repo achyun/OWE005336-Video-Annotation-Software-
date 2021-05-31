@@ -21,9 +21,7 @@ namespace OWE005336__Video_Annotation_Software_
         private Bitmap _CurrentImage;
         List<ROIObject> _CurrentROIs = new List<ROIObject>();
 
-        public Dictionary<int, string> Detector_LabelMap = new Dictionary<int, string>() { { 0, "ROTARY WING" }, { 1, "FIXED WING" }, { 2, "BIRD" }, { 3, "TREE" } };
-
-        public Dictionary<string, LabelNode> LabelMap = new Dictionary<string, LabelNode>();
+        public Dictionary<int, string> Detector_LabelMap = new Dictionary<int, string>() { { 0, "ROTARY_WING" }, { 1, "FIXED_WING" }, { 2, "BIRD" }, { 3, "TREE" } };
         public int LabelID { get; set; } = -1;
         public string Tags { get; set; } = "";
         public SensorTypeEnum SensorType { get; set; } = SensorTypeEnum.Daylight;
@@ -58,11 +56,6 @@ namespace OWE005336__Video_Annotation_Software_
             cmbSensorType.SelectedItem = SensorType;
             cmbSensorType.SelectedIndexChanged += CmbSensorType_SelectedIndexChanged;
             tgbTags.TagsChanged += TgbTags_TagsChanged;
-
-            //Cache a mapping of label names to IDs to match to labels from the detection results
-            var labels = Program.ImageDatabase.LabelTree_LoadLabelList();
-            foreach (var label in labels)
-                LabelMap.Add(label.Name.ToUpperInvariant(), label);
         }
 
         private void TgbTags_TagsChanged(TagBox sender, EventArgs e)
@@ -119,8 +112,8 @@ namespace OWE005336__Video_Annotation_Software_
                                 if (str_values.Length < 5)
                                     continue;
 
-                                LabelNode label = new LabelNode(-1, "<Unknown>", -1);
-                                var labelText = str_values[0];
+                                LabelNode label = new LabelNode(-1, "<Unknown>", -1, "");
+                                var labelTextID = str_values[0].ToUpperInvariant();
                                 var topLeft_x = float.Parse(str_values[1]);
                                 var topLeft_y = float.Parse(str_values[2]);
                                 var width = float.Parse(str_values[3]);
@@ -128,14 +121,12 @@ namespace OWE005336__Video_Annotation_Software_
                                 var confidence = str_values.Length >= 6 ? float.Parse(str_values[5]) : 1.0;
 
                                 //If label is a number assume it is a detector output ID, convert to text
-                                if (int.TryParse(labelText, out int dectectorClassID))
+                                if (int.TryParse(labelTextID, out int dectectorClassID))
                                 {
-                                    labelText = Detector_LabelMap[dectectorClassID];
+                                    labelTextID = Detector_LabelMap[dectectorClassID];
                                 }
-                                //Try and get the label ID for the given label
-
-                                if (LabelMap.TryGetValue(labelText, out LabelNode matchedlabel))
-                                    label = matchedlabel;
+                                //Try and get the label info for the given text ID, otherwise fall back to our unknown label
+                                label = Program.ImageDatabase.LabelTree_LoadByTextID(labelTextID) ?? label;
 
                                 _CurrentROIs.Add(new ROIObject(new RectangleF(topLeft_x, topLeft_y, width, height), 1, label.Name) { Tag = label });
                             }

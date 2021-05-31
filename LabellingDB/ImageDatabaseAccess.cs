@@ -303,7 +303,7 @@ namespace LabellingDB
             List<LabelNode> labels = new List<LabelNode>();
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT id, name, lft, rgt FROM label_trees WHERE parent_id = @parent_id", conn);
+            SqlCommand cmd = new SqlCommand("SELECT id, name, lft, rgt, text_id FROM label_trees WHERE parent_id = @parent_id", conn);
             cmd.Parameters.AddWithValue("@parent_id", parentID);
             
             try
@@ -314,7 +314,7 @@ namespace LabellingDB
                 rdr = cmd.ExecuteReader();
                 while (rdr.Read())
                 {
-                    LabelNode ln = new LabelNode(rdr.GetInt32(0), rdr.GetString(1), parentID);
+                    LabelNode ln = new LabelNode(rdr.GetInt32(0), rdr.GetString(1), parentID, rdr.GetString(4));
                     ln.Left = rdr.GetInt32(2);
                     ln.Right = rdr.GetInt32(3);
                     labels.Add(ln);
@@ -337,7 +337,7 @@ namespace LabellingDB
             LabelNode label = null;
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT id, name, parent_id, lft, rgt FROM label_trees WHERE id = @id", conn);
+            SqlCommand cmd = new SqlCommand("SELECT id, name, parent_id, lft, rgt, text_id FROM label_trees WHERE id = @id", conn);
             cmd.Parameters.AddWithValue("@id", id);
 
             try
@@ -348,7 +348,40 @@ namespace LabellingDB
                 rdr = cmd.ExecuteReader();
                 if (rdr.Read())
                 {
-                    label = new LabelNode(rdr.GetInt32(0), rdr.GetString(1), rdr.GetInt32(2));
+                    label = new LabelNode(rdr.GetInt32(0), rdr.GetString(1), rdr.GetInt32(2), rdr.GetString(5));
+                    label.Left = rdr.GetInt32(3);
+                    label.Right = rdr.GetInt32(4);
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'LabelTree_LoadByID' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return label;
+        }
+        public LabelNode LabelTree_LoadByTextID(string textID)
+        {
+            LabelNode label = null;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlDataReader rdr = null;
+            SqlCommand cmd = new SqlCommand("SELECT id, name, parent_id, lft, rgt, text_id FROM label_trees WHERE text_id = @text_id", conn);
+            cmd.Parameters.AddWithValue("@text_id", textID);
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                rdr = cmd.ExecuteReader();
+                if (rdr.Read())
+                {
+                    label = new LabelNode(rdr.GetInt32(0), rdr.GetString(1), rdr.GetInt32(2), rdr.GetString(5));
                     label.Left = rdr.GetInt32(3);
                     label.Right = rdr.GetInt32(4);
                 }
@@ -380,13 +413,15 @@ namespace LabellingDB
         public LabelNode LabelTree_AddLabel(int parentID, string name)
         {
             int new_id = -1;
+            string text_id = name.Replace(' ', '_').ToUpperInvariant();
             LabelNode newNode = null;
             SqlConnection conn = new SqlConnection(_ConnectionString);
-            SqlCommand cmd = new SqlCommand("INSERT INTO label_trees (parent_id, name) VALUES(@parent_id, @name); " +
+            SqlCommand cmd = new SqlCommand("INSERT INTO label_trees (parent_id, name, text_id) VALUES(@parent_id, @name, @text_id ); " +
                                             "SELECT SCOPE_IDENTITY()", conn);
             SqlDataReader rdr = null;
             cmd.Parameters.Add("@parent_id", SqlDbType.Int).Value = parentID;
             cmd.Parameters.Add("@name", SqlDbType.NVarChar, 50).Value = name;
+            cmd.Parameters.Add("@text_id", SqlDbType.NVarChar, 50).Value = text_id;
 
             try
             {
@@ -397,7 +432,7 @@ namespace LabellingDB
                 if (rdr.Read())
                 {
                     new_id = Decimal.ToInt32(rdr.GetDecimal(0));
-                    newNode = new LabelNode(new_id, name, parentID);
+                    newNode = new LabelNode(new_id, name, parentID, text_id);
                 }
 
             }
@@ -583,7 +618,7 @@ namespace LabellingDB
             List<LabelNode> labels = new List<LabelNode>();
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT id, name, parent_id FROM label_trees WHERE parent_id > -1", conn);
+            SqlCommand cmd = new SqlCommand("SELECT id, name, parent_id, text_id FROM label_trees WHERE parent_id > -1", conn);
 
             try
             {
@@ -593,7 +628,7 @@ namespace LabellingDB
                 rdr = cmd.ExecuteReader();
                 while (rdr.Read())
                 {
-                    labels.Add(new LabelNode(rdr.GetInt32(0), rdr.GetString(1), rdr.GetInt32(2)));
+                    labels.Add(new LabelNode(rdr.GetInt32(0), rdr.GetString(1), rdr.GetInt32(2), rdr.GetString(3)));
                 }
             }
             catch (Exception ex)
@@ -1844,11 +1879,12 @@ namespace LabellingDB
 
     public class LabelNode
     {
-        public LabelNode(int id, string name, int parentID)
+        public LabelNode(int id, string name, int parentID, string textID)
         {
             ID = id;
             ParentID = parentID;
             Name = name;
+            TextID = textID;
         }
 
         public override string ToString()
@@ -1858,6 +1894,7 @@ namespace LabellingDB
 
         public int ID { get; set; }
         public int ParentID { get; set; }
+        public string TextID { get; set; }
         public string Name { get; set; }
         public int Left { get; set; }
         public int Right { get; set; }

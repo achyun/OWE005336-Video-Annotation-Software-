@@ -836,6 +836,17 @@ namespace OWE005336__Video_Annotation_Software_
             form.ShowDialog();
         }
 
+        private void fMain_Load(object sender, EventArgs e)
+        {
+            var imageDirPath = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
+
+            if (!Directory.Exists(imageDirPath))
+            {
+                MessageBox.Show("Cannot access Image Library folder. Please check folder is accessible and restart the application.", "Error Opening Image Library", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
+            }
+        }
+
         //private void ReformatImage(string filePath, ImageFormat destFormat)
         //{
         //    byte[] imgBytes;

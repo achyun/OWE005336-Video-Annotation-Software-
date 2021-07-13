@@ -21,7 +21,7 @@ namespace OWE005336__Video_Annotation_Software_
         private Bitmap _CurrentImage;
         List<ROIObject> _CurrentROIs = new List<ROIObject>();
 
-        public Dictionary<int, string> Detector_LabelMap = new Dictionary<int, string>() { { 0, "ROTARY_WING" }, { 1, "FIXED_WING" }, { 2, "BIRD" }, { 3, "TREE" } };
+        public Dictionary<int, string> Detector_LabelMap = new Dictionary<int, string>() { { 0, "FIXED_WING" }, { 1, "ROTARY_WING" }, { 2, "BIRD" }, { 3, "TREE" } };
         public int LabelID { get; set; } = -1;
         public string Tags { get; set; } = "";
         public SensorTypeEnum SensorType { get; set; } = SensorTypeEnum.Daylight;
@@ -120,10 +120,11 @@ namespace OWE005336__Video_Annotation_Software_
                                 var height = float.Parse(str_values[4]);
                                 var confidence = str_values.Length >= 6 ? float.Parse(str_values[5]) : 1.0;
 
-                                //If label is a number assume it is a detector output ID, convert to text
+                                //If label is a number assume it is a detector output ID, convert to text. However it might be invalid (e.g. -2 if the detection was done manually)
                                 if (int.TryParse(labelTextID, out int dectectorClassID))
                                 {
-                                    labelTextID = Detector_LabelMap[dectectorClassID];
+                                    if (Detector_LabelMap.ContainsKey(dectectorClassID))
+                                        labelTextID = Detector_LabelMap[dectectorClassID];
                                 }
                                 //Try and get the label info for the given text ID, otherwise fall back to our unknown label
                                 label = Program.ImageDatabase.LabelTree_LoadByTextID(labelTextID) ?? label;

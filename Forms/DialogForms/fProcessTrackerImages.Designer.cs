@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvImages = new System.Windows.Forms.DataGridView();
             this.Thumbnail = new System.Windows.Forms.DataGridViewImageColumn();
             this.FileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -70,40 +70,41 @@
             this.dgvImages.AllowDrop = true;
             this.dgvImages.AllowUserToAddRows = false;
             this.dgvImages.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvImages.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvImages.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvImages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvImages.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Thumbnail,
             this.FileName,
             this.FilePath,
             this.MetadataFilePath});
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvImages.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvImages.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvImages.Dock = System.Windows.Forms.DockStyle.Left;
             this.dgvImages.Location = new System.Drawing.Point(0, 0);
             this.dgvImages.Name = "dgvImages";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvImages.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvImages.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dgvImages.RowHeadersVisible = false;
+            this.dgvImages.RowHeadersWidth = 51;
             this.dgvImages.RowTemplate.Height = 50;
             this.dgvImages.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvImages.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -117,27 +118,35 @@
             // 
             this.Thumbnail.HeaderText = "Thumbnail";
             this.Thumbnail.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.Thumbnail.MinimumWidth = 6;
             this.Thumbnail.Name = "Thumbnail";
             this.Thumbnail.ReadOnly = true;
             this.Thumbnail.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Thumbnail.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.Thumbnail.Width = 125;
             // 
             // FileName
             // 
             this.FileName.HeaderText = "Name";
+            this.FileName.MinimumWidth = 6;
             this.FileName.Name = "FileName";
+            this.FileName.Width = 125;
             // 
             // FilePath
             // 
             this.FilePath.HeaderText = "File Path";
+            this.FilePath.MinimumWidth = 6;
             this.FilePath.Name = "FilePath";
             this.FilePath.ReadOnly = true;
+            this.FilePath.Width = 125;
             // 
             // MetadataFilePath
             // 
             this.MetadataFilePath.HeaderText = "Metadata File Path";
+            this.MetadataFilePath.MinimumWidth = 6;
             this.MetadataFilePath.Name = "MetadataFilePath";
             this.MetadataFilePath.ReadOnly = true;
+            this.MetadataFilePath.Width = 125;
             // 
             // splitter1
             // 
@@ -179,7 +188,7 @@
             this.panel6.Controls.Add(this.btnSave);
             this.panel6.Controls.Add(this.groupBox1);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel6.Location = new System.Drawing.Point(5, 203);
+            this.panel6.Location = new System.Drawing.Point(5, 209);
             this.panel6.Name = "panel6";
             this.panel6.Padding = new System.Windows.Forms.Padding(5);
             this.panel6.Size = new System.Drawing.Size(190, 78);
@@ -238,7 +247,7 @@
             this.lblAddedCount.AutoSize = true;
             this.lblAddedCount.Location = new System.Drawing.Point(46, 16);
             this.lblAddedCount.Name = "lblAddedCount";
-            this.lblAddedCount.Size = new System.Drawing.Size(13, 13);
+            this.lblAddedCount.Size = new System.Drawing.Size(14, 15);
             this.lblAddedCount.TabIndex = 9;
             this.lblAddedCount.Text = "0";
             // 
@@ -247,7 +256,7 @@
             this.lblImageCount.AutoSize = true;
             this.lblImageCount.Location = new System.Drawing.Point(6, 16);
             this.lblImageCount.Name = "lblImageCount";
-            this.lblImageCount.Size = new System.Drawing.Size(41, 13);
+            this.lblImageCount.Size = new System.Drawing.Size(45, 15);
             this.lblImageCount.TabIndex = 7;
             this.lblImageCount.Text = "Added:";
             // 
@@ -256,7 +265,7 @@
             this.tgbTags.AutoScroll = true;
             this.tgbTags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tgbTags.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tgbTags.Location = new System.Drawing.Point(5, 86);
+            this.tgbTags.Location = new System.Drawing.Point(5, 92);
             this.tgbTags.Name = "tgbTags";
             this.tgbTags.Size = new System.Drawing.Size(190, 117);
             this.tgbTags.TabIndex = 15;
@@ -265,9 +274,9 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Location = new System.Drawing.Point(5, 73);
+            this.label1.Location = new System.Drawing.Point(5, 77);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.Size = new System.Drawing.Size(34, 15);
             this.label1.TabIndex = 12;
             this.label1.Text = "Tags";
             // 
@@ -276,7 +285,7 @@
             this.cmbSensorType.Dock = System.Windows.Forms.DockStyle.Top;
             this.cmbSensorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSensorType.FormattingEnabled = true;
-            this.cmbSensorType.Location = new System.Drawing.Point(5, 52);
+            this.cmbSensorType.Location = new System.Drawing.Point(5, 56);
             this.cmbSensorType.Name = "cmbSensorType";
             this.cmbSensorType.Size = new System.Drawing.Size(190, 21);
             this.cmbSensorType.TabIndex = 17;
@@ -285,9 +294,9 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label2.Location = new System.Drawing.Point(5, 39);
+            this.label2.Location = new System.Drawing.Point(5, 41);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(67, 13);
+            this.label2.Size = new System.Drawing.Size(75, 15);
             this.label2.TabIndex = 16;
             this.label2.Text = "Sensor Type";
             // 
@@ -297,7 +306,7 @@
             this.panel5.Controls.Add(this.btnSelectLabel);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.panel5.Location = new System.Drawing.Point(5, 18);
+            this.panel5.Location = new System.Drawing.Point(5, 20);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(190, 21);
             this.panel5.TabIndex = 18;
@@ -329,17 +338,18 @@
             this.Label.Dock = System.Windows.Forms.DockStyle.Top;
             this.Label.Location = new System.Drawing.Point(5, 5);
             this.Label.Name = "Label";
-            this.Label.Size = new System.Drawing.Size(33, 13);
+            this.Label.Size = new System.Drawing.Size(38, 15);
             this.Label.TabIndex = 9;
             this.Label.Text = "Label";
             // 
             // roiSelector
             // 
+            this.roiSelector.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.roiSelector.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.roiSelector.Location = new System.Drawing.Point(0, 0);
+            this.roiSelector.Location = new System.Drawing.Point(274, 0);
             this.roiSelector.Name = "roiSelector";
             this.roiSelector.SelectedROIIndex = -1;
-            this.roiSelector.Size = new System.Drawing.Size(1336, 607);
+            this.roiSelector.Size = new System.Drawing.Size(862, 607);
             this.roiSelector.TabIndex = 0;
             this.roiSelector.Text = "roiSelector1";
             // 
@@ -348,12 +358,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1336, 607);
+            this.Controls.Add(this.roiSelector);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.dgvImages);
-            this.Controls.Add(this.roiSelector);
             this.Name = "fProcessTrackerImages";
             this.Text = "Review Images from CV System";
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvImages_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel4.ResumeLayout(false);

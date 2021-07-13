@@ -108,9 +108,9 @@
             // tkbScan
             // 
             this.tkbScan.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tkbScan.Location = new System.Drawing.Point(0, 6);
+            this.tkbScan.Location = new System.Drawing.Point(0, -5);
             this.tkbScan.Name = "tkbScan";
-            this.tkbScan.Size = new System.Drawing.Size(1193, 45);
+            this.tkbScan.Size = new System.Drawing.Size(1193, 56);
             this.tkbScan.TabIndex = 1;
             this.tkbScan.ValueChanged += new System.EventHandler(this.tkbScan_ValueChanged);
             // 
@@ -186,7 +186,7 @@
             this.panel6.Controls.Add(this.btnSave);
             this.panel6.Controls.Add(this.groupBox1);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel6.Location = new System.Drawing.Point(5, 203);
+            this.panel6.Location = new System.Drawing.Point(5, 209);
             this.panel6.Name = "panel6";
             this.panel6.Padding = new System.Windows.Forms.Padding(5);
             this.panel6.Size = new System.Drawing.Size(265, 78);
@@ -197,7 +197,7 @@
             this.ckbArchiveVideo.AutoSize = true;
             this.ckbArchiveVideo.Location = new System.Drawing.Point(175, 54);
             this.ckbArchiveVideo.Name = "ckbArchiveVideo";
-            this.ckbArchiveVideo.Size = new System.Drawing.Size(92, 17);
+            this.ckbArchiveVideo.Size = new System.Drawing.Size(102, 19);
             this.ckbArchiveVideo.TabIndex = 11;
             this.ckbArchiveVideo.Text = "Archive Video";
             this.ckbArchiveVideo.UseVisualStyleBackColor = true;
@@ -242,7 +242,7 @@
             this.lblImageCount.AutoSize = true;
             this.lblImageCount.Location = new System.Drawing.Point(38, 14);
             this.lblImageCount.Name = "lblImageCount";
-            this.lblImageCount.Size = new System.Drawing.Size(53, 13);
+            this.lblImageCount.Size = new System.Drawing.Size(61, 15);
             this.lblImageCount.TabIndex = 7;
             this.lblImageCount.Text = "Images: 0";
             // 
@@ -251,7 +251,7 @@
             this.lblClipCount.AutoSize = true;
             this.lblClipCount.Location = new System.Drawing.Point(38, 31);
             this.lblClipCount.Name = "lblClipCount";
-            this.lblClipCount.Size = new System.Drawing.Size(41, 13);
+            this.lblClipCount.Size = new System.Drawing.Size(47, 15);
             this.lblClipCount.TabIndex = 8;
             this.lblClipCount.Text = "Clips: 0";
             // 
@@ -260,7 +260,7 @@
             this.tgbTags.AutoScroll = true;
             this.tgbTags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tgbTags.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tgbTags.Location = new System.Drawing.Point(5, 86);
+            this.tgbTags.Location = new System.Drawing.Point(5, 92);
             this.tgbTags.Name = "tgbTags";
             this.tgbTags.Size = new System.Drawing.Size(265, 117);
             this.tgbTags.TabIndex = 15;
@@ -269,9 +269,9 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Location = new System.Drawing.Point(5, 73);
+            this.label1.Location = new System.Drawing.Point(5, 77);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.Size = new System.Drawing.Size(34, 15);
             this.label1.TabIndex = 12;
             this.label1.Text = "Tags";
             // 
@@ -280,7 +280,7 @@
             this.cmbSensorType.Dock = System.Windows.Forms.DockStyle.Top;
             this.cmbSensorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSensorType.FormattingEnabled = true;
-            this.cmbSensorType.Location = new System.Drawing.Point(5, 52);
+            this.cmbSensorType.Location = new System.Drawing.Point(5, 56);
             this.cmbSensorType.Name = "cmbSensorType";
             this.cmbSensorType.Size = new System.Drawing.Size(265, 21);
             this.cmbSensorType.TabIndex = 17;
@@ -289,9 +289,9 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label2.Location = new System.Drawing.Point(5, 39);
+            this.label2.Location = new System.Drawing.Point(5, 41);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(67, 13);
+            this.label2.Size = new System.Drawing.Size(75, 15);
             this.label2.TabIndex = 16;
             this.label2.Text = "Sensor Type";
             // 
@@ -301,7 +301,7 @@
             this.panel5.Controls.Add(this.btnSelectLabel);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.panel5.Location = new System.Drawing.Point(5, 18);
+            this.panel5.Location = new System.Drawing.Point(5, 20);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(265, 21);
             this.panel5.TabIndex = 18;
@@ -333,7 +333,7 @@
             this.Label.Dock = System.Windows.Forms.DockStyle.Top;
             this.Label.Location = new System.Drawing.Point(5, 5);
             this.Label.Name = "Label";
-            this.Label.Size = new System.Drawing.Size(33, 13);
+            this.Label.Size = new System.Drawing.Size(38, 15);
             this.Label.TabIndex = 9;
             this.Label.Text = "Label";
             // 

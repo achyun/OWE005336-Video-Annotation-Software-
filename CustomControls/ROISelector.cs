@@ -103,8 +103,8 @@ namespace OWE005336__Video_Annotation_Software_
                 if (_DragAction == DragActionEnum.DrawNew)
                 {
                     _DragAction = DragActionEnum.None;
+                    _HighlightedROIIndex = SelectedROIIndex = -1;
                     _ROIs.RemoveAt(_ROIs.Count - 1);
-                    SelectedROIIndex = -1;
                     this.Refresh();
                 }
                 else if (SelectedROIIndex > -1)
@@ -117,9 +117,10 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 if (e.KeyCode == Keys.Delete)
                 {
-                    _ROIs.RemoveAt(SelectedROIIndex);
-                    ROIDeleted?.Invoke(this, SelectedROIIndex);
-                    SelectedROIIndex = -1;
+                    int deletedIndex = SelectedROIIndex;
+                    _HighlightedROIIndex = _SelectedROIIndex = -1;
+                    _ROIs.RemoveAt(deletedIndex);
+                    ROIDeleted?.Invoke(this, deletedIndex);
                 }
                 else if (e.KeyValue >= 0x30 && e.KeyValue <= 0x39)
                 {
@@ -442,6 +443,7 @@ namespace OWE005336__Video_Annotation_Software_
         #region "Helper Functions"
         public void RemoveROIByIndex(int index)
         {
+            if (index == _HighlightedROIIndex) { _HighlightedROIIndex = -1; }
             if (index == _SelectedROIIndex) { _SelectedROIIndex = -1; }
             _ROIs.RemoveAt(index);
             this.Refresh();

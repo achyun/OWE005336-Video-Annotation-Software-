@@ -235,6 +235,9 @@ namespace OWE005336__Video_Annotation_Software_
                 {
                     dgvImages.Rows.Remove(dr);
                 }
+            } else if (e.KeyValue >= 0x30 && e.KeyValue <= 0x39)
+            {
+                lbiImage.HandleShortcutKey(e.KeyValue);
             }
         }
 
@@ -844,6 +847,14 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 MessageBox.Show("Cannot access Image Library folder. Please check folder is accessible and restart the application.", "Error Opening Image Library", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();
+            }
+        }
+
+        private void fMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyValue >= 0x30 && e.KeyValue <= 0x39)
+            {
+                lbiImage.HandleShortcutKey(e.KeyValue);
             }
         }
 

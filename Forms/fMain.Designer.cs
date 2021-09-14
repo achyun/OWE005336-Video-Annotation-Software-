@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mniFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mniOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,7 +66,6 @@
             this.btnOpenImages = new System.Windows.Forms.Button();
             this.btnOpenVideo = new System.Windows.Forms.Button();
             this.tbpLabels = new System.Windows.Forms.TabPage();
-            this.trvLabels = new OWE005336__Video_Annotation_Software_.LabelTree();
             this.tbpSettings = new System.Windows.Forms.TabPage();
             this.btnSelectProcessedFileArchiveDir = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -80,8 +79,9 @@
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.stsStatus = new System.Windows.Forms.StatusStrip();
             this.lblConnectedUser = new System.Windows.Forms.ToolStripStatusLabel();
-            this.lbiImage = new OWE005336__Video_Annotation_Software_.LabellingInterface();
             this.tips = new System.Windows.Forms.ToolTip(this.components);
+            this.lbiImage = new OWE005336__Video_Annotation_Software_.LabellingInterface();
+            this.trvLabels = new OWE005336__Video_Annotation_Software_.LabelTree();
             this.menuStrip1.SuspendLayout();
             this.tbcOptions.SuspendLayout();
             this.tbpImages.SuspendLayout();
@@ -229,38 +229,38 @@
             this.dgvImages.AllowDrop = true;
             this.dgvImages.AllowUserToAddRows = false;
             this.dgvImages.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvImages.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvImages.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvImages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvImages.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Thumbnail,
             this.Complete,
             this.FilePath});
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvImages.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvImages.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvImages.Location = new System.Drawing.Point(3, 3);
             this.dgvImages.Name = "dgvImages";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvImages.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvImages.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dgvImages.RowHeadersVisible = false;
             this.dgvImages.RowTemplate.Height = 50;
             this.dgvImages.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
@@ -467,17 +467,6 @@
             this.tbpLabels.Text = "Labels";
             this.tbpLabels.UseVisualStyleBackColor = true;
             // 
-            // trvLabels
-            // 
-            this.trvLabels.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trvLabels.ImageIndex = 0;
-            this.trvLabels.Location = new System.Drawing.Point(3, 3);
-            this.trvLabels.Name = "trvLabels";
-            this.trvLabels.SelectedImageIndex = 0;
-            this.trvLabels.ShowNodeToolTips = true;
-            this.trvLabels.Size = new System.Drawing.Size(268, 661);
-            this.trvLabels.TabIndex = 0;
-            // 
             // tbpSettings
             // 
             this.tbpSettings.Controls.Add(this.btnSelectProcessedFileArchiveDir);
@@ -609,6 +598,17 @@
             this.lbiImage.Size = new System.Drawing.Size(923, 693);
             this.lbiImage.TabIndex = 4;
             // 
+            // trvLabels
+            // 
+            this.trvLabels.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trvLabels.ImageIndex = 0;
+            this.trvLabels.Location = new System.Drawing.Point(3, 3);
+            this.trvLabels.Name = "trvLabels";
+            this.trvLabels.SelectedImageIndex = 0;
+            this.trvLabels.ShowNodeToolTips = true;
+            this.trvLabels.Size = new System.Drawing.Size(268, 661);
+            this.trvLabels.TabIndex = 0;
+            // 
             // fMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -624,6 +624,7 @@
             this.Name = "fMain";
             this.Text = "AIData";
             this.Load += new System.EventHandler(this.fMain_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.fMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tbcOptions.ResumeLayout(false);

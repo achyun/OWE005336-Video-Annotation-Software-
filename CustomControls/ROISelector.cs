@@ -124,7 +124,7 @@ namespace OWE005336__Video_Annotation_Software_
                 }
                 else if (e.KeyValue >= 0x30 && e.KeyValue <= 0x39)
                 {
-                    ShortcutKeyPressed(this, e.KeyValue);
+                    ShortcutKeyPressed?.Invoke(this, e.KeyValue);
                 }
             }
         }

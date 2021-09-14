@@ -47,7 +47,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblAddedCount = new System.Windows.Forms.Label();
             this.lblImageCount = new System.Windows.Forms.Label();
-            this.tgbTags = new OWE005336__Video_Annotation_Software_.TagBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmbSensorType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -57,6 +56,7 @@
             this.Label = new System.Windows.Forms.Label();
             this.tips = new System.Windows.Forms.ToolTip(this.components);
             this.roiSelector = new OWE005336__Video_Annotation_Software_.ROISelector();
+            this.tgbTags = new OWE005336__Video_Annotation_Software_.TagBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -188,7 +188,7 @@
             this.panel6.Controls.Add(this.btnSave);
             this.panel6.Controls.Add(this.groupBox1);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel6.Location = new System.Drawing.Point(5, 209);
+            this.panel6.Location = new System.Drawing.Point(5, 203);
             this.panel6.Name = "panel6";
             this.panel6.Padding = new System.Windows.Forms.Padding(5);
             this.panel6.Size = new System.Drawing.Size(190, 78);
@@ -247,7 +247,7 @@
             this.lblAddedCount.AutoSize = true;
             this.lblAddedCount.Location = new System.Drawing.Point(46, 16);
             this.lblAddedCount.Name = "lblAddedCount";
-            this.lblAddedCount.Size = new System.Drawing.Size(14, 15);
+            this.lblAddedCount.Size = new System.Drawing.Size(13, 13);
             this.lblAddedCount.TabIndex = 9;
             this.lblAddedCount.Text = "0";
             // 
@@ -256,27 +256,17 @@
             this.lblImageCount.AutoSize = true;
             this.lblImageCount.Location = new System.Drawing.Point(6, 16);
             this.lblImageCount.Name = "lblImageCount";
-            this.lblImageCount.Size = new System.Drawing.Size(45, 15);
+            this.lblImageCount.Size = new System.Drawing.Size(41, 13);
             this.lblImageCount.TabIndex = 7;
             this.lblImageCount.Text = "Added:";
-            // 
-            // tgbTags
-            // 
-            this.tgbTags.AutoScroll = true;
-            this.tgbTags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tgbTags.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tgbTags.Location = new System.Drawing.Point(5, 92);
-            this.tgbTags.Name = "tgbTags";
-            this.tgbTags.Size = new System.Drawing.Size(190, 117);
-            this.tgbTags.TabIndex = 15;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Location = new System.Drawing.Point(5, 77);
+            this.label1.Location = new System.Drawing.Point(5, 73);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(34, 15);
+            this.label1.Size = new System.Drawing.Size(31, 13);
             this.label1.TabIndex = 12;
             this.label1.Text = "Tags";
             // 
@@ -285,7 +275,7 @@
             this.cmbSensorType.Dock = System.Windows.Forms.DockStyle.Top;
             this.cmbSensorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSensorType.FormattingEnabled = true;
-            this.cmbSensorType.Location = new System.Drawing.Point(5, 56);
+            this.cmbSensorType.Location = new System.Drawing.Point(5, 52);
             this.cmbSensorType.Name = "cmbSensorType";
             this.cmbSensorType.Size = new System.Drawing.Size(190, 21);
             this.cmbSensorType.TabIndex = 17;
@@ -294,9 +284,9 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label2.Location = new System.Drawing.Point(5, 41);
+            this.label2.Location = new System.Drawing.Point(5, 39);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 15);
+            this.label2.Size = new System.Drawing.Size(67, 13);
             this.label2.TabIndex = 16;
             this.label2.Text = "Sensor Type";
             // 
@@ -306,7 +296,7 @@
             this.panel5.Controls.Add(this.btnSelectLabel);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.panel5.Location = new System.Drawing.Point(5, 20);
+            this.panel5.Location = new System.Drawing.Point(5, 18);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(190, 21);
             this.panel5.TabIndex = 18;
@@ -338,7 +328,7 @@
             this.Label.Dock = System.Windows.Forms.DockStyle.Top;
             this.Label.Location = new System.Drawing.Point(5, 5);
             this.Label.Name = "Label";
-            this.Label.Size = new System.Drawing.Size(38, 15);
+            this.Label.Size = new System.Drawing.Size(33, 13);
             this.Label.TabIndex = 9;
             this.Label.Text = "Label";
             // 
@@ -353,6 +343,16 @@
             this.roiSelector.TabIndex = 0;
             this.roiSelector.Text = "roiSelector1";
             // 
+            // tgbTags
+            // 
+            this.tgbTags.AutoScroll = true;
+            this.tgbTags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tgbTags.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tgbTags.Location = new System.Drawing.Point(5, 86);
+            this.tgbTags.Name = "tgbTags";
+            this.tgbTags.Size = new System.Drawing.Size(190, 117);
+            this.tgbTags.TabIndex = 15;
+            // 
             // fProcessTrackerImages
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -364,6 +364,7 @@
             this.Controls.Add(this.dgvImages);
             this.Name = "fProcessTrackerImages";
             this.Text = "Review Images from CV System";
+            this.Load += new System.EventHandler(this.fProcessTrackerImages_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvImages_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).EndInit();
             this.panel1.ResumeLayout(false);

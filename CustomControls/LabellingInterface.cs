@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace OWE005336__Video_Annotation_Software_
@@ -37,9 +38,14 @@ namespace OWE005336__Video_Annotation_Software_
             tbxTags.TagsChanged += tbxTags_TagsChanged;
         }
 
+        public void HandleShortcutKey(int keyValue)
+        {
+            ProcessLabelShortcut(keyValue);
+        }
+
         private void _ROISelector_ShortcutKeyPressed(ROISelector sender, int keyValue)
         {
-            ProcessLabelShorcut(keyValue);
+            ProcessLabelShortcut(keyValue);
         }
 
         #region "GUI Events"
@@ -124,7 +130,7 @@ namespace OWE005336__Video_Annotation_Software_
                 }
                 if (e.KeyValue >= 0x30 && e.KeyValue <= 0x39)
                 {
-                    ProcessLabelShorcut(e.KeyValue);
+                    ProcessLabelShortcut(e.KeyValue);
                 }
             }
         }
@@ -140,13 +146,7 @@ namespace OWE005336__Video_Annotation_Software_
                         if (l.ParentID > -1)
                         {
                             LabelledROI lroi = (LabelledROI)dgvLabels.SelectedRows[0].Tag;
-                            lroi.LabelID = l.ID;
-                            lroi.LabelName = l.Name;
-                            if (Program.ImageDatabase.BBoxLabels_UpdateLabel(lroi))
-                            {
-                                dgvLabels.SelectedRows[0].Cells["Label"].Value = l.Name;
-                                _ROISelector.UpdateROIName(e.RowIndex, l.Name);
-                            }
+                            SetLabelForROI(l, lroi);
                         }
                     }
                     dgvLabels.EndEdit();
@@ -154,6 +154,36 @@ namespace OWE005336__Video_Annotation_Software_
                 }
             }
         }
+
+        private bool SetLabelForROI(LabelNode l, LabelledROI lroi)
+        {
+            lroi.LabelID = l.ID;
+            lroi.LabelName = l.Name;
+            if (Program.ImageDatabase.BBoxLabels_UpdateLabel(lroi))
+            {
+                var dgvRow = dgvLabels.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Tag == lroi);
+                if (dgvRow != null)
+                {
+                    dgvRow.Cells["Label"].Value = l.Name;
+                    var rowIndex = dgvLabels.Rows.IndexOf(dgvRow);
+                    _ROISelector.UpdateROIName(rowIndex, l.Name);
+
+                }
+                if (dgvLabels.Rows.Count == 1)
+                {
+                    _LabelledImage.LabelID = l.ID;
+                    _LabelledImage.LabelName = l.Name;
+
+                    if (Program.ImageDatabase.Images_Update(_LabelledImage))
+                    {
+                        txtLabel.Text = l.Name;
+                    }
+                }
+                return true;
+            }
+            return false;            
+        }
+
         private void _ROISelector_ROIDeleted(ROISelector sender, int index)
         {
             int id = _LabelledImage.LabelledROIs[index].ID;
@@ -301,7 +331,7 @@ namespace OWE005336__Video_Annotation_Software_
             dgvLabels.Rows[index].Cells["ROISize"].Value = s;
         }
 
-        private void ProcessLabelShorcut(int keyValue)
+        private void ProcessLabelShortcut(int keyValue)
         {
             if (dgvLabels.SelectedRows.Count > 0)
             {
@@ -312,25 +342,7 @@ namespace OWE005336__Video_Annotation_Software_
                 if (ln != null)
                 {
                     LabelledROI lroi = (LabelledROI)dgvLabels.SelectedRows[0].Tag;
-                    lroi.LabelID = ln.ID;
-                    lroi.LabelName = ln.Name;
-
-                    if (Program.ImageDatabase.BBoxLabels_UpdateLabel(lroi))
-                    {
-                        dgvLabels.SelectedRows[0].Cells["Label"].Value = ln.Name;
-                        _ROISelector.UpdateROIName(dgvLabels.SelectedRows[0].Index, ln.Name);
-                    }
-                }
-
-                if (dgvLabels.Rows.Count == 1)
-                {
-                    _LabelledImage.LabelID = ln.ID;
-                    _LabelledImage.LabelName = ln.Name;
-
-                    if (Program.ImageDatabase.Images_Update(_LabelledImage))
-                    {
-                        txtLabel.Text = ln.Name;
-                    }
+                    SetLabelForROI(ln, lroi);
                 }
             }
         }

@@ -16,6 +16,7 @@ namespace OWE005336__Video_Annotation_Software_
 {
     public partial class fProcessTrackerImages : Form
     {
+        private string _DirectoryPath;
         private PaintLocker _PaintDataInProgress = new PaintLocker();
         private string _CurrentFilePath;
         private Bitmap _CurrentImage;
@@ -31,26 +32,7 @@ namespace OWE005336__Video_Annotation_Software_
         public fProcessTrackerImages(string dirpath)
         {
             InitializeComponent();
-
-            string[] extensions = { ".png", ".jpg" };
-            List<string> filePaths = Directory
-                .GetFiles(dirpath)
-                .Where(file => extensions.Any(file.ToLower().EndsWith))
-                .ToList();
-
-            foreach (string s in filePaths)
-            {
-                _PaintDataInProgress.Lock();
-                dgvImages.Rows.Add(new object[] { null, Path.GetFileName(s), s, "" });
-                _PaintDataInProgress.Unlock();
-            }
-
-            dgvImages_SelectionChanged(null, null);
-
-            for (int i = 0; i < filePaths.Count; i++)
-            {
-                LoadThumbnail(i);
-            }
+            _DirectoryPath = dirpath;
 
             cmbSensorType.DataSource = Enum.GetValues(typeof(SensorTypeEnum));
             cmbSensorType.SelectedItem = SensorType;
@@ -68,14 +50,19 @@ namespace OWE005336__Video_Annotation_Software_
             SensorType = (SensorTypeEnum)cmbSensorType.SelectedItem;
         }
 
-        private async void LoadThumbnail(int row_index)
+        /// <summary>
+        /// Loads the thumbnail image for each row in the grid view.
+        /// </summary>
+        /// <param name="row_index"></param>
+        /// <returns>True if the image was loaded. False if an error occured (e.g. image is corrupted)</returns>
+        private async Task<bool> LoadThumbnail(int row_index)
         {
             var cell = dgvImages.Rows[row_index].Cells[0];
             string filepath = (string)dgvImages.Rows[row_index].Cells[2].Value;
 
             Image img = await Task.Run(() =>
             {
-                Image thumbnail = LoadImage(filepath).GetThumbnailImage(50, 50, null, IntPtr.Zero);
+                Image thumbnail = LoadImage(filepath)?.GetThumbnailImage(50, 50, null, IntPtr.Zero);
                 return thumbnail;
             });
 
@@ -84,7 +71,9 @@ namespace OWE005336__Video_Annotation_Software_
                 _PaintDataInProgress.Lock();
                 cell.Value = img;
                 _PaintDataInProgress.Unlock();
+                return true;
             }
+            return false;
         }
 
         private void dgvImages_SelectionChanged(object sender, EventArgs e)
@@ -140,6 +129,14 @@ namespace OWE005336__Video_Annotation_Software_
                     }
 
                     roiSelector.LinkToLabelledImage(_CurrentROIs, _CurrentImage);
+
+                    //If there is only 1 labelled ROI in the image update the label for the entire image
+                    var knownLabels = _CurrentROIs.Select(x => x.Tag as LabelNode).Where(x => x != null && x.ID > 0).ToArray();
+                    if (knownLabels.Length == 1)
+                    {
+                        LabelID = knownLabels[0].ID;
+                        txtLabel.Text = knownLabels[0].Name;
+                    }
                 }
                 else
                 {
@@ -152,10 +149,17 @@ namespace OWE005336__Video_Annotation_Software_
 
         private Image LoadImage(string filepath)
         {
-            byte[] b = File.ReadAllBytes(filepath);
-            MemoryStream ms = new MemoryStream(b);
+            try
+            {
+                byte[] b = File.ReadAllBytes(filepath);
+                MemoryStream ms = new MemoryStream(b);
 
-            return Image.FromStream(ms);
+                return Image.FromStream(ms);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         protected void RemoveImageFromList(int index, bool deleteFile = true)
@@ -272,6 +276,35 @@ namespace OWE005336__Video_Annotation_Software_
         private void btnFinish_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private async void fProcessTrackerImages_Load(object sender, EventArgs e)
+        {
+            string[] extensions = { ".png", ".jpg", ".jpeg" };
+            List<string> filePaths = Directory
+                .GetFiles(_DirectoryPath)
+                .Where(file => extensions.Any(file.ToLower().EndsWith))
+                .ToList();
+
+            foreach (string s in filePaths)
+            {
+                _PaintDataInProgress.Lock();
+                dgvImages.Rows.Add(new object[] { null, Path.GetFileName(s), s, "" });
+                _PaintDataInProgress.Unlock();
+            }
+
+            dgvImages_SelectionChanged(null, null);
+
+            for (int i = 0; i < dgvImages.Rows.Count; i++)
+            {
+                if (!await LoadThumbnail(i))
+                {
+                    //Image is corrupted, remove from datagrid
+                    RemoveImageFromList(i, false);
+                    i--;
+                }
+            }
+
         }
     }
 }

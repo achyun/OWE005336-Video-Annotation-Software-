@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LabellingDB;
 
 namespace OWE005336__Video_Annotation_Software_
 {
@@ -49,6 +50,15 @@ namespace OWE005336__Video_Annotation_Software_
             InitializeComponent();
             this.Height = txtTextBox.Height;
             txtTextBox.Text = tag;
+            txtTextBox.ReadOnly = true;
+        }
+
+        public TagTextBox(LabelNode label)
+        {
+            InitializeComponent();
+            this.Tag = label;
+            this.Height = txtTextBox.Height;
+            txtTextBox.Text = label.Name;
             txtTextBox.ReadOnly = true;
         }
 

@@ -47,6 +47,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblAddedCount = new System.Windows.Forms.Label();
             this.lblImageCount = new System.Windows.Forms.Label();
+            this.tgbTags = new OWE005336__Video_Annotation_Software_.TagBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmbSensorType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -56,7 +57,6 @@
             this.Label = new System.Windows.Forms.Label();
             this.tips = new System.Windows.Forms.ToolTip(this.components);
             this.roiSelector = new OWE005336__Video_Annotation_Software_.ROISelector();
-            this.tgbTags = new OWE005336__Video_Annotation_Software_.TagBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvImages)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -260,6 +260,16 @@
             this.lblImageCount.TabIndex = 7;
             this.lblImageCount.Text = "Added:";
             // 
+            // tgbTags
+            // 
+            this.tgbTags.AutoScroll = true;
+            this.tgbTags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tgbTags.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tgbTags.Location = new System.Drawing.Point(5, 86);
+            this.tgbTags.Name = "tgbTags";
+            this.tgbTags.Size = new System.Drawing.Size(190, 117);
+            this.tgbTags.TabIndex = 15;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -342,16 +352,6 @@
             this.roiSelector.Size = new System.Drawing.Size(862, 607);
             this.roiSelector.TabIndex = 0;
             this.roiSelector.Text = "roiSelector1";
-            // 
-            // tgbTags
-            // 
-            this.tgbTags.AutoScroll = true;
-            this.tgbTags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tgbTags.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tgbTags.Location = new System.Drawing.Point(5, 86);
-            this.tgbTags.Name = "tgbTags";
-            this.tgbTags.Size = new System.Drawing.Size(190, 117);
-            this.tgbTags.TabIndex = 15;
             // 
             // fProcessTrackerImages
             // 

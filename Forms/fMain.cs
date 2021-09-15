@@ -14,6 +14,7 @@ using System.Data.Sql;
 using System.Data.SqlClient;
 using LabellingDB;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using OWE005336__Video_Annotation_Software_.Classes;
 
 namespace OWE005336__Video_Annotation_Software_
 {
@@ -856,6 +857,11 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 lbiImage.HandleShortcutKey(e.KeyValue);
             }
+        }
+
+        private void tsExportLabels_Click(object sender, EventArgs e)
+        {
+            LabelsExporter.Export();
         }
 
         //private void ReformatImage(string filePath, ImageFormat destFormat)

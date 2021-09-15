@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 
 namespace LabellingDB
 {
@@ -1679,7 +1680,7 @@ namespace LabellingDB
 
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT id, name, sql, created_by, pad_train, pad_valid, pad_test, pct_train, pct_valid, pct_test, min_pixels_train, min_pixels_valid, min_pixels_test FROM classificationexporttasks", conn);
+            SqlCommand cmd = new SqlCommand("SELECT id, name, sql, created_by, pad_train, pad_valid, pad_test, pct_train, pct_valid, pct_test, min_pixels_train, min_pixels_valid, min_pixels_test, labels FROM classificationexporttasks", conn);
 
             if (id >= 0)
             {
@@ -1712,6 +1713,17 @@ namespace LabellingDB
                     t.MinPixelsTrain = rdr.GetInt32(10);
                     t.MinPixelsValidation = rdr.GetInt32(11);
                     t.MinPixelsTest = rdr.GetInt32(12);
+
+                    var labelStr = rdr.GetString(13);
+                    if (!string.IsNullOrWhiteSpace(labelStr))
+                    {
+                        t.Labels = labelStr.Split('#').Select(labelIDstr =>
+                        {
+                            int labelID = int.Parse(labelIDstr);
+                            return LabelTree_LoadByID(labelID);
+                        }).ToArray();
+                    }
+
                     tasks.Add(t);
                 }
             }
@@ -1776,7 +1788,8 @@ namespace LabellingDB
             SqlCommand cmd = new SqlCommand("UPDATE classificationexporttasks SET classificationexporttasks.name = @name, classificationexporttasks.sql = @sql, " + 
                                                     "pad_train = @pad_train, pad_valid = @pad_valid, pad_test = @pad_test, " + 
                                                     "pct_train = @pct_train, pct_valid = @pct_valid, pct_test = @pct_test, " +
-                                                    "min_pixels_train = @min_pixels_train, min_pixels_valid = @min_pixels_valid, min_pixels_test = @min_pixels_test " + 
+                                                    "min_pixels_train = @min_pixels_train, min_pixels_valid = @min_pixels_valid, min_pixels_test = @min_pixels_test, " + 
+                                                    "labels = @labels " +
                                             "WHERE id = @id", conn);
 
             cmd.Parameters.Add("@id", SqlDbType.Int).Value = task.ID;
@@ -1794,6 +1807,9 @@ namespace LabellingDB
             cmd.Parameters.Add("@min_pixels_train", SqlDbType.Int).Value = task.MinPixelsTrain;
             cmd.Parameters.Add("@min_pixels_valid", SqlDbType.Int).Value = task.MinPixelsValidation;
             cmd.Parameters.Add("@min_pixels_test", SqlDbType.Int).Value = task.MinPixelsTest;
+
+            var labelsStr = string.Join("#", task.Labels.Select(x => x.ID.ToString()));
+            cmd.Parameters.Add("@labels", SqlDbType.NVarChar).Value = labelsStr;
 
             try
             {
@@ -1996,6 +2012,7 @@ namespace LabellingDB
         public int MinPixelsTrain = 0;
         public int MinPixelsValidation = 0;
         public int MinPixelsTest = 0;
+        public LabelNode[] Labels = new LabelNode[0];
     }
 
     public enum SensorTypeEnum

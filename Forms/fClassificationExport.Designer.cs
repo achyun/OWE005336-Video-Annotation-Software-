@@ -30,9 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.label11 = new System.Windows.Forms.Label();
+            this.labelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
             this.txtSQL = new System.Windows.Forms.TextBox();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btnOpenPrevScript = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.nudMinPixelsTest = new System.Windows.Forms.NumericUpDown();
@@ -63,8 +67,8 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnOpenPrevScript = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsTest)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsValidation)).BeginInit();
@@ -80,6 +84,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.panel5);
             this.panel1.Controls.Add(this.txtSQL);
             this.panel1.Controls.Add(this.splitter2);
             this.panel1.Controls.Add(this.panel3);
@@ -89,6 +94,37 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(828, 658);
             this.panel1.TabIndex = 0;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.label11);
+            this.panel5.Controls.Add(this.labelsSelector);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel5.Location = new System.Drawing.Point(0, 124);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(828, 34);
+            this.panel5.TabIndex = 15;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(10, 10);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(41, 13);
+            this.label11.TabIndex = 15;
+            this.label11.Text = "Labels:";
+            // 
+            // labelsSelector
+            // 
+            this.labelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelsSelector.AutoScroll = true;
+            this.labelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelsSelector.Location = new System.Drawing.Point(59, 2);
+            this.labelsSelector.Name = "labelsSelector";
+            this.labelsSelector.Size = new System.Drawing.Size(766, 29);
+            this.labelsSelector.TabIndex = 14;
             // 
             // txtSQL
             // 
@@ -135,6 +171,19 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(828, 71);
             this.panel3.TabIndex = 12;
+            // 
+            // btnOpenPrevScript
+            // 
+            this.btnOpenPrevScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOpenPrevScript.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources._1200px_OneDrive_Folder_Icon__32x32_;
+            this.btnOpenPrevScript.Location = new System.Drawing.Point(696, 17);
+            this.btnOpenPrevScript.Name = "btnOpenPrevScript";
+            this.btnOpenPrevScript.Size = new System.Drawing.Size(41, 41);
+            this.btnOpenPrevScript.TabIndex = 21;
+            this.btnOpenPrevScript.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTip1.SetToolTip(this.btnOpenPrevScript, "Open previous export script");
+            this.btnOpenPrevScript.UseVisualStyleBackColor = true;
+            this.btnOpenPrevScript.Click += new System.EventHandler(this.btnOpenPrevScript_Click);
             // 
             // label9
             // 
@@ -424,19 +473,6 @@
             this.label4.TabIndex = 17;
             this.label4.Text = "Output Directory";
             // 
-            // btnOpenPrevScript
-            // 
-            this.btnOpenPrevScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenPrevScript.Image = global::OWE005336__Video_Annotation_Software_.Properties.Resources._1200px_OneDrive_Folder_Icon__32x32_;
-            this.btnOpenPrevScript.Location = new System.Drawing.Point(696, 17);
-            this.btnOpenPrevScript.Name = "btnOpenPrevScript";
-            this.btnOpenPrevScript.Size = new System.Drawing.Size(41, 41);
-            this.btnOpenPrevScript.TabIndex = 21;
-            this.btnOpenPrevScript.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.toolTip1.SetToolTip(this.btnOpenPrevScript, "Open previous export script");
-            this.btnOpenPrevScript.UseVisualStyleBackColor = true;
-            this.btnOpenPrevScript.Click += new System.EventHandler(this.btnOpenPrevScript_Click);
-            // 
             // fClassificationExport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -449,6 +485,8 @@
             this.Text = "Export Images for Classifier Training";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinPixelsTest)).EndInit();
@@ -503,5 +541,8 @@
         private System.Windows.Forms.NumericUpDown nudMinPixelsValidation;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnOpenPrevScript;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Label label11;
+        private LabelBox labelsSelector;
     }
 }

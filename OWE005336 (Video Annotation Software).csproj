@@ -104,6 +104,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\LabelsExporter.cs" />
     <Compile Include="Classes\PaintLocker.cs" />
     <Compile Include="Classes\DatasetSerializer.cs" />
     <Compile Include="CustomControls\ClipSelector.cs">
@@ -117,6 +118,12 @@
     </Compile>
     <Compile Include="CustomControls\LabelButton.Designer.cs">
       <DependentUpon>LabelButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\LabelBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\LabelBox.Designer.cs">
+      <DependentUpon>LabelBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DialogForms\fMissingFiles.cs">
       <SubType>Form</SubType>

@@ -48,7 +48,7 @@ namespace OWE005336__Video_Annotation_Software_
 
             //Serialize the configuration file
             var yamlSerializer = (new SerializerBuilder()).WithNamingConvention(PascalCaseNamingConvention.Instance).Build();
-            System.IO.File.AppendAllText(Path.Combine(directory, Settings.DefinitionFileName), yamlSerializer.Serialize(configuration));
+            System.IO.File.WriteAllText(Path.Combine(directory, Settings.DefinitionFileName), yamlSerializer.Serialize(configuration));
         }
 
         protected void SerializeDataset(string filePath, IEnumerable<LabelledImage> images)

@@ -26,6 +26,7 @@ namespace OWE005336__Video_Annotation_Software_
             RefreshTaskGrid();
 
             txtOutputDir.Text = Properties.Settings.Default.ClassificationExportLocation;
+            btnExport.Enabled = dgvResults.Rows.Count > 0;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -34,8 +35,9 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 ClassificationExportTask task = (ClassificationExportTask)dgvTasks.SelectedRows[0].DataBoundItem;
 
+                task.Labels = labelsSelector.SelectedLabels;
                 task.SQL = txtSQL.Text;
-
+                
                 task.PadTrainingData = ckbPadTrainData.Checked;
                 task.PadValidationData = ckbPadValidationData.Checked;
                 task.PadTestData = ckbPadTestData.Checked;
@@ -61,6 +63,7 @@ namespace OWE005336__Video_Annotation_Software_
                 }
 
                 PaintClassificationExportTask(task);
+                RunTaskQuery(task);
             }
         }
 
@@ -94,6 +97,7 @@ namespace OWE005336__Video_Annotation_Software_
         private void PaintClassificationExportTask(ClassificationExportTask task)
         {
             txtSQL.Text = task.SQL;
+            labelsSelector.SetLabels(task.Labels);
 
             ckbPadTrainData.Checked = task.PadTrainingData;
             ckbPadValidationData.Checked = task.PadValidationData;
@@ -107,7 +111,6 @@ namespace OWE005336__Video_Annotation_Software_
             nudMinPixelsValidation.Value = (decimal)task.MinPixelsValidation;
             nudMinPixelsTest.Value = (decimal)task.MinPixelsTest;
 
-            RunTaskQuery(task);
         }
 
         private void dgvTasks_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
@@ -138,19 +141,34 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 ClassificationExportTask t = (ClassificationExportTask)dgvTasks.SelectedRows[0].DataBoundItem;
                 PaintClassificationExportTask(t);
-                RunTaskQuery(t);
             }
             
         }
 
         private void RunTaskQuery(ClassificationExportTask task)
         {
+            //Generate Filter for given labels
+            string labelsFilter = string.Join(" OR ", task.Labels.Select(x => $"label_trees.name = '{x.Name}'\n"));
+            labelsFilter = "(" + labelsFilter + ")";
+
+            string sql = task.SQL.Replace("${LabelsFilter}", labelsFilter);
+
             string err;
-            DataTable dt = Program.ImageDatabase.RunCustomQuery(task.SQL, out err);
+            DataTable dt = Program.ImageDatabase.RunCustomQuery(sql, out err);
 
             if (err == "")
             {
                 lblSummary.Text = dt.Rows.Count.ToString() + " rows retrieved";
+                foreach (var label in task.Labels)
+                {
+                    int numberOfOccurences = 0;
+                    foreach (var row in dt.Rows.Cast<DataRow>())
+                    {
+                        string[] labelsInImage = row.ItemArray[2].ToString().Split('|');
+                        numberOfOccurences += labelsInImage.Sum(x => x.Contains(label.TextID) ? 1 : 0);
+                    }
+                    lblSummary.Text += $"\n {label.Name}: {numberOfOccurences}";
+                }
                 dgvResults.DataSource = dt;
             }
             else
@@ -158,6 +176,7 @@ namespace OWE005336__Video_Annotation_Software_
                 lblSummary.Text = err;
                 dgvResults.DataSource = null;
             }
+            btnExport.Enabled = dgvResults.Rows.Count > 0;
         }
 
         private async void btnExport_Click(object sender, EventArgs e)
@@ -239,11 +258,11 @@ namespace OWE005336__Video_Annotation_Software_
                         if (File.Exists(imgPath))
                         {
                             //Debug.WriteLine("File exists...");
-                            Bitmap origImg = new Bitmap(imgPath);
                             //Debug.WriteLine("File loaded...");
                             string bbox_string = r.ItemArray[2].ToString();
                             //Debug.WriteLine("BBox String: " + bbox_string);
                             string[] bboxes = bbox_string.Split('|');
+                            var img_size = new Size((int)r.ItemArray[3], (int)r.ItemArray[4]);
 
                             for (int i = 0; i < bboxes.Length; i++)
                             {
@@ -273,12 +292,13 @@ namespace OWE005336__Video_Annotation_Software_
                                     {
                                         if (doPad) { cropRect = PadRectangleToSquare(cropRect); }
                                         //Debug.WriteLine(newPath + ", " + cropRect.ToString());
-                                        Bitmap croppedbmp = CropBitmap(origImg, cropRect);
-                                        croppedbmp.Save(newPath);
+                                        //Bitmap origImg = new Bitmap(imgPath);
+                                        //Bitmap croppedbmp = CropBitmap(origImg, cropRect);
+                                        //croppedbmp.Save(newPath);
                                         //Debug.WriteLine("Save Complete");
 
                                         //Add to correct data set
-                                        LabelledImage img = new LabelledImage(origImg.Size);
+                                        LabelledImage img = new LabelledImage(img_size);
                                         img.Filepath = r.ItemArray[1].ToString();
                                         img.LabelledROIs.Add(new LabelledROI(0, 0, cropRect) { LabelName = values[0] });
                                         targetDataset.Add(img);

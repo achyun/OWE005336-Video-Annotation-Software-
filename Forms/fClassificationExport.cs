@@ -211,6 +211,7 @@ namespace OWE005336__Video_Annotation_Software_
             DateTime localDate = DateTime.Now;
             string exportName = localDate.Year.ToString() + localDate.Month.ToString("00") + localDate.Day.ToString("00") + "_" + dgvTasks.SelectedRows[0].Cells[0].Value.ToString();
             string subDirPath = Path.Combine(txtOutputDir.Text, exportName);
+            bool generateImages = chkGenerateImages.Checked;
             DataTable dt = (DataTable)dgvResults.DataSource;
             int rowIndex = 0;
             float percent;
@@ -224,11 +225,14 @@ namespace OWE005336__Video_Annotation_Software_
             try
             {
                 Directory.CreateDirectory(subDirPath);
-                Directory.CreateDirectory(trainDirPath);
-                Directory.CreateDirectory(validDirPath);
-                Directory.CreateDirectory(testDirPath);
+                if (generateImages)
+                {
+                    Directory.CreateDirectory(trainDirPath);
+                    Directory.CreateDirectory(validDirPath);
+                    Directory.CreateDirectory(testDirPath);
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Failed to create directory '" + subDirPath + "': " + ex.Message);
                 return;
@@ -266,21 +270,30 @@ namespace OWE005336__Video_Annotation_Software_
                         {
                             //Debug.WriteLine("File exists...");
                             //Debug.WriteLine("File loaded...");
+
+                            //Select the dataset for this image
+                            //Note that for YOLO we need to group by image, for classifier in theory we could split out each bbox and put it in a separate dataset
+                            double rand = (double)r.ItemArray[0]; //randGen.NextDouble();
+                            string targetDir;
+                            bool doPad = false;
+                            int minPixels;
+                            List<LabelledImage> targetDataset;
+                            if (rand < boundTrain) { targetDir = trainDirPath; doPad = t.PadTrainingData; minPixels = t.MinPixelsTrain; targetDataset = datasetSerializer.TrainingDataset; }
+                            else if (rand < boundValid) { targetDir = validDirPath; doPad = t.PadValidationData; minPixels = t.MinPixelsValidation; targetDataset = datasetSerializer.ValidationDataset; }
+                            else { targetDir = testDirPath; doPad = t.PadTestData; minPixels = t.MinPixelsTest; targetDataset = datasetSerializer.TestDataset; }
+
                             string bbox_string = r.ItemArray[2].ToString();
                             //Debug.WriteLine("BBox String: " + bbox_string);
                             string[] bboxes = bbox_string.Split('|');
                             var img_size = new Size((int)r.ItemArray[3], (int)r.ItemArray[4]);
 
+                            LabelledImage img = new LabelledImage(img_size);
+                            img.Filepath = r.ItemArray[1].ToString();
+                            targetDataset.Add(img);
+
+                            //Parse information about the bouding boxes in the image
                             for (int i = 0; i < bboxes.Length; i++)
                             {
-                                double rand = randGen.NextDouble();
-                                string targetDir;
-                                bool doPad = false;
-                                int minPixels;
-                                List<LabelledImage> targetDataset;
-                                if (rand < boundTrain) { targetDir = trainDirPath; doPad = t.PadTrainingData; minPixels = t.MinPixelsTrain; targetDataset = datasetSerializer.TrainingDataset; }
-                                else if (rand < boundValid) { targetDir = validDirPath; doPad = t.PadValidationData; minPixels = t.MinPixelsValidation; targetDataset = datasetSerializer.ValidationDataset; }
-                                else { targetDir = testDirPath; doPad = t.PadTestData; minPixels = t.MinPixelsTest; targetDataset = datasetSerializer.TestDataset; }
                                 //Debug.WriteLine("Idx: " + i.ToString());
                                 try
                                 {
@@ -298,17 +311,17 @@ namespace OWE005336__Video_Annotation_Software_
                                     if (cropRect.Width >= minPixels || cropRect.Height >= minPixels)
                                     {
                                         if (doPad) { cropRect = PadRectangleToSquare(cropRect); }
-                                        //Debug.WriteLine(newPath + ", " + cropRect.ToString());
-                                        //Bitmap origImg = new Bitmap(imgPath);
-                                        //Bitmap croppedbmp = CropBitmap(origImg, cropRect);
-                                        //croppedbmp.Save(newPath);
-                                        //Debug.WriteLine("Save Complete");
 
-                                        //Add to correct data set
-                                        LabelledImage img = new LabelledImage(img_size);
-                                        img.Filepath = r.ItemArray[1].ToString();
+                                        if (generateImages)
+                                        {   //Save an image of just the selected region in the correct folder for its label
+                                            //Debug.WriteLine(newPath + ", " + cropRect.ToString());
+                                            Bitmap origImg = new Bitmap(imgPath);
+                                            Bitmap croppedbmp = CropBitmap(origImg, cropRect);
+                                            croppedbmp.Save(newPath);
+                                            //Debug.WriteLine("Save Complete");
+                                        }
+
                                         img.LabelledROIs.Add(new LabelledROI(0, 0, cropRect) { LabelName = values[0] });
-                                        targetDataset.Add(img);
                                     }
                                 }
                                 catch (Exception ex)

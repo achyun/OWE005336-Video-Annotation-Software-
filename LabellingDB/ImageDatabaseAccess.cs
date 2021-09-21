@@ -1680,7 +1680,7 @@ namespace LabellingDB
 
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT id, name, sql, created_by, pad_train, pad_valid, pad_test, pct_train, pct_valid, pct_test, min_pixels_train, min_pixels_valid, min_pixels_test, labels FROM classificationexporttasks", conn);
+            SqlCommand cmd = new SqlCommand("SELECT id, name, sql, created_by, pad_train, pad_valid, pad_test, pct_train, pct_valid, pct_test, min_pixels_train, min_pixels_valid, min_pixels_test, domains, outputs FROM classificationexporttasks", conn);
 
             if (id >= 0)
             {
@@ -1714,10 +1714,20 @@ namespace LabellingDB
                     t.MinPixelsValidation = rdr.GetInt32(11);
                     t.MinPixelsTest = rdr.GetInt32(12);
 
-                    var labelStr = rdr.GetString(13);
-                    if (!string.IsNullOrWhiteSpace(labelStr))
+                    var domainLabelStr = rdr.GetString(13);
+                    if (!string.IsNullOrWhiteSpace(domainLabelStr))
                     {
-                        t.Labels = labelStr.Split('#').Select(labelIDstr =>
+                        t.Domains = domainLabelStr.Split('#').Select(labelIDstr =>
+                        {
+                            int labelID = int.Parse(labelIDstr);
+                            return LabelTree_LoadByID(labelID);
+                        }).ToArray();
+                    }
+
+                    var outputLabelStr = rdr.GetString(14);
+                    if (!string.IsNullOrWhiteSpace(outputLabelStr))
+                    {
+                        t.Outputs = outputLabelStr.Split('#').Select(labelIDstr =>
                         {
                             int labelID = int.Parse(labelIDstr);
                             return LabelTree_LoadByID(labelID);
@@ -1788,8 +1798,8 @@ namespace LabellingDB
             SqlCommand cmd = new SqlCommand("UPDATE classificationexporttasks SET classificationexporttasks.name = @name, classificationexporttasks.sql = @sql, " + 
                                                     "pad_train = @pad_train, pad_valid = @pad_valid, pad_test = @pad_test, " + 
                                                     "pct_train = @pct_train, pct_valid = @pct_valid, pct_test = @pct_test, " +
-                                                    "min_pixels_train = @min_pixels_train, min_pixels_valid = @min_pixels_valid, min_pixels_test = @min_pixels_test, " + 
-                                                    "labels = @labels " +
+                                                    "min_pixels_train = @min_pixels_train, min_pixels_valid = @min_pixels_valid, min_pixels_test = @min_pixels_test, " +
+                                                    "Domains = @domainLabels, Outputs = @outputLabels " +
                                             "WHERE id = @id", conn);
 
             cmd.Parameters.Add("@id", SqlDbType.Int).Value = task.ID;
@@ -1808,8 +1818,11 @@ namespace LabellingDB
             cmd.Parameters.Add("@min_pixels_valid", SqlDbType.Int).Value = task.MinPixelsValidation;
             cmd.Parameters.Add("@min_pixels_test", SqlDbType.Int).Value = task.MinPixelsTest;
 
-            var labelsStr = string.Join("#", task.Labels.Select(x => x.ID.ToString()));
-            cmd.Parameters.Add("@labels", SqlDbType.NVarChar).Value = labelsStr;
+            var domainLabelsStr = string.Join("#", task.Outputs.Select(x => x.ID.ToString()));
+            cmd.Parameters.Add("@domainLabels", SqlDbType.NVarChar).Value = domainLabelsStr;
+
+            var outputLabelsStr = string.Join("#", task.Outputs.Select(x => x.ID.ToString()));
+            cmd.Parameters.Add("@outputLabels", SqlDbType.NVarChar).Value = outputLabelsStr;
 
             try
             {
@@ -2012,7 +2025,8 @@ namespace LabellingDB
         public int MinPixelsTrain = 0;
         public int MinPixelsValidation = 0;
         public int MinPixelsTest = 0;
-        public LabelNode[] Labels = new LabelNode[0];
+        public LabelNode[] Domains = new LabelNode[0];
+        public LabelNode[] Outputs = new LabelNode[0];
     }
 
     public enum SensorTypeEnum

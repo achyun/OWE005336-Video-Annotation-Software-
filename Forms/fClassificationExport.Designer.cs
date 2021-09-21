@@ -31,8 +31,10 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.domainLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.labelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
+            this.outputLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
             this.txtSQL = new System.Windows.Forms.TextBox();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -97,34 +99,58 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.domainLabelsSelector);
+            this.panel5.Controls.Add(this.label12);
             this.panel5.Controls.Add(this.label11);
-            this.panel5.Controls.Add(this.labelsSelector);
+            this.panel5.Controls.Add(this.outputLabelsSelector);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel5.Location = new System.Drawing.Point(0, 124);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(828, 34);
+            this.panel5.Size = new System.Drawing.Size(828, 66);
             this.panel5.TabIndex = 15;
+            // 
+            // domainLabelsSelector
+            // 
+            this.domainLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.domainLabelsSelector.AutoScroll = true;
+            this.domainLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.domainLabelsSelector.Location = new System.Drawing.Point(59, 3);
+            this.domainLabelsSelector.Name = "domainLabelsSelector";
+            this.domainLabelsSelector.Size = new System.Drawing.Size(766, 29);
+            this.domainLabelsSelector.TabIndex = 15;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(8, 8);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(51, 13);
+            this.label12.TabIndex = 16;
+            this.label12.Text = "Domains:";
+            this.toolTip1.SetToolTip(this.label12, "The labels that will cause this classifier to be run");
             // 
             // label11
             // 
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 10);
+            this.label11.Location = new System.Drawing.Point(10, 41);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(41, 13);
+            this.label11.Size = new System.Drawing.Size(47, 13);
             this.label11.TabIndex = 15;
-            this.label11.Text = "Labels:";
+            this.label11.Text = "Outputs:";
+            this.toolTip1.SetToolTip(this.label11, "The labels that this classifier will be trained against");
             // 
-            // labelsSelector
+            // outputLabelsSelector
             // 
-            this.labelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.outputLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelsSelector.AutoScroll = true;
-            this.labelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.labelsSelector.Location = new System.Drawing.Point(59, 2);
-            this.labelsSelector.Name = "labelsSelector";
-            this.labelsSelector.Size = new System.Drawing.Size(766, 29);
-            this.labelsSelector.TabIndex = 14;
+            this.outputLabelsSelector.AutoScroll = true;
+            this.outputLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.outputLabelsSelector.Location = new System.Drawing.Point(59, 34);
+            this.outputLabelsSelector.Name = "outputLabelsSelector";
+            this.outputLabelsSelector.Size = new System.Drawing.Size(766, 29);
+            this.outputLabelsSelector.TabIndex = 14;
             // 
             // txtSQL
             // 
@@ -543,6 +569,8 @@
         private System.Windows.Forms.Button btnOpenPrevScript;
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Label label11;
-        private LabelBox labelsSelector;
+        private LabelBox outputLabelsSelector;
+        private LabelBox domainLabelsSelector;
+        private System.Windows.Forms.Label label12;
     }
 }

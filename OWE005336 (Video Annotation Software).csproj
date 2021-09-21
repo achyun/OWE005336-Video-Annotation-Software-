@@ -107,6 +107,7 @@
     <Compile Include="Classes\LabelsExporter.cs" />
     <Compile Include="Classes\PaintLocker.cs" />
     <Compile Include="Classes\DatasetSerializer.cs" />
+    <Compile Include="Classes\Yaml.cs" />
     <Compile Include="CustomControls\ClipSelector.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -35,7 +35,8 @@ namespace OWE005336__Video_Annotation_Software_
             {
                 ClassificationExportTask task = (ClassificationExportTask)dgvTasks.SelectedRows[0].DataBoundItem;
 
-                task.Labels = labelsSelector.SelectedLabels;
+                task.Domains = domainLabelsSelector.SelectedLabels;
+                task.Outputs = outputLabelsSelector.SelectedLabels;
                 task.SQL = txtSQL.Text;
                 
                 task.PadTrainingData = ckbPadTrainData.Checked;
@@ -97,7 +98,8 @@ namespace OWE005336__Video_Annotation_Software_
         private void PaintClassificationExportTask(ClassificationExportTask task)
         {
             txtSQL.Text = task.SQL;
-            labelsSelector.SetLabels(task.Labels);
+            domainLabelsSelector.SetLabels(task.Domains);
+            outputLabelsSelector.SetLabels(task.Outputs);
 
             ckbPadTrainData.Checked = task.PadTrainingData;
             ckbPadValidationData.Checked = task.PadValidationData;
@@ -148,7 +150,7 @@ namespace OWE005336__Video_Annotation_Software_
         private void RunTaskQuery(ClassificationExportTask task)
         {
             //Generate Filter for given labels
-            string labelsFilter = string.Join(" OR ", task.Labels.Select(x => $"label_trees.name = '{x.Name}'\n"));
+            string labelsFilter = string.Join(" OR ", task.Outputs.Select(x => $"label_trees.name = '{x.Name}'\n"));
             labelsFilter = "(" + labelsFilter + ")";
 
             string sql = task.SQL.Replace("${LabelsFilter}", labelsFilter);
@@ -159,7 +161,7 @@ namespace OWE005336__Video_Annotation_Software_
             if (err == "")
             {
                 lblSummary.Text = dt.Rows.Count.ToString() + " rows retrieved";
-                foreach (var label in task.Labels)
+                foreach (var label in task.Outputs)
                 {
                     int numberOfOccurences = 0;
                     foreach (var row in dt.Rows.Cast<DataRow>())
@@ -203,6 +205,7 @@ namespace OWE005336__Video_Annotation_Software_
             t.MinPixelsTrain = (int)nudMinPixelsTrain.Value;
             t.MinPixelsValidation = (int)nudMinPixelsValidation.Value;
             t.MinPixelsTest = (int)nudMinPixelsTest.Value;
+            t.Domains = domainLabelsSelector.SelectedLabels;
 
             string imageDirPath = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
             DateTime localDate = DateTime.Now;
@@ -232,7 +235,11 @@ namespace OWE005336__Video_Annotation_Software_
             }
 
             //Save the SQL query used for this task as a .sql file in the root folder
-            var yamlSerializer = (new SerializerBuilder()).WithNamingConvention(PascalCaseNamingConvention.Instance).Build();
+            var yamlSerializer = (new SerializerBuilder())
+                .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                .WithTypeConverter(new Classes.LabelNodeYamlTypeConverter())
+                .Build();
+
             System.IO.File.AppendAllText(Path.Combine(subDirPath, "exportSettings.yaml"), yamlSerializer.Serialize(t));
 
             fProgressBar progress = new fProgressBar("Exporting images", "Exporting images from row 1 of " + dt.Rows.Count);
@@ -322,7 +329,7 @@ namespace OWE005336__Video_Annotation_Software_
                     }
                 }
                 //Write configuration data
-                datasetSerializer.Serialize(subDirPath, exportName);
+                datasetSerializer.Serialize(subDirPath, exportName, t);
             });
 
             progress.Close();

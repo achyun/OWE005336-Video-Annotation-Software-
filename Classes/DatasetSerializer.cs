@@ -1,4 +1,5 @@
 ﻿using LabellingDB;
+using OWE005336__Video_Annotation_Software_.Classes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ namespace OWE005336__Video_Annotation_Software_
             this.Settings = settings ?? this.Settings;
         }
 
-        public void Serialize(string directory, string name, DateTime? dateCreated = null)
+        public void Serialize(string directory, string name, ClassificationExportTask task, DateTime? dateCreated = null)
         {
             if (!dateCreated.HasValue)
                 dateCreated = DateTime.Now;
@@ -43,11 +44,20 @@ namespace OWE005336__Video_Annotation_Software_
                 ValidationDataset = Settings.ValidationDatasetFileName,
                 TestDataset = Settings.TestDatasetFileName,
                 Name = name,
-                DateCreated = dateCreated.Value
+                DateCreated = dateCreated.Value,
+                Metadata = new DatasetConfiguration.MetadataDef()
+                {
+                    Domains = task.Domains,
+                    Outputs = task.Outputs
+                }
             };
 
             //Serialize the configuration file
-            var yamlSerializer = (new SerializerBuilder()).WithNamingConvention(PascalCaseNamingConvention.Instance).Build();
+            var yamlSerializer = (new SerializerBuilder())
+                .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                .WithTypeConverter(new Classes.LabelNodeYamlTypeConverter())
+                .Build();
+
             System.IO.File.WriteAllText(Path.Combine(directory, Settings.DefinitionFileName), yamlSerializer.Serialize(configuration));
         }
 
@@ -93,5 +103,13 @@ namespace OWE005336__Video_Annotation_Software_
         public string TrainingDataset { get; set; }
         public string ValidationDataset { get; set; }
         public string TestDataset { get; set; }
+
+        public MetadataDef Metadata { get; set; }
+
+        public class MetadataDef
+        {
+            public LabelNode[] Domains { get; set; }
+            public LabelNode[] Outputs { get; set; }
+        }
     }
 }

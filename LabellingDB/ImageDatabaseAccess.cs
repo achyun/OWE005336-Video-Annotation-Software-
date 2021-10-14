@@ -1818,7 +1818,7 @@ namespace LabellingDB
             cmd.Parameters.Add("@min_pixels_valid", SqlDbType.Int).Value = task.MinPixelsValidation;
             cmd.Parameters.Add("@min_pixels_test", SqlDbType.Int).Value = task.MinPixelsTest;
 
-            var domainLabelsStr = string.Join("#", task.Outputs.Select(x => x.ID.ToString()));
+            var domainLabelsStr = string.Join("#", task.Domains.Select(x => x.ID.ToString()));
             cmd.Parameters.Add("@domainLabels", SqlDbType.NVarChar).Value = domainLabelsStr;
 
             var outputLabelsStr = string.Join("#", task.Outputs.Select(x => x.ID.ToString()));

@@ -289,7 +289,6 @@ namespace OWE005336__Video_Annotation_Software_
 
                             LabelledImage img = new LabelledImage(img_size);
                             img.Filepath = r.ItemArray[1].ToString();
-                            targetDataset.Add(img);
 
                             //Parse information about the bouding boxes in the image
                             for (int i = 0; i < bboxes.Length; i++)
@@ -329,6 +328,10 @@ namespace OWE005336__Video_Annotation_Software_
                                     MessageBox.Show("Error exporting image from: " + imgPath + "\r\n   With bounding box string: " + bbox_string + "\r\n" + ex.Message);
                                 }
                             }
+
+                            //Do not include images that have had all their labels filtered out (e.g. the label is too small for this dataset)
+                            if (img.LabelledROIs.Count() > 0)
+                                targetDataset.Add(img);
                         }
                         rowIndex += 1;
 

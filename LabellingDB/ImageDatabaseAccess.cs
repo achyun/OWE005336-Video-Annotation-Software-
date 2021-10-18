@@ -1904,6 +1904,97 @@ namespace LabellingDB
         }
 
         #endregion
+
+        #region "ExcludeImageLabels"
+        public LabelNode[] ExcludeImageLabels_Load(int image_id)
+        {
+            var labels = new List<LabelNode>();
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlDataReader rdr = null;
+            SqlCommand cmd = new SqlCommand("SELECT label_trees.id, label_trees.name, label_trees.parent_id, label_trees.text_id " + 
+                                            "FROM label_trees, exclude_image_labels " + 
+                                            "WHERE label_trees.id = exclude_image_labels.label_id AND exclude_image_labels.image_id = @image_id", conn);
+            cmd.Parameters.AddWithValue("@image_id", image_id);
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    int id = rdr.GetInt32(0);
+                    labels.Add(new LabelNode(rdr.GetInt32(0), rdr.GetString(1), rdr.GetInt32(2), rdr.GetString(3)));
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'ExcludeImageLabels_Load' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return labels.ToArray();
+        }
+
+        public bool ExcludeImageLabels_Add(int image_id, int label_id)
+        {
+            bool success = false;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlCommand cmd = new SqlCommand("INSERT INTO exclude_image_labels (image_id, label_id) VALUES(@image_id, @label_id)", conn);
+            cmd.Parameters.AddWithValue("@image_id", image_id);
+            cmd.Parameters.AddWithValue("@label_id", label_id);
+
+            try
+            {
+                conn.Open();
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'ExcludeImageLabels_Add' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+            }
+
+            return success;
+        }
+
+        public bool ExcludeImageLabels_Delete(int image_id, int label_id)
+        {
+            bool success = false;
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlCommand cmd = new SqlCommand("DELETE FROM exclude_image_labels WHERE image_id = @image_id AND label_id = @label_id", conn);
+            cmd.Parameters.AddWithValue("@image_id", image_id);
+            cmd.Parameters.AddWithValue("@label_id", label_id);
+
+            try
+            {
+                conn.Open();
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'ExcludeImageLabels_Delete' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+            }
+
+            return success;
+        }
+        #endregion
     }
 
     public class LabelNode

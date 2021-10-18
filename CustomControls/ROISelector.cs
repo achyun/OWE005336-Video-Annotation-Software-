@@ -150,7 +150,14 @@ namespace OWE005336__Video_Annotation_Software_
         private void ROISelector_MouseMove(object sender, MouseEventArgs e)
         {
             PointF p = TransformPointToPixel(new Point(e.X, e.Y));
+            bool mouse_in_bounds = false;
+            RectangleF image_bounds = new RectangleF(0, 0, 0, 0);
             var currentROI = (_HighlightedROIIndex >= 0 ? _ROIs[_HighlightedROIIndex] : null);
+            if (_Frame != null)
+            {
+                image_bounds.Width = _Frame.Width - 1;
+                image_bounds.Height = _Frame.Height - 1;
+            }
 
             switch (_DragAction)
             {
@@ -189,8 +196,12 @@ namespace OWE005336__Video_Annotation_Software_
                             h = _OldMouseLocation_pixels.Y - p.Y;
                         }
 
-                        currentROI.SetRectangle(new RectangleF(x, y, w, h), _Scale);
-                        this.Refresh();
+                        RectangleF temp = new RectangleF(x, y, w, h);
+                        if (image_bounds.Contains(temp))
+                        {
+                            currentROI.SetRectangle(temp, _Scale);
+                            this.Refresh();
+                        }
                         break;
                     }
                 case DragActionEnum.Resize:
@@ -234,8 +245,12 @@ namespace OWE005336__Video_Annotation_Software_
                                 break;
                         }
 
-                        currentROI.SetRectangle(new RectangleF(x, y, w, h), _Scale);
-                        this.Refresh();
+                        RectangleF temp = new RectangleF(x, y, w, h);
+                        if (image_bounds.Contains(temp))
+                        {
+                            currentROI.SetRectangle(temp, _Scale);
+                            this.Refresh();
+                        }
                         break;
                     }
                 case DragActionEnum.Move:
@@ -247,9 +262,12 @@ namespace OWE005336__Video_Annotation_Software_
                         _OldMouseLocation_pixels.X = p.X;
                         _OldMouseLocation_pixels.Y = p.Y;
 
-                        currentROI.SetRectangle(new RectangleF(x, y, r.Width, r.Height), _Scale);
-                        this.Refresh();
-
+                        RectangleF temp = new RectangleF(x, y, r.Width, r.Height);
+                        if (image_bounds.Contains(temp))
+                        {
+                            currentROI.SetRectangle(temp, _Scale);
+                            this.Refresh();
+                        }
                         break;
                     }
                 case DragActionEnum.None:
@@ -306,12 +324,11 @@ namespace OWE005336__Video_Annotation_Software_
                         }
 
                         //if (oldHighlightedROIIndex != _HighlightedROIIndex) { this.Refresh(); }
-
+                        this.Refresh();
                         break;
                     }
                     
             }
-            this.Refresh();
         }
 
         private void ROISelector_MouseDown(object sender, MouseEventArgs e)
@@ -319,19 +336,18 @@ namespace OWE005336__Video_Annotation_Software_
             this.Focus();
             _OldMouseLocation_pixels = TransformPointToPixel(new Point(e.X, e.Y));
             _OldMouseLocationRaw = new Point(e.X, e.Y);
+            bool mouse_in_bounds = false;
+            int initial_width = 6;
+            int initial_height = 6;
+            if (_Frame != null)
+            {
+                RectangleF image_bounds = new RectangleF(0, 0, _Frame.Width - initial_width - 1, _Frame.Height - initial_height - 1);
+                mouse_in_bounds = image_bounds.Contains(_OldMouseLocation_pixels);
+            }
 
             if (e.Button == MouseButtons.Left && _Frame != null)
             {
-                if (_HighlightedROIIndex < 0)
-                {
-                    ROIObject newROI = new ROIObject(new RectangleF(e.X, e.Y, 6, 6), _Scale, "");
-                    _ROIs.Add(newROI);
-                    _SelectedROIIndex = _ROIs.Count - 1;
-                    _HighlightedROIIndex = _SelectedROIIndex;
-                    _DragAction = DragActionEnum.DrawNew;
-                    NewROIAdded?.Invoke(this, Rectangle.Round(_ROIs[_SelectedROIIndex].GetROI()));
-                }
-                else
+                if (_HighlightedROIIndex >= 0)
                 {
                     if (_CurrentGrabBox != GrabBoxLocation.None)
                     {
@@ -341,6 +357,15 @@ namespace OWE005336__Video_Annotation_Software_
                     {
                         _DragAction = DragActionEnum.Move;
                     }
+                }
+                else if (mouse_in_bounds)
+                {
+                    ROIObject newROI = new ROIObject(new RectangleF(e.X, e.Y, initial_width, initial_height), _Scale, "");
+                    _ROIs.Add(newROI);
+                    _SelectedROIIndex = _ROIs.Count - 1;
+                    _HighlightedROIIndex = _SelectedROIIndex;
+                    _DragAction = DragActionEnum.DrawNew;
+                    NewROIAdded?.Invoke(this, Rectangle.Round(_ROIs[_SelectedROIIndex].GetROI()));
                 }
                 _SelectedROIIndex = _HighlightedROIIndex;
                 ROISelectionChanged?.Invoke(this, _SelectedROIIndex);

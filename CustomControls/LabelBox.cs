@@ -14,7 +14,11 @@ namespace OWE005336__Video_Annotation_Software_
     public partial class LabelBox : FlowLayoutPanel
     {
         public delegate void LabelsChangedEventHandler(LabelBox sender, EventArgs e);
+        public delegate void LabelAddedEventHandler(LabelBox sender, EventArgs e, int label_id);
+        public delegate void LabelDeletedEventHandler(LabelBox sender, EventArgs e, int label_id);
         public event LabelsChangedEventHandler LabelsChanged;
+        public event LabelAddedEventHandler LabelAdded;
+        public event LabelDeletedEventHandler LabelDeleted;
 
         private List<TagTextBox> TextBoxes = new List<TagTextBox>();
         private AutoCompleteStringCollection _AllowableTags;
@@ -38,8 +42,7 @@ namespace OWE005336__Video_Annotation_Software_
 
         public void SetLabels(LabelNode[] labels)
         {
-            this.Controls.Clear();
-            TextBoxes.Clear();
+            ClearLabels();
 
             foreach (var label in labels)
             {
@@ -48,6 +51,12 @@ namespace OWE005336__Video_Annotation_Software_
                 this.Controls.Add(ttb);
                 ttb.TagDeleted += Ttb_Deleted;
             }
+        }
+
+        public void ClearLabels()
+        {
+            this.Controls.Clear();
+            TextBoxes.Clear();
         }
 
         private void TagBox_MouseMove(object sender, MouseEventArgs e)
@@ -67,6 +76,7 @@ namespace OWE005336__Video_Annotation_Software_
                     this.Controls.Add(ttb);
                     ttb.TagDeleted += Ttb_Deleted;
                     LabelsChanged?.Invoke(this, new EventArgs());
+                    LabelAdded?.Invoke(this, new EventArgs(), l.ID);
                 }
             }
         }
@@ -75,7 +85,9 @@ namespace OWE005336__Video_Annotation_Software_
         {
             TextBoxes.Remove(sender);
             this.Controls.Remove(sender);
+            LabelNode ln = (LabelNode)(sender.Tag);
             LabelsChanged?.Invoke(this, new EventArgs());
+            LabelDeleted?.Invoke(this, new EventArgs(), ln.ID);
             sender.Dispose();
         }
 

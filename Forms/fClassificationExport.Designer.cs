@@ -31,8 +31,10 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.domainLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
+            this.outputLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
             this.txtSQL = new System.Windows.Forms.TextBox();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -65,11 +67,9 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.dgvResults = new System.Windows.Forms.DataGridView();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.chkGenerateImages = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.chkGenerateImages = new System.Windows.Forms.CheckBox();
-            this.domainLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
-            this.outputLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -87,8 +87,8 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.panel5);
             this.panel1.Controls.Add(this.txtSQL);
+            this.panel1.Controls.Add(this.panel5);
             this.panel1.Controls.Add(this.splitter2);
             this.panel1.Controls.Add(this.panel3);
             this.panel1.Controls.Add(this.dgvTasks);
@@ -109,6 +109,17 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(828, 66);
             this.panel5.TabIndex = 15;
+            // 
+            // domainLabelsSelector
+            // 
+            this.domainLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.domainLabelsSelector.AutoScroll = true;
+            this.domainLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.domainLabelsSelector.Location = new System.Drawing.Point(59, 3);
+            this.domainLabelsSelector.Name = "domainLabelsSelector";
+            this.domainLabelsSelector.Size = new System.Drawing.Size(766, 29);
+            this.domainLabelsSelector.TabIndex = 15;
             // 
             // label12
             // 
@@ -131,13 +142,24 @@
             this.label11.Text = "Outputs:";
             this.toolTip1.SetToolTip(this.label11, "The labels that this classifier will be trained against");
             // 
+            // outputLabelsSelector
+            // 
+            this.outputLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.outputLabelsSelector.AutoScroll = true;
+            this.outputLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.outputLabelsSelector.Location = new System.Drawing.Point(59, 34);
+            this.outputLabelsSelector.Name = "outputLabelsSelector";
+            this.outputLabelsSelector.Size = new System.Drawing.Size(766, 29);
+            this.outputLabelsSelector.TabIndex = 14;
+            // 
             // txtSQL
             // 
             this.txtSQL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSQL.Location = new System.Drawing.Point(0, 124);
+            this.txtSQL.Location = new System.Drawing.Point(0, 190);
             this.txtSQL.Multiline = true;
             this.txtSQL.Name = "txtSQL";
-            this.txtSQL.Size = new System.Drawing.Size(828, 463);
+            this.txtSQL.Size = new System.Drawing.Size(828, 397);
             this.txtSQL.TabIndex = 1;
             // 
             // splitter2
@@ -475,15 +497,6 @@
             this.panel4.Size = new System.Drawing.Size(378, 207);
             this.panel4.TabIndex = 18;
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 125);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(84, 13);
-            this.label4.TabIndex = 17;
-            this.label4.Text = "Output Directory";
-            // 
             // chkGenerateImages
             // 
             this.chkGenerateImages.AutoSize = true;
@@ -495,27 +508,14 @@
             this.toolTip1.SetToolTip(this.chkGenerateImages, "Generate images of each labelled ROI and save into folders");
             this.chkGenerateImages.UseVisualStyleBackColor = true;
             // 
-            // domainLabelsSelector
+            // label4
             // 
-            this.domainLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.domainLabelsSelector.AutoScroll = true;
-            this.domainLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.domainLabelsSelector.Location = new System.Drawing.Point(59, 3);
-            this.domainLabelsSelector.Name = "domainLabelsSelector";
-            this.domainLabelsSelector.Size = new System.Drawing.Size(766, 29);
-            this.domainLabelsSelector.TabIndex = 15;
-            // 
-            // outputLabelsSelector
-            // 
-            this.outputLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.outputLabelsSelector.AutoScroll = true;
-            this.outputLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.outputLabelsSelector.Location = new System.Drawing.Point(59, 34);
-            this.outputLabelsSelector.Name = "outputLabelsSelector";
-            this.outputLabelsSelector.Size = new System.Drawing.Size(766, 29);
-            this.outputLabelsSelector.TabIndex = 14;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 125);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(84, 13);
+            this.label4.TabIndex = 17;
+            this.label4.Text = "Output Directory";
             // 
             // fClassificationExport
             // 

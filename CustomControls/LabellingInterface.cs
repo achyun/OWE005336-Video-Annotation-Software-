@@ -278,12 +278,14 @@ namespace OWE005336__Video_Annotation_Software_
                 tbxTags.PopulateTagsFromString(image.Tags);
                 cmbSensorType.SelectedItem = image.SensorType;
                 PaintROIsGrid(image);
+                olsNegativeLabels.SetLabels(Program.ImageDatabase.ExcludeImageLabels_Load(image.ID));
 
                 txtLabel.Enabled = true;
                 cmbSensorType.Enabled = true;
                 dgvLabels.Enabled = true;
                 btnSelectLabel.Enabled = true;
                 tbxTags.Enabled = true;
+                olsNegativeLabels.Enabled = true;
             }
             else
             {
@@ -292,12 +294,14 @@ namespace OWE005336__Video_Annotation_Software_
                 tbxTags.PopulateTagsFromString("");
                 cmbSensorType.SelectedItem = SensorTypeEnum.Unknown;
                 dgvLabels.Rows.Clear();
+                olsNegativeLabels.ClearLabels();
 
                 txtLabel.Enabled = false;
                 cmbSensorType.Enabled = false;
                 dgvLabels.Enabled = false;
                 btnSelectLabel.Enabled = false;
                 tbxTags.Enabled = false;
+                olsNegativeLabels.Enabled = false;
             }
             
 
@@ -344,6 +348,22 @@ namespace OWE005336__Video_Annotation_Software_
                     LabelledROI lroi = (LabelledROI)dgvLabels.SelectedRows[0].Tag;
                     SetLabelForROI(ln, lroi);
                 }
+            }
+        }
+
+        private void olsNegativeLabels_LabelAdded(LabelBox sender, EventArgs e, int label_id)
+        {
+            if (_LabelledImage != null)
+            {
+                Program.ImageDatabase.ExcludeImageLabels_Add(_LabelledImage.ID, label_id);
+            }
+        }
+
+        private void olsNegativeLabels_LabelDeleted(LabelBox sender, EventArgs e, int label_id)
+        {
+            if (_LabelledImage != null)
+            {
+                Program.ImageDatabase.ExcludeImageLabels_Delete(_LabelledImage.ID, label_id);
             }
         }
     }

@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlImage = new System.Windows.Forms.Panel();
             this.pnlMetaData = new System.Windows.Forms.Panel();
             this.dgvLabels = new System.Windows.Forms.DataGridView();
@@ -41,6 +41,8 @@
             this.ROILocation = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ROISize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.olsNegativeLabels = new OWE005336__Video_Annotation_Software_.LabelBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.tbxTags = new OWE005336__Video_Annotation_Software_.TagBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbSensorType = new System.Windows.Forms.ComboBox();
@@ -80,14 +82,14 @@
             // 
             this.dgvLabels.AllowUserToAddRows = false;
             this.dgvLabels.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvLabels.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvLabels.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dgvLabels.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvLabels.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Label,
@@ -96,30 +98,30 @@
             this.Occluded,
             this.ROILocation,
             this.ROISize});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvLabels.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvLabels.DefaultCellStyle = dataGridViewCellStyle5;
             this.dgvLabels.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvLabels.Enabled = false;
             this.dgvLabels.Location = new System.Drawing.Point(0, 0);
             this.dgvLabels.Name = "dgvLabels";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvLabels.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvLabels.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dgvLabels.RowHeadersVisible = false;
             this.dgvLabels.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvLabels.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvLabels.Size = new System.Drawing.Size(382, 471);
+            this.dgvLabels.Size = new System.Drawing.Size(382, 335);
             this.dgvLabels.TabIndex = 0;
             this.dgvLabels.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvLabels_CellBeginEdit);
             // 
@@ -163,6 +165,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.olsNegativeLabels);
+            this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.tbxTags);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.cmbSensorType);
@@ -170,11 +174,33 @@
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 471);
+            this.panel1.Location = new System.Drawing.Point(0, 335);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(5);
-            this.panel1.Size = new System.Drawing.Size(382, 220);
+            this.panel1.Size = new System.Drawing.Size(382, 356);
             this.panel1.TabIndex = 2;
+            // 
+            // olsNegativeLabels
+            // 
+            this.olsNegativeLabels.AutoScroll = true;
+            this.olsNegativeLabels.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.olsNegativeLabels.Dock = System.Windows.Forms.DockStyle.Top;
+            this.olsNegativeLabels.Location = new System.Drawing.Point(5, 167);
+            this.olsNegativeLabels.Name = "olsNegativeLabels";
+            this.olsNegativeLabels.Size = new System.Drawing.Size(372, 84);
+            this.olsNegativeLabels.TabIndex = 15;
+            this.olsNegativeLabels.LabelAdded += new OWE005336__Video_Annotation_Software_.LabelBox.LabelAddedEventHandler(this.olsNegativeLabels_LabelAdded);
+            this.olsNegativeLabels.LabelDeleted += new OWE005336__Video_Annotation_Software_.LabelBox.LabelDeletedEventHandler(this.olsNegativeLabels_LabelDeleted);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label4.Location = new System.Drawing.Point(5, 154);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(175, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Image not suitable for detections of:";
             // 
             // tbxTags
             // 
@@ -184,7 +210,7 @@
             this.tbxTags.Enabled = false;
             this.tbxTags.Location = new System.Drawing.Point(5, 91);
             this.tbxTags.Name = "tbxTags";
-            this.tbxTags.Size = new System.Drawing.Size(372, 121);
+            this.tbxTags.Size = new System.Drawing.Size(372, 63);
             this.tbxTags.TabIndex = 4;
             // 
             // label2
@@ -311,5 +337,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn Occluded;
         private System.Windows.Forms.DataGridViewTextBoxColumn ROILocation;
         private System.Windows.Forms.DataGridViewTextBoxColumn ROISize;
+        private System.Windows.Forms.Label label4;
+        private LabelBox olsNegativeLabels;
     }
 }

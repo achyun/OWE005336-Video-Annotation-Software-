@@ -30,12 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.txtSQL = new System.Windows.Forms.TextBox();
             this.panel5 = new System.Windows.Forms.Panel();
-            this.domainLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.outputLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
-            this.txtSQL = new System.Windows.Forms.TextBox();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.panel3 = new System.Windows.Forms.Panel();
             this.btnOpenPrevScript = new System.Windows.Forms.Button();
@@ -70,6 +68,10 @@
             this.chkGenerateImages = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label13 = new System.Windows.Forms.Label();
+            this.domainLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
+            this.outputLabelsSelector = new OWE005336__Video_Annotation_Software_.LabelBox();
+            this.projectSelector = new OWE005336__Video_Annotation_Software_.ProjectBox();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -98,8 +100,19 @@
             this.panel1.Size = new System.Drawing.Size(828, 658);
             this.panel1.TabIndex = 0;
             // 
+            // txtSQL
+            // 
+            this.txtSQL.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSQL.Location = new System.Drawing.Point(0, 227);
+            this.txtSQL.Multiline = true;
+            this.txtSQL.Name = "txtSQL";
+            this.txtSQL.Size = new System.Drawing.Size(828, 360);
+            this.txtSQL.TabIndex = 1;
+            // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.projectSelector);
+            this.panel5.Controls.Add(this.label13);
             this.panel5.Controls.Add(this.domainLabelsSelector);
             this.panel5.Controls.Add(this.label12);
             this.panel5.Controls.Add(this.label11);
@@ -107,24 +120,13 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel5.Location = new System.Drawing.Point(0, 124);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(828, 66);
+            this.panel5.Size = new System.Drawing.Size(828, 103);
             this.panel5.TabIndex = 15;
-            // 
-            // domainLabelsSelector
-            // 
-            this.domainLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.domainLabelsSelector.AutoScroll = true;
-            this.domainLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.domainLabelsSelector.Location = new System.Drawing.Point(59, 3);
-            this.domainLabelsSelector.Name = "domainLabelsSelector";
-            this.domainLabelsSelector.Size = new System.Drawing.Size(766, 29);
-            this.domainLabelsSelector.TabIndex = 15;
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(8, 8);
+            this.label12.Location = new System.Drawing.Point(6, 44);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(51, 13);
             this.label12.TabIndex = 16;
@@ -135,32 +137,12 @@
             // 
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 41);
+            this.label11.Location = new System.Drawing.Point(10, 78);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(47, 13);
             this.label11.TabIndex = 15;
             this.label11.Text = "Outputs:";
             this.toolTip1.SetToolTip(this.label11, "The labels that this classifier will be trained against");
-            // 
-            // outputLabelsSelector
-            // 
-            this.outputLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.outputLabelsSelector.AutoScroll = true;
-            this.outputLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.outputLabelsSelector.Location = new System.Drawing.Point(59, 34);
-            this.outputLabelsSelector.Name = "outputLabelsSelector";
-            this.outputLabelsSelector.Size = new System.Drawing.Size(766, 29);
-            this.outputLabelsSelector.TabIndex = 14;
-            // 
-            // txtSQL
-            // 
-            this.txtSQL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSQL.Location = new System.Drawing.Point(0, 190);
-            this.txtSQL.Multiline = true;
-            this.txtSQL.Name = "txtSQL";
-            this.txtSQL.Size = new System.Drawing.Size(828, 397);
-            this.txtSQL.TabIndex = 1;
             // 
             // splitter2
             // 
@@ -517,6 +499,47 @@
             this.label4.TabIndex = 17;
             this.label4.Text = "Output Directory";
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(9, 11);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(48, 13);
+            this.label13.TabIndex = 17;
+            this.label13.Text = "Projects:";
+            this.toolTip1.SetToolTip(this.label13, "The projects from which to draw images");
+            // 
+            // domainLabelsSelector
+            // 
+            this.domainLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.domainLabelsSelector.AutoScroll = true;
+            this.domainLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.domainLabelsSelector.Location = new System.Drawing.Point(59, 39);
+            this.domainLabelsSelector.Name = "domainLabelsSelector";
+            this.domainLabelsSelector.Size = new System.Drawing.Size(766, 29);
+            this.domainLabelsSelector.TabIndex = 15;
+            // 
+            // outputLabelsSelector
+            // 
+            this.outputLabelsSelector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.outputLabelsSelector.AutoScroll = true;
+            this.outputLabelsSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.outputLabelsSelector.Location = new System.Drawing.Point(59, 71);
+            this.outputLabelsSelector.Name = "outputLabelsSelector";
+            this.outputLabelsSelector.Size = new System.Drawing.Size(766, 29);
+            this.outputLabelsSelector.TabIndex = 14;
+            // 
+            // projectBox1
+            // 
+            this.projectSelector.AutoScroll = true;
+            this.projectSelector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.projectSelector.Location = new System.Drawing.Point(59, 6);
+            this.projectSelector.Name = "projectBox1";
+            this.projectSelector.Size = new System.Drawing.Size(766, 29);
+            this.projectSelector.TabIndex = 18;
+            // 
             // fClassificationExport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -591,5 +614,7 @@
         private LabelBox domainLabelsSelector;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.CheckBox chkGenerateImages;
+        private System.Windows.Forms.Label label13;
+        private ProjectBox projectSelector;
     }
 }

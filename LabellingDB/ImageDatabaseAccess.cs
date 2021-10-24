@@ -1682,7 +1682,7 @@ namespace LabellingDB
 
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataReader rdr = null;
-            SqlCommand cmd = new SqlCommand("SELECT id, name, sql, created_by, pad_train, pad_valid, pad_test, pct_train, pct_valid, pct_test, min_pixels_train, min_pixels_valid, min_pixels_test, domains, outputs FROM classificationexporttasks", conn);
+            SqlCommand cmd = new SqlCommand("SELECT id, name, sql, created_by, pad_train, pad_valid, pad_test, pct_train, pct_valid, pct_test, min_pixels_train, min_pixels_valid, min_pixels_test, domains, outputs, projects FROM classificationexporttasks", conn);
 
             if (id >= 0)
             {
@@ -1733,6 +1733,16 @@ namespace LabellingDB
                         {
                             int labelID = int.Parse(labelIDstr);
                             return LabelTree_LoadByID(labelID);
+                        }).ToArray();
+                    }
+
+                    var projectStr = rdr.GetString(15);
+                    if (!string.IsNullOrWhiteSpace(projectStr))
+                    {
+                        t.Projects = projectStr.Split('#').Select(projectIDStr =>
+                        {
+                            int projectID = int.Parse(projectIDStr);
+                            return Projects.First(x => x.ID == projectID);
                         }).ToArray();
                     }
 
@@ -1801,7 +1811,7 @@ namespace LabellingDB
                                                     "pad_train = @pad_train, pad_valid = @pad_valid, pad_test = @pad_test, " + 
                                                     "pct_train = @pct_train, pct_valid = @pct_valid, pct_test = @pct_test, " +
                                                     "min_pixels_train = @min_pixels_train, min_pixels_valid = @min_pixels_valid, min_pixels_test = @min_pixels_test, " +
-                                                    "Domains = @domainLabels, Outputs = @outputLabels " +
+                                                    "domains = @domainLabels, outputs = @outputLabels, projects = @projects " +
                                             "WHERE id = @id", conn);
 
             cmd.Parameters.Add("@id", SqlDbType.Int).Value = task.ID;
@@ -1825,6 +1835,9 @@ namespace LabellingDB
 
             var outputLabelsStr = string.Join("#", task.Outputs.Select(x => x.ID.ToString()));
             cmd.Parameters.Add("@outputLabels", SqlDbType.NVarChar).Value = outputLabelsStr;
+
+            var projectStr = string.Join("#", task.Projects.Select(x => x.ID.ToString()));
+            cmd.Parameters.Add("@projects", SqlDbType.NVarChar).Value = projectStr;
 
             try
             {
@@ -2169,6 +2182,7 @@ namespace LabellingDB
         public int MinPixelsTest = 0;
         public LabelNode[] Domains = new LabelNode[0];
         public LabelNode[] Outputs = new LabelNode[0];
+        public Project[] Projects = new Project[0];
     }
 
     public enum SensorTypeEnum

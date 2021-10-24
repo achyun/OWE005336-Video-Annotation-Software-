@@ -37,6 +37,7 @@ namespace OWE005336__Video_Annotation_Software_
 
                 task.Domains = domainLabelsSelector.SelectedLabels;
                 task.Outputs = outputLabelsSelector.SelectedLabels;
+                task.Projects = projectSelector.SelectedProjects;
                 task.SQL = txtSQL.Text;
                 
                 task.PadTrainingData = ckbPadTrainData.Checked;
@@ -100,6 +101,7 @@ namespace OWE005336__Video_Annotation_Software_
             txtSQL.Text = task.SQL;
             domainLabelsSelector.SetLabels(task.Domains);
             outputLabelsSelector.SetLabels(task.Outputs);
+            projectSelector.SetProjects(task.Projects);
 
             ckbPadTrainData.Checked = task.PadTrainingData;
             ckbPadValidationData.Checked = task.PadValidationData;
@@ -153,7 +155,11 @@ namespace OWE005336__Video_Annotation_Software_
             string labelsFilter = string.Join(" OR ", task.Outputs.Select(x => $"label_trees.name = '{x.Name}'\n"));
             labelsFilter = "(" + labelsFilter + ")";
 
-            string sql = task.SQL.Replace("${LabelsFilter}", labelsFilter);
+            string projectsFilter = string.Join(",", task.Projects.Select(x => x.ID.ToString()));
+            projectsFilter = "(" + projectsFilter + ")";
+
+            string sql = task.SQL.Replace("${LabelsFilter}", labelsFilter)
+                                .Replace("${ProjectsFilter}", projectsFilter);
 
             string err;
             DataTable dt = Program.ImageDatabase.RunCustomQuery(sql, out err);
@@ -206,6 +212,8 @@ namespace OWE005336__Video_Annotation_Software_
             t.MinPixelsValidation = (int)nudMinPixelsValidation.Value;
             t.MinPixelsTest = (int)nudMinPixelsTest.Value;
             t.Domains = domainLabelsSelector.SelectedLabels;
+            t.Outputs = outputLabelsSelector.SelectedLabels;
+            t.Projects = projectSelector.SelectedProjects;
 
             string imageDirPath = Program.ImageDatabase.Settings_Get(ImageDatabaseAccess.SETTING_IMAGE_DIR);
             DateTime localDate = DateTime.Now;

@@ -30,7 +30,7 @@ namespace OWE005336__Video_Annotation_Software_
             _AllowableProjects.AddRange(Program.ImageDatabase.Projects.Select(x => x.Name).ToArray());
         }
 
-        public Project[] SelectedLabels {
+        public Project[] SelectedProjects {
             get
             {
                 return this.Controls.OfType<TagTextBox>().Select(x => x.Tag as Project).ToArray();

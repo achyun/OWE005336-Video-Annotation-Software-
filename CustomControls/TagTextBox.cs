@@ -62,6 +62,15 @@ namespace OWE005336__Video_Annotation_Software_
             txtTextBox.ReadOnly = true;
         }
 
+        public TagTextBox(Project project)
+        {
+            InitializeComponent();
+            this.Tag = project;
+            this.Height = txtTextBox.Height;
+            txtTextBox.Text = project.Name;
+            txtTextBox.ReadOnly = true;
+        }
+
         private void TxtTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Enter)

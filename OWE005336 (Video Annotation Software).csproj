@@ -114,6 +114,12 @@
     <Compile Include="CustomControls\ClipSelector.Designer.cs">
       <DependentUpon>ClipSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\ProjectBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\ProjectBox.Designer.cs">
+      <DependentUpon>ProjectBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\LabelButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -125,6 +131,12 @@
     </Compile>
     <Compile Include="CustomControls\LabelBox.Designer.cs">
       <DependentUpon>LabelBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fProjectSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DialogForms\fProjectSelector.Designer.cs">
+      <DependentUpon>fProjectSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DialogForms\fMissingFiles.cs">
       <SubType>Form</SubType>
@@ -235,6 +247,9 @@
     <Compile Include="CustomControls\TagTextBox.Designer.cs">
       <DependentUpon>TagTextBox.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Forms\DialogForms\fProjectSelector.resx">
+      <DependentUpon>fProjectSelector.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DialogForms\fMissingFiles.resx">
       <DependentUpon>fMissingFiles.cs</DependentUpon>
     </EmbeddedResource>

@@ -19,6 +19,7 @@ namespace OWE005336__Video_Annotation_Software_
             _ROISelector.Dock = DockStyle.Fill;
 
             cmbSensorType.DataSource = Enum.GetValues(typeof(SensorTypeEnum));
+            cmbProject.DataSource = Program.ImageDatabase.Projects;
 
             dgvLabels.Columns["Truncated"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvLabels.Columns["Occluded"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
@@ -277,11 +278,13 @@ namespace OWE005336__Video_Annotation_Software_
                 txtLabel.Text = image.LabelName;
                 tbxTags.PopulateTagsFromString(image.Tags);
                 cmbSensorType.SelectedItem = image.SensorType;
+                cmbProject.SelectedItem = image.Project;
                 PaintROIsGrid(image);
                 olsNegativeLabels.SetLabels(Program.ImageDatabase.ExcludeImageLabels_Load(image.ID));
 
                 txtLabel.Enabled = true;
                 cmbSensorType.Enabled = true;
+                cmbProject.Enabled = true;
                 dgvLabels.Enabled = true;
                 btnSelectLabel.Enabled = true;
                 tbxTags.Enabled = true;
@@ -293,11 +296,13 @@ namespace OWE005336__Video_Annotation_Software_
                 txtLabel.Text = "";
                 tbxTags.PopulateTagsFromString("");
                 cmbSensorType.SelectedItem = SensorTypeEnum.Unknown;
+                cmbProject.SelectedItem = Program.ImageDatabase.Projects.First();
                 dgvLabels.Rows.Clear();
                 olsNegativeLabels.ClearLabels();
 
                 txtLabel.Enabled = false;
                 cmbSensorType.Enabled = false;
+                cmbProject.Enabled = false;
                 dgvLabels.Enabled = false;
                 btnSelectLabel.Enabled = false;
                 tbxTags.Enabled = false;
@@ -364,6 +369,16 @@ namespace OWE005336__Video_Annotation_Software_
             if (_LabelledImage != null)
             {
                 Program.ImageDatabase.ExcludeImageLabels_Delete(_LabelledImage.ID, label_id);
+            }
+        }
+
+        private void cmbProject_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!_PaintDataInProgress && _LabelledImage != null)
+            {
+                Properties.Settings.Default.Save();
+                _LabelledImage.Project = (Project)cmbProject.SelectedItem;
+                Program.ImageDatabase.Images_Update(_LabelledImage);
             }
         }
     }

@@ -52,6 +52,8 @@
             this.btnSelectLabel = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.splitter1 = new System.Windows.Forms.Splitter();
+            this.cmbProject = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.pnlMetaData.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvLabels)).BeginInit();
             this.panel1.SuspendLayout();
@@ -165,6 +167,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.cmbProject);
+            this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.olsNegativeLabels);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.tbxTags);
@@ -297,6 +301,28 @@
             this.splitter1.TabIndex = 7;
             this.splitter1.TabStop = false;
             // 
+            // cmbProject
+            // 
+            this.cmbProject.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cmbProject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbProject.Enabled = false;
+            this.cmbProject.FormattingEnabled = true;
+            this.cmbProject.Location = new System.Drawing.Point(5, 264);
+            this.cmbProject.Name = "cmbProject";
+            this.cmbProject.Size = new System.Drawing.Size(372, 21);
+            this.cmbProject.TabIndex = 17;
+            this.cmbProject.SelectedIndexChanged += new System.EventHandler(this.cmbProject_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label5.Location = new System.Drawing.Point(5, 251);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(40, 13);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "Project";
+            // 
             // LabellingInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -339,5 +365,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ROISize;
         private System.Windows.Forms.Label label4;
         private LabelBox olsNegativeLabels;
+        private System.Windows.Forms.ComboBox cmbProject;
+        private System.Windows.Forms.Label label5;
     }
 }

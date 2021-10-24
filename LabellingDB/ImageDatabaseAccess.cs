@@ -1086,7 +1086,7 @@ namespace LabellingDB
             List<LabelledImage> imageList = new List<LabelledImage>();
             SqlConnection conn = new SqlConnection(_ConnectionString);
             SqlDataAdapter adapter = new SqlDataAdapter();
-            SqlCommand cmd = new SqlCommand("SELECT TOP " + maxResults.ToString() + " images.id, filepath, labelling_complete, sensor_type, tags, label_id, image_width, image_height, label_trees.name FROM images LEFT JOIN label_trees ON label_trees.id = images.label_id", conn);
+            SqlCommand cmd = new SqlCommand("SELECT TOP " + maxResults.ToString() + " images.id, filepath, labelling_complete, sensor_type, tags, label_id, image_width, image_height, label_trees.name, project_id FROM images LEFT JOIN label_trees ON label_trees.id = images.label_id", conn);
             int filterCount = 0;
             bool andRequired = false;
 
@@ -1165,6 +1165,7 @@ namespace LabellingDB
                     img.LabelID = (int)dr.ItemArray[5];
                     if (!dr.ItemArray[8].Equals(System.DBNull.Value)) { img.LabelName = (string)dr.ItemArray[8]; }
                     imageList.Add(img);
+                    img.Project = Projects.First(x => x.ID == (int)dr.ItemArray[9]);
                 }
             }
             catch (Exception ex)
@@ -1298,7 +1299,7 @@ namespace LabellingDB
             bool addCompleteDetails = (!oldCompleteStatus && image.Completed);
             SqlConnection conn = new SqlConnection(_ConnectionString);
 
-            string commandString = "UPDATE images SET label_id = @label_id, sensor_type = @sensor_type, labelling_complete = @labelling_complete, tags = @tags, modified_by = CURRENT_USER, modified_date = CURRENT_TIMESTAMP";
+            string commandString = "UPDATE images SET label_id = @label_id, sensor_type = @sensor_type, project_id = @project_id, labelling_complete = @labelling_complete, tags = @tags, modified_by = CURRENT_USER, modified_date = CURRENT_TIMESTAMP";
             if(addCompleteDetails) { commandString += ", completed_by = CURRENT_USER, completed_date = CURRENT_TIMESTAMP"; }
             commandString += " WHERE id = @id";
 
@@ -1306,6 +1307,7 @@ namespace LabellingDB
             cmd.Parameters.Add("@id", SqlDbType.Int).Value = image.ID;
             cmd.Parameters.Add("@label_id", SqlDbType.Int).Value = image.LabelID;
             cmd.Parameters.Add("@sensor_type", SqlDbType.Int).Value = (int)image.SensorType;
+            cmd.Parameters.Add("@project_id", SqlDbType.Int).Value = (int)(image.Project?.ID ?? 1);
             cmd.Parameters.Add("@labelling_complete", SqlDbType.Bit).Value = image.Completed;
             cmd.Parameters.Add("@tags", SqlDbType.NVarChar).Value = image.Tags;
 
@@ -1995,6 +1997,54 @@ namespace LabellingDB
             return success;
         }
         #endregion
+
+        #region Projects
+
+        //Maintain a cached list of projects.
+        protected List<Project> _Projects = null;
+        public Project[] Projects
+        {
+            get
+            {
+                if (_Projects == null)
+                    _Projects = Projects_Load();
+
+                return _Projects.ToArray();
+            }
+        }
+        
+        protected List<Project> Projects_Load()
+        {
+            List<Project> projects = new List<Project>();
+            SqlConnection conn = new SqlConnection(_ConnectionString);
+            SqlDataReader rdr = null;
+            SqlCommand cmd = new SqlCommand("SELECT id, name FROM projects", conn);
+
+            try
+            {
+                conn.Open();
+
+                cmd.CommandType = CommandType.Text;
+                rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    var prj = new Project() { ID = rdr.GetInt32(0), Name = rdr.GetString(1) };
+                    projects.Add(prj);
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("Error in 'LabelTree_LoadByID' : \r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+                if (conn != null) { conn.Close(); }
+                if (rdr != null) { rdr.Close(); }
+            }
+
+            return projects;
+        }
+        #endregion
     }
 
     public class LabelNode
@@ -2052,6 +2102,7 @@ namespace LabellingDB
         public List<LabelledROI> LabelledROIs { get; set; }
         public Bitmap Thumbnail { get; set; }
         public SensorTypeEnum SensorType { get; set; }
+        public Project Project { get; set; }
         public string Tags { get; set; } = "";
         public int LabelID { get; set; }
         public string LabelName { get; set; }
@@ -2125,5 +2176,15 @@ namespace LabellingDB
         Unknown = -1,
         Daylight = 0,
         IR = 1
+    }
+
+    public class Project
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public override string ToString() => this.Name;
+
+        public override bool Equals(object obj) =>(obj is Project prj) && prj.ID == this.ID;
+        public override int GetHashCode() => this.ID;
     }
 }
